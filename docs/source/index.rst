@@ -1,13 +1,8 @@
-Welcome to Lumache's documentation!
-===================================
+Welcome to Portworx documentation for the Red Hat Product Demo System!
+=======================================================================
 
-**Lumache** (/lu'make/) is a Python library for cooks and food lovers
-that creates recipes mixing random ingredients.
-It pulls data from the `Open Food Facts database <https://world.openfoodfacts.org/>`_
-and offers a *simple* and *intuitive* API.
 
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
+.. warning:: The steps assume you are using the Red Hat Demo System**
 
 .. note::
 
@@ -17,6 +12,8 @@ Contents
 --------
 
 .. toctree::
+   :titlesonly:
 
    lab2guide-cli
    lab7guide-cli
+
