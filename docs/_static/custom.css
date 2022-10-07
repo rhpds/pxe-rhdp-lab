@@ -3,8 +3,8 @@
     clear: both;
 }
 
-.toggle .header p {display: inline; }
-.toggle .header strong {color: #ff5000 }
+#.toggle .header p {display: inline; }
+#.toggle .header strong {color: #ff5000 }
 
 .toggle .header:after {
     content: " ▶";
