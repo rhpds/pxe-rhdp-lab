@@ -462,31 +462,17 @@ Spec:
    pre-snapshot rule: mongodb-presnap-rule
    post-snapshot rule: mongodb-postsnap-rule
 
-.. raw:: html
+.. container:: toggle
 
-   <details>
+    .. container:: header
 
-.. raw:: html
+        **Show Solution**
 
-   <summary style="color:green">
+    .. code-block:: text
+       :linenos:
 
-Show Solution
-
-.. raw:: html
-
-   </summary>
+       We have created a solution file for you under ``/tmp/gvs.yaml`` Run: oc apply -f /tmp/gvs.yaml
+       ...
 
 .. raw:: html
 
-   <hr style="background-color:green">
-
-We have created a solution file for you under ‘/tmp/gvs.yaml’ Run: oc
-apply -f /tmp/gvs.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
