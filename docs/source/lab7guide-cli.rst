@@ -457,7 +457,6 @@ makes use of the pre and snapshot rules ``mongodb-presnap-rule`` and
 Spec:
 
 ::
-
    pvcSelector: role=mongo
    pre-snapshot rule: mongodb-presnap-rule
    post-snapshot rule: mongodb-postsnap-rule
@@ -468,4 +467,5 @@ Spec:
         **Show Solution**
 
     .. code-block:: text
-       We have created a solution file for you under ``/tmp/gvs.yaml`` Run: oc apply -f /tmp/gvs.yaml
+       We have created a solution file for you under ``/tmp/gvs.yaml`` 
+       Run: oc apply -f /tmp/gvs.yaml
