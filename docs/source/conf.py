@@ -2,9 +2,9 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'rhpds-portworx'
+copyright = '2022, Matt LeVan, Portworx'
+author = 'Matt LeVan, Portworx'
 
 release = '0.1'
 version = '0.1.0'
@@ -20,7 +20,6 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    'sphinxcontrib.contentui',
 ]
 
 intersphinx_mapping = {
