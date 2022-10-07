@@ -461,11 +461,8 @@ Spec:
    pre-snapshot rule: mongodb-presnap-rule
    post-snapshot rule: mongodb-postsnap-rule
 
-.. container:: toggle
-
-    .. container:: header
-        **Show Solution**
-
+.. toggle:: 
+    
     .. code-block:: text
        We have created a solution file for you under ``/tmp/gvs.yaml`` 
        Run: oc apply -f /tmp/gvs.yaml
