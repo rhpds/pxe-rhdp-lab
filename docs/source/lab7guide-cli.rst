@@ -468,3 +468,6 @@ Spec:
     .. code-block:: text
        We have created a solution file for you under ``/tmp/gvs.yaml`` Run: oc apply -f /tmp/gvs.yaml
 
+.. toggle-header::
+    :header: Example 1 **Show/Hide Code**
+       We have created a solution file for you under ``/tmp/gvs.yaml`` Run: oc apply -f /tmp/gvs.yaml
