@@ -18,5 +18,5 @@ Contents
 
 .. toctree::
 
-   usage
-   api
+   lab2guide-cli
+   lab7guide-cli
