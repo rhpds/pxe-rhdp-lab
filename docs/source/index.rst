@@ -11,7 +11,6 @@ Welcome to Portworx documentation for the Red Hat Product Demo System!
 .. toctree::
    :caption: Command Line Labs
    :maxdepth: 2
-   :numbered:
    :glob:
 
    cli-based-labs/index
@@ -19,7 +18,6 @@ Welcome to Portworx documentation for the Red Hat Product Demo System!
 .. toctree::
    :caption: GUI Labs
    :maxdepth: 2
-   :numbered:
    :glob:
 
    gui-based-labs/index
