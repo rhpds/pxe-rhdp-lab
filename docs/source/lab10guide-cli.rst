@@ -177,7 +177,7 @@ Q2: What is the Size of the PVC called ‘pvc1’?
    
    Run the below command: 
    
-   .. code-block::shell 
+   .. code-block:: shell 
    
       oc describe pvc pvc1
    
@@ -214,7 +214,7 @@ Are you able to do it? Inspect the storage class used by this PVC.
 
    The storage class ‘px-default-sc’ does not have ‘allowVolumeExpansion’
    enabled. As a result you cannot resize this PVC! 
-   
+
    .. code-block:: 
       
       oc describe sc px-default-sc
