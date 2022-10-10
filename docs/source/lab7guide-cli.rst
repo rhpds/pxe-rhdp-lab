@@ -472,3 +472,12 @@ Spec:
       
        We have created a solution file for you under ``/tmp/gvs.yaml`` 
        Run: oc apply -f /tmp/gvs.yaml
+
+.. container:: toggle, toggle-hidden
+
+  .. admonition:: Show Solution
+
+    .. code-block:: text
+
+      We have created a solution file for you under ``/tmp/gvs.yaml`` 
+      Run: oc apply -f /tmp/gvs.yaml

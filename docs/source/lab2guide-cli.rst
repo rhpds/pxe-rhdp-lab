@@ -48,7 +48,6 @@ Let’s create the above storage class.
       repl: "3"
       priority_io: "high"
    EOF
-   }
 
 .. code:: text
 
