@@ -12,7 +12,9 @@ Contents
 --------
 
 .. toctree::
-   :titlesonly:
+   :maxdepth: 1
+   :numbered:
+   :glob:
 
    lab2guide-cli
    lab3guide-cli
