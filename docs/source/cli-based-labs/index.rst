@@ -8,11 +8,14 @@ Welcome to Portworx documentation for the Red Hat Product Demo System!
 
    This project is under active development.
 
+Contents
+--------
+
 .. toctree::
    :caption: Command Line Labs
-   :maxdepth: 2
+   :maxdepth: 1
    :numbered:
    :glob:
 
-   cli-based-labs/index
+   *-cli
 
