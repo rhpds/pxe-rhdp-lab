@@ -1,6 +1,6 @@
-===========================================
-Explore Red Hat Product Demo System cluster
-===========================================
+===================================================
+Lab 1 - Explore Red Hat Product Demo System cluster
+===================================================
 
 We will begin with a quick tour of the lab environment. This lab consists of a multi-node kubernetes cluster which has been deployed exclusively for you. This is a sandbox environment. Feel free to play around.
 
@@ -10,15 +10,14 @@ Red Hat Openshift Container Storage configuration review
 Q1: How many master nodes do you see in the cluster?
 
 Hint:
+
 .. code-block:: text
-
-oc get nodes
-
-
+    
+    oc get nodes
 
 .. dropdown:: Show Solution
- 
-Answer: 3
+    
+    Answer: 3
 
 Q2: What is the version of Kubernetes installed in this environment?
 1. 1.18
@@ -26,13 +25,14 @@ Q2: What is the version of Kubernetes installed in this environment?
 3. 1.21
 
 Hint:
+
 .. code-block:: text
-oc version
+    
+    oc version
 
 .. dropdown:: Show Solution
-
-Answer: 1.21 
-
+    
+    Answer: 1.21 
 
 Q3: What is the status of the `kube-apiserver`?
 
@@ -43,24 +43,26 @@ Q3: What is the status of the `kube-apiserver`?
 
 Hint:
 .. code-block:: text
-oc cluster-info
+    
+    oc cluster-info
 
 .. dropdown:: Show Solution
-
-Answer: Running 
-
+    
+    Answer: Running 
 
 Q4: Are there any pods running on the default name space?
 1. Yes
 2. No
 
 Hint:
+
 .. code-block:: text
-oc get pods
+    
+    oc get pods
 
 .. dropdown:: Show Solution
-
-Answer: No
+    
+    Answer: No
 
 Q5: What is the name of the dns deployment in the cluster?
 1. kube-dns
@@ -68,25 +70,29 @@ Q5: What is the name of the dns deployment in the cluster?
 3. kube-dns
 
 Hint:
+
 .. code-block:: text
-oc get deployments -n openshift-dns
+    
+    oc get deployments -n openshift-dns
 
 .. dropdown:: Show Solution
-
-Answer: coredns
+    
+    Answer: coredns
 
 Q6: How many replicas are configured for this deployment?
 1. 2
 2. 4
 3. 1
+4. 3
 
 Hint:
 .. code-block:: text
-oc -n openshift-dns get deployments -l k8s-app=kube-dns
+    
+    oc -n openshift-dns get deployments -l k8s-app=kube-dns
 
 .. dropdown:: Show Solution
-
-Answer: 2
+    
+    Answer: 3
 
 Portworx configuration review
 -----------------------------
@@ -116,17 +122,17 @@ Lets explore the cluster using pxctl utility.
 
 **Note**: You can run pxctl cli from any of the cluster nodes (node01, node02 or node03) OR you can run it from the portworx pods (label name=portworx)
 
-
 Portworx on K8's Quiz
 ---------------------
 
 Q1: How many storage nodes do you see in the PX cluster?
 
 Hint:
+
 .. code-block:: text
 
     oc -n portworx exec $PX_POD -c portworx -it -- /opt/pwx/bin/pxctl status
 
 .. dropdown:: Show Solution
     
-    Answer: 3<
+    Answer: 3
