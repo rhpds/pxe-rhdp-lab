@@ -159,7 +159,7 @@ Q1: How many PVC’s have been created?
 .. dropdown:: Show Solution
    
    Run the below command: 
-   
+
    .. code-block:: shell
       
       oc get pvc
@@ -175,7 +175,12 @@ Q2: What is the Size of the PVC called ‘pvc1’?
 
 .. dropdown:: Show Solution
    
-   Run the below command: oc describe pvc pvc1
+   Run the below command: 
+   
+   .. code-block::shell 
+   
+      oc describe pvc pvc1
+   
    Answer: 2Gi
 
 Q3: What is the Access Mode used for the PVC called ‘pvc3’?
@@ -186,7 +191,12 @@ Q3: What is the Access Mode used for the PVC called ‘pvc3’?
 
 .. dropdown:: Show Solution
    
-   Run the below command: oc describe pvc pvc3
+   Run the below command: 
+
+   .. code-block:: shell
+
+      oc describe pvc pvc3
+
    Answer: RWX
 
 Resize the pvc1
@@ -201,9 +211,13 @@ Try to update the size of ``pvc1`` to 8Gi.
 Are you able to do it? Inspect the storage class used by this PVC.
 
 .. dropdown:: Show Solution
+
    The storage class ‘px-default-sc’ does not have ‘allowVolumeExpansion’
-   enabled. As a result you cannot resize this PVC! oc describe sc
-   px-default-sc
+   enabled. As a result you cannot resize this PVC! 
+   
+   .. code-block:: 
+      
+      oc describe sc px-default-sc
 
 Inspect www-web-0 PVC
 ---------------------
@@ -222,7 +236,11 @@ Manually resize this PVC ``www-web-0`` to 8GiB.
 
 .. dropdown:: Show Solution
    
-   Edit the PVC and change the size to 8Gi: oc edit pvc www-web-0
+   Edit the PVC and change the size to 8Gi: 
+
+   .. code-block:: shell
+      
+      oc edit pvc www-web-0
 
 Inspect www-web-0 PVC again
 ---------------------------
