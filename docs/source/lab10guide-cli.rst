@@ -159,6 +159,7 @@ Q1: How many PVC’s have been created?
 .. dropdown:: Show Solution
    
    Run the below command: 
+   
    .. code-block:: shell
       
       oc get pvc
