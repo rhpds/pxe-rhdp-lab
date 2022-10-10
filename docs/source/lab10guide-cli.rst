@@ -8,7 +8,7 @@ Lab setup
 First we will create a few PVCs and a StatefulSet with 2 replicas for
 you to explore.
 
-::
+.. code-block:: shell
 
    cat <<'EOF' > /tmp/create-pvc.yaml
    kind: StorageClass
@@ -57,7 +57,7 @@ you to explore.
          storage: 1Gi
    EOF
 
-.. code:: text
+.. code-block:: shell
 
    cat <<'EOF' > /tmp/create-nginx-sts.yaml
    kind: StorageClass
@@ -122,7 +122,7 @@ you to explore.
 
 Create the PVCs and statefulSet
 
-.. code:: text
+.. code-block:: shell
 
    oc create -f /tmp/create-pvc.yaml
    oc create -f /tmp/create-nginx-sts.yaml
@@ -132,16 +132,16 @@ Wait for nginx to be ready
 
 echo “Waiting for Nginx to be ready….”
 
-oc wait pod web-0 –for=condition=Ready –timeout=-1s oc exec web-0 – dd
-if=/dev/zero of=/usr/share/nginx/html/file2.txt count=4101024 bs=1024
-echo “Nginx initialized successfully….”
+.. code-block:: shell
 
-::
-
+   oc wait pod web-0 –for=condition=Ready –timeout=-1s 
+   oc exec web-0 – dd if=/dev/zero of=/usr/share/nginx/html/file2.txt count=4101024 bs=1024
+   echo “Nginx initialized successfully….”
 
    Before proceeding, please make sure all the pods are up:
 
-   ```text
+.. code-block:: shell 
+
    oc get pods -n default -l app=nginx
 
 Challenge questions
@@ -189,7 +189,7 @@ Resize the pvc1
 
 Try to update the size of ``pvc1`` to 8Gi.
 
-::
+.. code-block:: shell
 
    oc edit pvc pvc1
 
@@ -206,7 +206,7 @@ Inspect www-web-0 PVC
 The volume mounted on the pod ``web-0`` seems to be running out of
 space. Inspect it!
 
-::
+.. code-block:: shell
 
    oc exec web-0 -- df -hP /usr/share/nginx/html
 
@@ -226,13 +226,13 @@ Check out the utilization of the volume after the resize.
 
 It takes approximately 30s to complete resizing.
 
-.. code:: text
+.. code-block:: shell
 
    oc describe pvc www-web-0
 
 Once ExpandVolume succeds, run the below command:
 
-.. code:: text
+.. code-block:: shell
 
    oc exec web-0 -- df -hP /usr/share/nginx/html
 
