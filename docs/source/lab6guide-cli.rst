@@ -74,38 +74,14 @@ Run the below command to obtain the object store endpoint:
 
    MINIO_ENDPOINT=http://$(oc -n minio get svc px-minio -o jsonpath='{.spec.clusterIP}:9000');echo $MINIO_ENDPOINT
 
-.. raw:: html
+.. dropdown:: Show Solution
+   Get the minio endpoint from the ‘px-minio-1’ service and use it to
+   create portworx credential: MINIO_ENDPOINT=http://$(oc -n minio get svc
+   px-minio -o jsonpath=‘{.spec.clusterIP}:9000’) ssh -o
+   strictHostKeyChecking=no node01 sudo pxctl credentials create –provider
+   s3 –s3-access-key ZZYYXXWWVVUUTT –s3-secret-key 0ldSup3rS3cr3t
+   –s3-endpoint $MINIO_ENDPOINT –s3-region us-east-1 my-cloud-credentials
 
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Get the minio endpoint from the ‘px-minio-1’ service and use it to
-create portworx credential: MINIO_ENDPOINT=http://$(oc -n minio get svc
-px-minio -o jsonpath=‘{.spec.clusterIP}:9000’) ssh -o
-strictHostKeyChecking=no node01 sudo pxctl credentials create –provider
-s3 –s3-access-key ZZYYXXWWVVUUTT –s3-secret-key 0ldSup3rS3cr3t
-–s3-endpoint $MINIO_ENDPOINT –s3-region us-east-1 my-cloud-credentials
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
 
 Provision MySQL Database
 ------------------------
@@ -201,34 +177,9 @@ successfully backed up to the object store.
      persistentVolumeClaimName: px-mysql-pvc
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-We have created a solution file under ‘/tmp/cloud-snap.yaml’. Create it
-by running: oc apply -f /tmp/cloud-snap.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   We have created a solution file under ‘/tmp/cloud-snap.yaml’. 
+   Create it by running: oc apply -f /tmp/cloud-snap.yaml
 
 If the cloud credentials and volume snapshot were set up correctly, you
 can check the status by running the below command:
@@ -267,32 +218,7 @@ the snapshot ``mysql-snapshot``.
          storage: 1Gi
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-We have created a solution file under ‘/tmp/restore.yaml’. Create it by
-running: oc apply -f /tmp/restore.yaml Make sure the volume becomes
-bound oc get pvc
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   We have created a solution file under ‘/tmp/restore.yaml’. Create it by
+   running: oc apply -f /tmp/restore.yaml Make sure the volume becomes
+   bound oc get pvc

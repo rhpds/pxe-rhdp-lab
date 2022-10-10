@@ -121,43 +121,10 @@ Challenge questions
 
 How many schedule policies have been created?
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run: oc get schedulepolicies
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: 8
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run: oc get schedulepolicies
+   Answer: 8
 
 What is the retenton period of the ``weekly`` policy?
 
@@ -166,43 +133,9 @@ What is the retenton period of the ``weekly`` policy?
 3. 3
 4. 4
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run: oc describe schedulepolicies weekly
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: 5
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   Run: oc describe schedulepolicies weekly
+   Answer: 5
 
 What is snapshot frequency set for the policy ``pol1``?
 
@@ -210,43 +143,10 @@ What is snapshot frequency set for the policy ``pol1``?
 2. Everyday at 12 AM
 3. Every 60 minutes
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run: oc describe schedulepolicies pol1
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: Every 60 minutes
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run: oc describe schedulepolicies pol1
+   Answer: Every 60 minutes
 
 Create a new snapshot schedule policy
 -------------------------------------
@@ -267,34 +167,9 @@ Create a daily snapshot schedule policy called ``daily-schedule`` at
        retain: 5
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command to create the snapshot: oc create -f
-/tmp/sched-pol.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   Run the below command to create the snapshot: 
+   oc create -f /tmp/sched-pol.yaml
 
 Create a storageClass that uses this schedule policy
 ----------------------------------------------------
@@ -319,34 +194,10 @@ schedule policy ``daily-schedule``
           portworx/snapshot-type: local
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command to create the storage class: oc create -f
-/tmp/px-nginx-scheduled.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run the below command to create the storage class: 
+   oc create -f /tmp/px-nginx-scheduled.yaml
 
 Create a Nginx StatefulSet that utilizes this storageClass
 ----------------------------------------------------------
@@ -413,31 +264,6 @@ deployment.
 The PVC’s created by the StatefulSet will be backed up automatically as
 per the schedule policy ``daily-schedule``.
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command to create the NGINX sts: oc create -f
-/tmp/create-nginx-sts.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   Run the below command to create the NGINX sts: 
+   oc create -f /tmp/create-nginx-sts.yaml

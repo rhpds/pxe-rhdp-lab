@@ -156,43 +156,10 @@ Q1: How many PVC’s have been created?
 3. 3
 4. 1
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command: oc get pvc
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: 5
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run the below command: oc get pvc
+   Answer: 5
 
 Q2: What is the Size of the PVC called ‘pvc1’?
 
@@ -201,43 +168,10 @@ Q2: What is the Size of the PVC called ‘pvc1’?
 3. 5Gi
 4. 2Gi
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command: oc describe pvc pvc1
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: 2Gi
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run the below command: oc describe pvc pvc1
+   Answer: 2Gi
 
 Q3: What is the Access Mode used for the PVC called ‘pvc3’?
 
@@ -245,43 +179,10 @@ Q3: What is the Access Mode used for the PVC called ‘pvc3’?
 2. RWO
 3. ROX
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command: oc describe pvc pvc3
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: RWX
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run the below command: oc describe pvc pvc3
+   Answer: RWX
 
 Resize the pvc1
 ---------------
@@ -294,35 +195,10 @@ Try to update the size of ``pvc1`` to 8Gi.
 
 Are you able to do it? Inspect the storage class used by this PVC.
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-The storage class ‘px-default-sc’ does not have ‘allowVolumeExpansion’
-enabled. As a result you cannot resize this PVC! oc describe sc
-px-default-sc
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   The storage class ‘px-default-sc’ does not have ‘allowVolumeExpansion’
+   enabled. As a result you cannot resize this PVC! oc describe sc
+   px-default-sc
 
 Inspect www-web-0 PVC
 ---------------------
@@ -339,33 +215,9 @@ Resize www-web-0 PVC
 
 Manually resize this PVC ``www-web-0`` to 8GiB.
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Edit the PVC and change the size to 8Gi: oc edit pvc www-web-0
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Edit the PVC and change the size to 8Gi: oc edit pvc www-web-0
 
 Inspect www-web-0 PVC again
 ---------------------------

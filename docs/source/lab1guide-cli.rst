@@ -20,6 +20,7 @@ Hint:
     Answer: 3
 
 Q2: What is the version of Kubernetes installed in this environment?
+
 1. 1.18
 2. 1.20
 3. 1.21
@@ -52,6 +53,7 @@ Hint:
     Answer: Running 
 
 Q4: Are there any pods running on the default name space?
+
 1. Yes
 2. No
 
@@ -66,6 +68,7 @@ Hint:
     Answer: No
 
 Q5: What is the name of the dns deployment in the cluster?
+
 1. kube-dns
 2. coredns
 3. kube-dns
@@ -81,6 +84,7 @@ Hint:
     Answer: coredns
 
 Q6: How many replicas are configured for this deployment?
+
 1. 2
 2. 4
 3. 1
@@ -120,7 +124,6 @@ Check the installation logs:
 
 
 Lets explore the cluster using pxctl utility.
-
 
 **Note**: You can run pxctl cli from any of the cluster nodes (node01, node02 or node03) OR you can run it from the portworx pods (label name=portworx)
 

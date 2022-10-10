@@ -239,34 +239,10 @@ Rules:
    value: mysql --user=root --password=$MYSQL_ROOT_PASSWORD
    -Bse 'flush tables with read lock;system ${WAIT_CMD};'
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-We have created a solution file for you under ‘/tmp/pre-mysql.yaml’.
-Run: oc apply -f /tmp/pre-mysql.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+  
+  We have created a solution file for you under ‘/tmp/pre-mysql.yaml’.
+  Run: oc apply -f /tmp/pre-mysql.yaml
 
 Create an application consistent snapshot of MySQL
 --------------------------------------------------
@@ -288,34 +264,10 @@ use of the pre-snapshot rule ``mysql-presnap-rule'`` with PVC
      persistentVolumeClaimName: px-mysql-pvc
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-We have created a solution file for you under ‘/tmp/vs.yaml’ Run: oc
-apply -f /tmp/vs.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+  
+  We have created a solution file for you under ‘/tmp/vs.yaml’ 
+  Run: oc apply -f /tmp/vs.yaml
 
 Create a pre-snapshot rule for MongoDB
 --------------------------------------
@@ -346,36 +298,10 @@ Rules:
    type: command
    value: mongo --eval "printjson(db.fsyncLock())"
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-We have created a solution file for you under ‘/tmp/pre-mongo.yaml’ Run:
-oc apply -f /tmp/pre-mongo.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
-
-.. _create-a-post-snapshot-rule-for-mongodb-1:
+.. dropdown:: Show Solution
+  
+  We have created a solution file for you under ‘/tmp/pre-mongo.yaml’ Run:
+  oc apply -f /tmp/pre-mongo.yaml
 
 Create a post-snapshot rule for MongoDB
 ---------------------------------------
@@ -406,34 +332,10 @@ Rules:
    type: command
    value: mongo --eval "printjson(db.fsyncUnLock())"
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-We have created a solution file for you under ‘/tmp/post-mongo.yaml’.
-Run: oc apply -f /tmp/post-mongo.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+  
+  We have created a solution file for you under ‘/tmp/post-mongo.yaml’.
+  Run: oc apply -f /tmp/post-mongo.yaml
 
 Create an application consistent snapshot of MongoDB
 ----------------------------------------------------

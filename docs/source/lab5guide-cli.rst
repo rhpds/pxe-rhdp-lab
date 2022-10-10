@@ -89,43 +89,10 @@ running:
 How many pods have been created for MYSQL with label ``app=mysql`` in
 this cluster (all namespaces)?
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run: oc get pods –all-namespaces -l app=mysql
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: 1
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run: oc get pods –all-namespaces -l app=mysql
+   Answer: 1
 
 How many PVCs have been created for MYSQL?
 
@@ -134,123 +101,24 @@ How many PVCs have been created for MYSQL?
 3. 3
 4. 4
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run: oc get pvc -l app=mysql –all-namespaces
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: 1
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run: oc get pvc -l app=mysql –all-namespaces
+   Answer: 1
 
 What is the name of the storage class used to create this PVC?
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run: oc -n mysql-app describe pvc px-mysql-pvc \| grep storage-class
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: px-db-sc
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run: oc -n mysql-app describe pvc px-mysql-pvc \| grep storage-class
+   Answer: px-db-sc
 
 What is the ``io_profile`` used for this storage class?
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run: oc describe sc px-db-sc \| grep io_profile
-
-.. raw:: html
-
-   <p style="color:red">
-
-Answer: db
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run: oc describe sc px-db-sc \| grep io_profile
+   Answer: db
 
 Create a snapshot for MySQL
 ---------------------------
@@ -269,34 +137,10 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
      persistentVolumeClaimName: px-mysql-pvc
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command to create the snapshot: oc create -f
-/tmp/mysql-snap.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run the below command to create the snapshot: 
+   oc create -f /tmp/mysql-snap.yaml
 
 Restore the snapshot for MySQL
 ------------------------------
@@ -319,34 +163,10 @@ Namespace as the source. Call the restore object as
      sourceNamespace: mysql-app
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command to create the snapshot: oc create -f
-/tmp/restore-mysql.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run the below command to create the snapshot: 
+   oc create -f /tmp/restore-mysql.yaml
 
 We will create a Statefulset to use with snapshots and restores.
 ----------------------------------------------------------------
@@ -424,7 +244,9 @@ NGinx statefulSet
 Before proceeding to the next step, please make sure all the resources
 are up:
 
-``oc get pods  -l app=nginx``
+.. code:: text
+   
+   oc get pods  -l app=nginx
 
 Note: Please wait until both pods are in a ``Running`` state.
 
@@ -449,34 +271,10 @@ nginx StatefulSet.
       - default
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Run the below command to create the snapshot: oc create -f
-/tmp/nginx-snap.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Run the below command to create the snapshot: 
+   oc create -f /tmp/nginx-snap.yaml
 
 Restore the snapshot for Nginx
 ------------------------------
@@ -502,37 +300,13 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
          storage: 1Gi
    EOF
 
-.. raw:: html
-
-   <details>
-
-.. raw:: html
-
-   <summary style="color:green">
-
-Show Solution
-
-.. raw:: html
-
-   </summary>
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-Use this command to find the volumesnapshot identifier for web-0: oc
-describe volumesnapshot.volumesnapshot \| grep “web-0” Copy the
-identifier that will be found in the Name after
-“nginx-group-snap-www-web-0-” Now, use the below template to create a
-clone from the volumesnapshot for PVC of ‘pod - 0’ of the nginx
-StatefulSet: You must modify the yaml file to add the volumesnapshot
-identifier for web-0 vi /tmp/restore-nginx.yaml Create the restore
-object after editing. oc apply -f /tmp/restore-nginx.yaml
-
-.. raw:: html
-
-   <hr style="background-color:green">
-
-.. raw:: html
-
-   </details>
+.. dropdown:: Show Solution
+   
+   Use this command to find the volumesnapshot identifier for web-0: oc
+   describe volumesnapshot.volumesnapshot \| grep “web-0” Copy the
+   identifier that will be found in the Name after
+   “nginx-group-snap-www-web-0-” Now, use the below template to create a
+   clone from the volumesnapshot for PVC of ‘pod - 0’ of the nginx
+   StatefulSet: You must modify the yaml file to add the volumesnapshot
+   identifier for web-0 vi /tmp/restore-nginx.yaml Create the restore
+   object after editing. oc apply -f /tmp/restore-nginx.yaml
