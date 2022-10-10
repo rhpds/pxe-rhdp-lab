@@ -12,6 +12,7 @@ Contents
 --------
 
 .. toctree::
+   :caption: Command Line Labs
    :maxdepth: 1
    :numbered:
    :glob:
