@@ -1,7 +1,11 @@
 In this step, we will create a Portworx volume (PVC) for nginx.
 
+===================================
+Lab 4 - Working with Shared Volumes
+===================================
+
 Step: Create StorageClass
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 Take a look at the StorageClass definition for Portworx
 
@@ -34,7 +38,7 @@ Create the storage class using:
    oc create -f /tmp/px-shared-sc.yaml
 
 Step: Create PersistentVolumeClaim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------
 
 Take a look at the Persistent Volume Claim
 
@@ -76,7 +80,7 @@ In this step, we will deploy the nginx application using the
 ``PersistentVolumeClaim`` created before.
 
 Step deploy 3 instances of nginx
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------
 
 .. code:: text
 
@@ -224,7 +228,7 @@ Now use oc to deploy nginx.
    oc create -f /tmp/deploy-webapps.yaml
 
 Step: Verify nginx pods are ready
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 Run the below command and wait till all three nginx pods are in ready
 state.
@@ -240,7 +244,7 @@ while it’s because it has to fetch the docker image on each node.
 In this step, we will use pxctl to inspect the volume
 
 Step: Inspect the Portworx volume
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 Portworx ships with a
 `pxctl <https://docs.portworx.com/control/status.html>`__ command line
@@ -272,7 +276,7 @@ of nginx and see how it gets read by all three containers.
 In this step, we will check the state of our nginx servers.
 
 Step: Confirm our nginx servers are up
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------
 
 Run the following command:
 
@@ -293,7 +297,7 @@ You should see the following:
    </html>
 
 Step: Create index.html nginx html folder on webapp1
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------------
 
 Copy index.html into webapp1’s pod:
 
@@ -334,7 +338,7 @@ volume so updating one updates all three.
 In this step, we will play some file ping pong
 
 Step: Open some bash sessions in webapps 1-3
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------
 
 Let’s open a couple more terminals and have fun with shared volumes. You
 can navigate the terminals in the upper left corner of the screen:

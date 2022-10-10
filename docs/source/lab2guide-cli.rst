@@ -1,12 +1,12 @@
-======================
-Create a Storage Class
-======================
+======================================
+Lab 2 - Understand Kubernetest Storage
+======================================
 
 
 In this step, we will create a StorageClass for Portworx volumes.
 
 Understand StorageClass
-=======================
+-----------------------
 
 A
 `StorageClass <https://kubernetes.io/docs/concepts/storage/storage-classes/>`__
@@ -32,7 +32,7 @@ are classified into the high IO profile (for e.g SSDs).
       priority_io: "high"
 
 Create StorageClass
-===================
+-------------------
 
 Let’s create the above storage class.
 
@@ -59,7 +59,7 @@ Let’s proceed to creating volumes that use this storage class.
 In this step, we will deploy a ``PersistentVolumeClaim`` using Portworx.
 
 Step: Understand PersistentVolumeClaim
-======================================
+--------------------------------------
 
 A
 `PersistentVolumeClaim <https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims>`__
@@ -84,7 +84,7 @@ Storage class we created before this step.
           storage: 2Gi
 
 Step: Create PersistentVolumeClaim
-==================================
+----------------------------------
 
 Let’s create the above PersistentVolumeClaim.
 
@@ -115,7 +115,7 @@ create this PVC. Each PVC has a unique one-one mapping to a
 which is the actual volume backing the PVC.
 
 Step: Validate PersistentVolumeClaim
-====================================
+------------------------------------
 
 A PersistentVolumeClaim is successfully provisioned once it gets into
 “Bound” state. Let’s run the below script to check that.
@@ -141,7 +141,7 @@ Let’s proceed to the next step to further inspect the volume.
 In this step, we will use ``pxctl`` to inspect the volume.
 
 Inspect the Portworx volume
-===========================
+---------------------------
 
 Portworx ships with a
 `pxctl <https://docs.portworx.com/control/status.html>`__ command line
