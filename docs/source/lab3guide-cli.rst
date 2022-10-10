@@ -2,8 +2,11 @@ Before we deploy cassandra, we will need to create a Portworx volume
 (PVC) for Cassandra. In order to create PVCs, we need a StorageClass
 which defined the class of storage available to us.
 
+Lab 3 - Deploy Cassandra
+========================
+
 Step: Create StorageClass
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 Take a look at the StorageClass definition for Cassandra:
 
@@ -205,7 +208,7 @@ Now use oc to deploy Cassandra.
    oc create -f /tmp/cassandra.yaml
 
 Step: Verify Cassandra pod is ready
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 Below commands wait till the Cassandra pod are in ready state. Take note
 of the node it’s running on.
@@ -220,7 +223,7 @@ STATUS ``Running`` and ``READY 1/1``, hit ``ctrl-c`` to exit.
 In this step, we will use pxctl to inspect the volume
 
 Step: Inspect the Portworx volume
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 Portworx ships with a
 `pxctl <https://docs.portworx.com/reference/cli/basics/>`__ command line
@@ -249,7 +252,7 @@ In this step, we will initialize a sample database in our cassandra
 instance.
 
 Step: Create a table and insert data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 Start a CQL Shell session:
 
@@ -279,7 +282,7 @@ Select rows from the keyspace we just created:
 Now that we have data created let’s ``quit`` the cqlsh session.
 
 Step: Flush data to disk
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Before we proceed to the failover test we will flush the in-memory data
 onto disk so that when the cassandra-0 starts on another node it will
@@ -297,7 +300,7 @@ then be resheduled by the `STorage ORchestrator for Kubernetes
 lands on one of the nodes that has of replica of the data.
 
 Step: Simulate a node failure to force Cassandra to restart
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------------------
 
 First we will cordon the node where Cassandra is running to simulate a
 node failure or network partition:
@@ -318,7 +321,7 @@ Once the cassandra pod gets deleted, Kubernetes will start to create a
 new cassandra pod on another node.
 
 Step: Verify replacement pod starts running
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 
 Below commands wait till the new cassandra pod is ready.
 
@@ -341,7 +344,7 @@ database we previously created is still intact.
 In this step, we will check the state of our sample Cassandra database.
 
 Step: Verify data is still available
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 Start a CQL Shell session:
 
@@ -361,7 +364,7 @@ Now that we have verify our data survived the node failure let’s
 *THIS STEP IS OPTIONAL, (Click “Next” to move to snapshot and restore)*
 
 Step: Scale the cluster
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 In this step, we will scale our Cassandra stateful set to 3 replicas to
 show how portworx Dyanamically creates new PVCs as the statefulset
@@ -409,7 +412,7 @@ When you see your Cassandra node is in Status=Up and State=Normal (UN)
 that means the cluster is fully operational.
 
 Pro Tip: Use jq to get useful cluster configuration summary
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------------------
 
 Get the pods and the knowledge of the Hosts on which they are scheduled.
 
@@ -421,7 +424,7 @@ In this step, we will take a snapshot of all volumes for our Cassandra
 cluster, then drop our database table.
 
 Step: Take snapshot using oc
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 First let’s insert a new record in our features table so we can show
 that the snapshot will take the latest available data:
@@ -483,7 +486,7 @@ When you see all 3 volumesnapshots appear, take note of the names and
 hit ``ctrl-c`` to exit the screen.
 
 Step: Drop features table
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 Now we’re going to go ahead and do something stupid because it’s
 Katacoda and we’re here to learn.
