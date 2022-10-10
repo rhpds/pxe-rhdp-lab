@@ -16,6 +16,7 @@ Contents
    :numbered:
    :glob:
 
+   lab1guide-cli
    lab2guide-cli
    lab3guide-cli
    lab4guide-cli
