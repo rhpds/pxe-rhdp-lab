@@ -1,8 +1,12 @@
+=========================================
+Lab 6 - Cloud Snapshots
+=========================================
+
 **Important Note:** We will again make use of Minio object store in this
 Lab. We will use it as the endpoint for our cloud snapshots.
 
 Deploy Minio as target for Portworx Cloud Snapshots
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------------
 
 Create a storageClass for use by Minio
 
@@ -104,7 +108,7 @@ s3 –s3-access-key ZZYYXXWWVVUUTT –s3-secret-key 0ldSup3rS3cr3t
    </details>
 
 Provision MySQL Database
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 We will not create a MySQL database to use with Cloud Snapshots
 
@@ -177,7 +181,7 @@ We will not create a MySQL database to use with Cloud Snapshots
    oc exec -it $POD -- mysql -u root -e "Create database demodb"
 
 Take Cloud Snapshot
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 We have deployed a mysql pod that uses PortWorx volume. Take a cloud
 snapshot of this PVC called ``mysql-snapshot``. The snapshot should be
@@ -240,7 +244,7 @@ To check for the backed up objects in the object store:
    ssh node01 mc ls px/
 
 Clone PVC
-~~~~~~~~~
+---------
 
 Create a clone PVC called ``px-mysql-clone-pvc`` by restoring data from
 the snapshot ``mysql-snapshot``.

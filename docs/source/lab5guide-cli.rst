@@ -1,5 +1,9 @@
+=========================================
+Lab 5 - Kubernetes Snapshots
+=========================================
+
 We will create a Deployment to use with snapshots and restores.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------------------------
 
 MySQL Deployment
 
@@ -249,7 +253,7 @@ Answer: db
    </details>
 
 Create a snapshot for MySQL
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
 
@@ -295,7 +299,7 @@ Run the below command to create the snapshot: oc create -f
    </details>
 
 Restore the snapshot for MySQL
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same
 Namespace as the source. Call the restore object as
@@ -345,7 +349,7 @@ Run the below command to create the snapshot: oc create -f
    </details>
 
 We will create a Statefulset to use with snapshots and restores.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------------------------
 
 We will create a new StatefulSet for you to explore.
 
@@ -425,7 +429,7 @@ are up:
 Note: Please wait until both pods are in a ``Running`` state.
 
 Create a snapshot for Nginx
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 Create a group snapshot called ``nginx-group-snap`` for the PVC’s of the
 nginx StatefulSet.
@@ -475,7 +479,7 @@ Run the below command to create the snapshot: oc create -f
    </details>
 
 Restore the snapshot for Nginx
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Restore the snapshot taken for the pod ``web-0`` to a new PVC
 ``web-clone-0`` in the ``default`` namespace.

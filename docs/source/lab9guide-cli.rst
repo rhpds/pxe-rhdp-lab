@@ -1,7 +1,11 @@
+=======================================
+Lab 9 - PVC Auto Resize using AutoPilot
+=======================================
+
 In this step, we will create a Portworx volume (PVC) for postgres.
 
 Step: Create StorageClass and PersistentVolumeClaim
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------------
 
 Take a look at the StorageClass definition for Portworx
 
@@ -63,7 +67,7 @@ Create the PersistentVolumeClaim using:
    oc create -f /tmp/px-postgres-pvc.yaml
 
 Configuring monitoring rules
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 First we will create rules to monitor Postgres !
 
@@ -333,7 +337,7 @@ When the pod is in Running state then then hit ``ctrl-c`` to exit.
 In this step, we will use pxctl to inspect the volume
 
 Inspect the Portworx volume
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 Portworx ships with a
 `pxctl <https://docs.portworx.com/reference/cli/basics/>`__ command line
@@ -362,7 +366,7 @@ AutoPilot rule!
 In this step, we will configure the AutoPilot rule for Postgres
 
 Configure Autopilot Rule
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Learn more about `working with AutoPilot
 Rules <https://2.11.docs.portworx.com/portworx-install-with-kubernetes/autopilot/how-to-use/working-with-rules/#understanding-an-autopilotrule>`__
@@ -381,7 +385,7 @@ Keep in mind, an AutoPilot Rule has 4 main parts.
 Below we target the Postgres PVC using an AutPilot Rule.
 
 View the AutoPilot Rule
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 .. code:: text
 
@@ -420,7 +424,7 @@ using the ``openstorage.io.action.volume/resize`` action by 200 percent.
 Normally, you would likely use a larger threshold for volume usage.
 
 Create the AutoPilot Rule
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
    If you receive an error of ``no matches for kind "AutopilotRule"``
    wait 1 minute and try again. AutoPilot installs in the background and
@@ -432,7 +436,7 @@ Create the AutoPilot Rule
    oc apply -f /tmp/pvc-resize-rule.yaml
 
 Verify that AutoPilot initialized the Postgres PVC
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------------
 
 .. code:: text
 
@@ -447,7 +451,7 @@ volume and show how AutoPilot dynamically increases the volume size
 without downtime or user intervention.
 
 Open a shell inside the postgres container
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------
 
 Below commands exec into the postgres pod:
 
@@ -479,7 +483,7 @@ volume.
    rule.** Type ``exit`` to exit from the pod shell before proceeding.
 
 Check to see if the rule was triggered
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------
 
 We can retrieve events by using the ``oc get events`` and filtering for
 ``AutoPilotRule`` events that match our use case. Note, that AutoPilot

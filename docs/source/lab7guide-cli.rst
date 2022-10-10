@@ -1,3 +1,7 @@
+========================================
+Lab 7 - Application Consistent Snapshots
+========================================
+
 3D Snapshots
 ------------
 
@@ -5,7 +9,7 @@ In the upcoming steps, we will set up 3D snapshots for the Portworx
 volumes consumed by these deployment and StatefulSets.
 
 Deploy a MySQL Deployment and MongoDB statefulSet
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------------
 
 We will deploy a couple of Databases. Once ready, inspect them.
 
@@ -188,7 +192,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
    oc create -f /tmp/create-mongo.yaml
 
 Verify the creation of the MySQL and MongoDB pods are Ready
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------------------
 
 .. code:: text
 
@@ -203,7 +207,7 @@ Wait until all MySQL nodes are ``Ready 1/1``
 Wait until all Mongo nodes are ``Ready 3/3``
 
 Create a post-snapshot rule for MongoDB
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------
 
 Create a pre-snapshot rule called ``mysql-presnap-rule`` with the below
 specifications:
@@ -265,7 +269,7 @@ Run: oc apply -f /tmp/pre-mysql.yaml
    </details>
 
 Create an application consistent snapshot of MySQL
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------------
 
 Create a new volume snapshot called ``mysql-3d-snapshot`` which makes
 use of the pre-snapshot rule ``mysql-presnap-rule'`` with PVC
@@ -314,7 +318,7 @@ apply -f /tmp/vs.yaml
    </details>
 
 Create a pre-snapshot rule for MongoDB
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------
 
 Create a pre-snapshot rule called ``mongodb-presnap-rule`` with the
 below specifications:
@@ -374,7 +378,7 @@ oc apply -f /tmp/pre-mongo.yaml
 .. _create-a-post-snapshot-rule-for-mongodb-1:
 
 Create a post-snapshot rule for MongoDB
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------
 
 Create a pre-snapshot rule called ``mongodb-postsnap-rule`` with the
 below specifications:
@@ -432,7 +436,7 @@ Run: oc apply -f /tmp/post-mongo.yaml
    </details>
 
 Create an application consistent snapshot of MongoDB
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------------
 
 Create a new group volume snapshot called ``mongodb-3d-snapshot`` which
 makes use of the pre and snapshot rules ``mongodb-presnap-rule`` and

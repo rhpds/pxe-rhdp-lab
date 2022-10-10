@@ -1,5 +1,9 @@
+=================================
+Lab 10 - PVC Manual Resize Volume
+=================================
+
 Lab setup
-~~~~~~~~~
+---------
 
 First we will create a few PVCs and a StatefulSet with 2 replicas for
 you to explore.
@@ -124,7 +128,7 @@ Create the PVCs and statefulSet
    oc create -f /tmp/create-nginx-sts.yaml
 
 Wait for nginx to be ready
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 echo “Waiting for Nginx to be ready….”
 
@@ -141,7 +145,7 @@ echo “Nginx initialized successfully….”
    oc get pods -n default -l app=nginx
 
 Challenge questions
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 Inspect the PersistentVolumeClaims on this cluster (default namespace)
 
@@ -280,7 +284,7 @@ Answer: RWX
    </details>
 
 Resize the pvc1
-~~~~~~~~~~~~~~~
+---------------
 
 Try to update the size of ``pvc1`` to 8Gi.
 
@@ -321,7 +325,7 @@ px-default-sc
    </details>
 
 Inspect www-web-0 PVC
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 The volume mounted on the pod ``web-0`` seems to be running out of
 space. Inspect it!
@@ -331,7 +335,7 @@ space. Inspect it!
    oc exec web-0 -- df -hP /usr/share/nginx/html
 
 Resize www-web-0 PVC
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 Manually resize this PVC ``www-web-0`` to 8GiB.
 
@@ -364,7 +368,7 @@ Edit the PVC and change the size to 8Gi: oc edit pvc www-web-0
    </details>
 
 Inspect www-web-0 PVC again
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 Check out the utilization of the volume after the resize.
 

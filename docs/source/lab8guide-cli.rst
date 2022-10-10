@@ -1,5 +1,9 @@
+==========================
+Lab 8 - Snapshot Schedules
+==========================
+
 Deploy MySQL and create a schedulePolicies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------
 
 .. code:: text
 
@@ -113,7 +117,7 @@ Before proceeding, make sure all the pods are up and ready:
    oc get pods -n mysql-app  -l app=mysql
 
 Challenge questions
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 How many schedule policies have been created?
 
@@ -245,7 +249,7 @@ Answer: Every 60 minutes
    </details>
 
 Create a new snapshot schedule policy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------
 
 Create a daily snapshot schedule policy called ``daily-schedule`` at
 ``10 PM``, ``retain 5``.
@@ -293,7 +297,7 @@ Run the below command to create the snapshot: oc create -f
    </details>
 
 Create a storageClass that uses this schedule policy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------------
 
 Create a storage class ``px-nginx-scheduled`` with the newly created
 schedule policy ``daily-schedule``
@@ -345,7 +349,7 @@ Run the below command to create the storage class: oc create -f
    </details>
 
 Create a Nginx StatefulSet that utilizes this storageClass
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------------------
 
 Create a new NGINX StatefulSet, making use of the ``px-nginx-scheduled``
 storage class.
