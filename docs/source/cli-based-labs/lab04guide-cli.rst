@@ -1,8 +1,8 @@
-In this step, we will create a Portworx volume (PVC) for nginx.
+===================================
+Lab 04 - Shared Volumes
+===================================
 
-===================================
-Lab 4 - Shared Volumes
-===================================
+In this step, we will create a Portworx volume (PVC) for nginx.
 
 Step: Create StorageClass
 -------------------------

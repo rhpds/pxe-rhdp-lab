@@ -1,6 +1,6 @@
-=======================================
-Lab 9 - PVC Auto Resize using AutoPilot
-=======================================
+========================================
+Lab 09 - PVC Auto Resize using AutoPilot
+========================================
 
 In this step, we will create a Portworx volume (PVC) for postgres.
 

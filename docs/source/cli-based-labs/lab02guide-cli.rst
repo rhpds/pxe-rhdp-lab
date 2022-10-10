@@ -1,6 +1,6 @@
-======================================
-Lab 2 - Understand Kubernetest Storage
-======================================
+=======================================
+Lab 02 - Understand Kubernetest Storage
+=======================================
 
 
 In this step, we will create a StorageClass for Portworx volumes.

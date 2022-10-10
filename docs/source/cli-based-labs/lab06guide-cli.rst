@@ -1,5 +1,5 @@
 =========================================
-Lab 6 - Cloud Snapshots
+Lab 06 - Cloud Snapshots
 =========================================
 
 **Important Note:** We will again make use of Minio object store in this

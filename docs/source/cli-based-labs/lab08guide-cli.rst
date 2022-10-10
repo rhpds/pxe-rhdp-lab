@@ -1,6 +1,6 @@
-==========================
-Lab 8 - Snapshot Schedules
-==========================
+===========================
+Lab 08 - Snapshot Schedules
+===========================
 
 Deploy MySQL and create a schedulePolicies
 ------------------------------------------

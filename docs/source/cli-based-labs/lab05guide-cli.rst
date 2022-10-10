@@ -1,5 +1,5 @@
 =========================================
-Lab 5 - Kubernetes Snapshots
+Lab 05 - Kubernetes Snapshots
 =========================================
 
 We will create a Deployment to use with snapshots and restores.
