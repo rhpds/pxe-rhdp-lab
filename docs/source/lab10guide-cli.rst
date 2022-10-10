@@ -138,7 +138,7 @@ echo “Waiting for Nginx to be ready….”
    oc exec web-0 – dd if=/dev/zero of=/usr/share/nginx/html/file2.txt count=4101024 bs=1024
    echo “Nginx initialized successfully….”
 
-   Before proceeding, please make sure all the pods are up:
+Before proceeding, please make sure all the pods are up:
 
 .. code-block:: shell 
 
@@ -158,7 +158,11 @@ Q1: How many PVC’s have been created?
 
 .. dropdown:: Show Solution
    
-   Run the below command: oc get pvc
+   Run the below command: 
+   .. code-block:: shell
+      
+      oc get pvc
+   
    Answer: 5
 
 Q2: What is the Size of the PVC called ‘pvc1’?
