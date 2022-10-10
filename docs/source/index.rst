@@ -16,3 +16,11 @@ Welcome to Portworx documentation for the Red Hat Product Demo System!
 
    cli-based-labs/index
 
+.. toctree::
+   :caption: GUI Labs
+   :maxdepth: 2
+   :numbered:
+   :glob:
+
+   gui-based-labs/index
+
