@@ -92,26 +92,26 @@ Step: Create PersistentVolumeClaim
 
 Let’s create the above PersistentVolumeClaim.
 
-.. code:: text
+.. code-block:: shell
 
-   cat <<EOF > /tmp/px-pvc.yaml
-   kind: PersistentVolumeClaim
-   apiVersion: v1
-   metadata:
-     name: px-pvc
-     annotations:
-       volume.beta.kubernetes.io/storage-class: px-repl3-sc
-   spec:
-     accessModes:
-       - ReadWriteOnce
-     resources:
-       requests:
-         storage: 2Gi
-   EOF
+  cat <<EOF > /tmp/px-pvc.yaml
+  kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: px-pvc
+    annotations:
+      volume.beta.kubernetes.io/storage-class: px-repl3-sc
+  spec:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 2Gi
+  EOF
 
-.. code:: text
+.. code-block:: shell
 
-   oc create -f /tmp/px-pvc.yaml
+  oc create -f /tmp/px-pvc.yaml
 
 Behind the scenes, Kubernetes talks to the Portworx native driver to
 create this PVC. Each PVC has a unique one-one mapping to a
