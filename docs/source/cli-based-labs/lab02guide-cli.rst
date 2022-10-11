@@ -21,15 +21,18 @@ cluster \* High IO priority means Portworx will use storage devices that
 are classified into the high IO profile (for e.g SSDs).
 
 .. code:: yaml
-
+   
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
    metadata:
-       name: px-repl3-sc
-   provisioner: kubernetes.io/portworx-volume
+     name: px-repl3-sc
+   provisioner: pxd.portworx.com
    parameters:
-      repl: "3"
-      priority_io: "high"
+     repl: "3"
+     priorit_io: "high"
+   reclaimPolicy: Delete
+   volumeBindingMode: Immediate
+
 
 Create StorageClass
 -------------------
@@ -42,11 +45,13 @@ Let’s create the above storage class.
    kind: StorageClass
    apiVersion: storage.k8s.io/v1
    metadata:
-       name: px-repl3-sc
-   provisioner: kubernetes.io/portworx-volume
+     name: px-repl3-sc
+   provisioner: pxd.portworx.com
    parameters:
-      repl: "3"
-      priority_io: "high"
+     repl: "3"
+     priority_io: "high"
+   reclaimPolicy: Delete
+   volumeBindingMode: Immediate
    EOF
 
 .. code:: text
@@ -72,15 +77,15 @@ Storage class we created before this step.
    kind: PersistentVolumeClaim
    apiVersion: v1
    metadata:
-      name: px-pvc
-      annotations:
-        volume.beta.kubernetes.io/storage-class: px-repl3-sc
+     name: px-pvc
+     annotations:
+       volume.beta.kubernetes.io/storage-class: px-repl3-sc
    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 2Gi
+     accessModes:
+       - ReadWriteOnce
+     resources:
+       requests:
+         storage: 2Gi
 
 Step: Create PersistentVolumeClaim
 ----------------------------------
@@ -93,15 +98,15 @@ Let’s create the above PersistentVolumeClaim.
    kind: PersistentVolumeClaim
    apiVersion: v1
    metadata:
-      name: px-pvc
-      annotations:
-        volume.beta.kubernetes.io/storage-class: px-repl3-sc
+     name: px-pvc
+     annotations:
+       volume.beta.kubernetes.io/storage-class: px-repl3-sc
    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 2Gi
+     accessModes:
+       - ReadWriteOnce
+     resources:
+       requests:
+         storage: 2Gi
    EOF
 
 .. code:: text
@@ -126,7 +131,7 @@ A PersistentVolumeClaim is successfully provisioned once it gets into
    while true; do
        PVC_STATUS=`oc get pvc px-pvc | grep -v NAME | awk '{print $2}'`
        if [ "${PVC_STATUS}" == "Bound" ]; then
-           echo "px-pvc is ${PVC_STATUS} !"
+           echo "px-pvc is ${PVC_STATUS}"
            oc get pvc px-pvc
            break
        else
