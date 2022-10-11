@@ -78,9 +78,8 @@ Storage class we created before this step.
    apiVersion: v1
    metadata:
      name: px-pvc
-     annotations:
-       volume.beta.kubernetes.io/storage-class: px-repl3-sc
    spec:
+     storageClassName: px-repl3-sc
      accessModes:
        - ReadWriteOnce
      resources:
@@ -99,9 +98,8 @@ Let’s create the above PersistentVolumeClaim.
   apiVersion: v1
   metadata:
     name: px-pvc
-    annotations:
-      volume.beta.kubernetes.io/storage-class: px-repl3-sc
   spec:
+    storageClassName: px-repl3-sc
     accessModes:
       - ReadWriteOnce
     resources:
