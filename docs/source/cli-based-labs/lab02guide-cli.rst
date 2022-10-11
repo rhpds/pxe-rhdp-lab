@@ -20,7 +20,7 @@ means the data for the volume is replicated on 3 different nodes in the
 cluster \* High IO priority means Portworx will use storage devices that
 are classified into the high IO profile (for e.g SSDs).
 
-.. code:: yaml
+.. code-block:: yaml
    
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
@@ -29,7 +29,7 @@ are classified into the high IO profile (for e.g SSDs).
    provisioner: pxd.portworx.com
    parameters:
      repl: "3"
-     priorit_io: "high"
+     priority_io: "high"
    reclaimPolicy: Delete
    volumeBindingMode: Immediate
 
@@ -39,24 +39,24 @@ Create StorageClass
 
 Let’s create the above storage class.
 
-.. code:: text
+.. code-block:: shell
 
-   cat <<EOF > /tmp/px-repl3-sc.yaml
-   kind: StorageClass
-   apiVersion: storage.k8s.io/v1
-   metadata:
-     name: px-repl3-sc
-   provisioner: pxd.portworx.com
-   parameters:
-     repl: "3"
-     priority_io: "high"
-   reclaimPolicy: Delete
-   volumeBindingMode: Immediate
-   EOF
+  cat <<EOF > /tmp/px-repl3-sc.yaml
+  kind: StorageClass
+  apiVersion: storage.k8s.io/v1
+  metadata:
+    name: px-repl3-sc
+  provisioner: pxd.portworx.com
+  parameters:
+    repl: "3"
+    priority_io: "high"
+  reclaimPolicy: Delete
+  volumeBindingMode: Immediate
+  EOF
 
-.. code:: text
+.. code-block:: shell
 
-   oc create -f /tmp/px-repl3-sc.yaml
+  oc create -f /tmp/px-repl3-sc.yaml
 
 Let’s proceed to creating volumes that use this storage class.
 
@@ -72,7 +72,7 @@ can be used to dynamically create a volume using Portworx.
 For example, below is the spec for a 2GB volume that uses the Portworx
 Storage class we created before this step.
 
-.. code:: yaml
+.. code-block:: yaml
 
    kind: PersistentVolumeClaim
    apiVersion: v1
@@ -124,21 +124,21 @@ Step: Validate PersistentVolumeClaim
 A PersistentVolumeClaim is successfully provisioned once it gets into
 “Bound” state. Let’s run the below script to check that.
 
-.. code:: text
+.. code-block:: shell
 
-   echo "Checking if the PersistentVolumeClaim was created successfully..."
+  echo "Checking if the PersistentVolumeClaim was created successfully..."
 
-   while true; do
-       PVC_STATUS=`oc get pvc px-pvc | grep -v NAME | awk '{print $2}'`
-       if [ "${PVC_STATUS}" == "Bound" ]; then
-           echo "px-pvc is ${PVC_STATUS}"
-           oc get pvc px-pvc
-           break
-       else
-           echo "Waiting for px-pvc to be Bound..."
-       fi
-       sleep 2
-   done
+  while true; do
+      PVC_STATUS=`oc get pvc px-pvc | grep -v NAME | awk '{print $2}'`
+      if [ "${PVC_STATUS}" == "Bound" ]; then
+          echo "px-pvc is ${PVC_STATUS}"
+          oc get pvc px-pvc
+          break
+      else
+          echo "Waiting for px-pvc to be Bound..."
+      fi
+      sleep 2
+  done
 
 Let’s proceed to the next step to further inspect the volume.
 
@@ -153,11 +153,11 @@ that can be used to manage Portworx.
 
 Below we will use pxctl to inspect the underlying volume for our PVC.
 
-.. code:: text
+.. code-block:: shell
 
-   VOL=`oc get pvc | grep px-pvc | awk '{print $3}'`
-   PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
-   oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect ${VOL}
+  VOL=`oc get pvc | grep px-pvc | awk '{print $3}'`
+  PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
+  oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect ${VOL}
 
 Make the following observations in the inspect output \* ``HA`` shows
 the number of configured replcas for this volume \* ``Labels`` show the
