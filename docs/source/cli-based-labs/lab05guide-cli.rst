@@ -9,7 +9,7 @@ MySQL Deployment
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/create-mysql.yaml
+   cat <<EOF > /tmp/create-mysql.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
    metadata:
@@ -127,7 +127,7 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/mysql-snap.yaml
+   cat <<EOF > /tmp/mysql-snap.yaml
    apiVersion: volumesnapshot.external-storage.k8s.io/v1
    kind: VolumeSnapshot
    metadata:
@@ -151,7 +151,7 @@ Namespace as the source. Call the restore object as
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/restore-mysql.yaml
+   cat <<EOF > /tmp/restore-mysql.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: VolumeSnapshotRestore
    metadata:
@@ -177,7 +177,7 @@ NGinx statefulSet
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/create-nginx-sts.yaml
+   cat <<EOF > /tmp/create-nginx-sts.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
    metadata:
@@ -258,7 +258,7 @@ nginx StatefulSet.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/nginx-snap.yaml
+   cat <<EOF > /tmp/nginx-snap.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: GroupVolumeSnapshot
    metadata:
@@ -284,7 +284,7 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/restore-nginx.yaml
+   cat <<EOF > /tmp/restore-nginx.yaml
    apiVersion: v1
    kind: PersistentVolumeClaim
    metadata:

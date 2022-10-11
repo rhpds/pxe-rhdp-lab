@@ -21,9 +21,9 @@ Hint:
 
 Q2: What is the version of Kubernetes installed in this environment?
 
-1. 1.18
-2. 1.20
-3. 1.21
+1. 1.20
+2. 1.22
+3. 1.24
 
 Hint:
 
@@ -33,7 +33,7 @@ Hint:
 
 .. dropdown:: Show Solution
     
-    Answer: 1.21 
+    Answer: 1.24
 
 Q3: What is the status of the `kube-apiserver`?
 
@@ -67,38 +67,38 @@ Hint:
     
     Answer: No
 
-Q5: What is the name of the dns deployment in the cluster?
+Q5: What is the name of the dns daemonset in the cluster?
 
 1. kube-dns
 2. coredns
-3. kube-dns
+3. dns-default
 
 Hint:
 
 .. code-block:: text
     
-    oc get deployments -n openshift-dns
+    oc get daemonset -n openshift-dns
 
 .. dropdown:: Show Solution
     
-    Answer: coredns
+    Answer: dns-default
 
 Q6: How many replicas are configured for this deployment?
 
-1. 2
+1. 6
 2. 4
-3. 1
+3. 2
 4. 3
 
 Hint:
 
 .. code-block:: text
     
-    oc -n openshift-dns get deployments -l k8s-app=kube-dns
+    oc -n openshift-dns get daemonset -l dns.operator.openshift.io/owning-dns=default
 
 .. dropdown:: Show Solution
     
-    Answer: 3
+    Answer: 6
 
 Portworx configuration review
 -----------------------------
@@ -120,7 +120,8 @@ Check the installation logs:
 
 .. code-block:: text
 
-    PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}'); oc -n portworx logs -f $PX_POD -c portworx
+    PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') 
+    oc -n portworx logs -f $PX_POD -c portworx
 
 
 Lets explore the cluster using pxctl utility.

@@ -7,7 +7,7 @@ Deploy MySQL and create a schedulePolicies
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/create-mysql.yaml
+   cat <<EOF > /tmp/create-mysql.yaml
    apiVersion: storage.k8s.io/v1
    kind: StorageClass
    metadata:
@@ -75,7 +75,7 @@ Deploy MySQL and create a schedulePolicies
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/create-schedpol.yaml
+   cat <<EOF > /tmp/create-schedpol.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: SchedulePolicy
    metadata:
@@ -156,7 +156,7 @@ Create a daily snapshot schedule policy called ``daily-schedule`` at
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/sched-pol.yaml
+   cat <<EOF > /tmp/sched-pol.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: SchedulePolicy
    metadata:
@@ -179,7 +179,7 @@ schedule policy ``daily-schedule``
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/px-nginx-scheduled.yaml
+   cat <<EOF > /tmp/px-nginx-scheduled.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1
    metadata:
@@ -210,7 +210,7 @@ deployment.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/create-nginx-sts.yaml
+   cat <<EOF > /tmp/create-nginx-sts.yaml
    apiVersion: v1
    kind: Service
    metadata:

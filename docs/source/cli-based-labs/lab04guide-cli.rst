@@ -15,7 +15,7 @@ Take a look at the StorageClass definition for Portworx
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/px-shared-sc.yaml
+   cat <<EOF > /tmp/px-shared-sc.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1
    metadata:
@@ -44,7 +44,7 @@ Take a look at the Persistent Volume Claim
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/px-shared-pvc.yaml
+   cat <<EOF > /tmp/px-shared-pvc.yaml
    kind: PersistentVolumeClaim
    apiVersion: v1
    metadata:
@@ -84,7 +84,7 @@ Step deploy 3 instances of nginx
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/deploy-webapps.yaml
+   cat <<EOF > /tmp/deploy-webapps.yaml
    apiVersion: apps/v1
    kind: Deployment
    metadata:
@@ -303,7 +303,7 @@ Copy index.html into webapp1’s pod:
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/index.html
+   cat <<EOF > /tmp/index.html
     /$$$$$$$                       /$$                                                
    | $$__  $$                     | $$                                                
    | $$  \ $$ /$$$$$$   /$$$$$$  /$$$$$$   /$$  /$$  /$$  /$$$$$$   /$$$$$$  /$$   /$$

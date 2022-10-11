@@ -38,7 +38,7 @@ Let’s create the above storage class.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/px-repl3-sc.yaml
+   cat <<EOF > /tmp/px-repl3-sc.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1
    metadata:
@@ -89,7 +89,7 @@ Let’s create the above PersistentVolumeClaim.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/px-pvc.yaml
+   cat <<EOF > /tmp/px-pvc.yaml
    kind: PersistentVolumeClaim
    apiVersion: v1
    metadata:

@@ -11,7 +11,7 @@ Take a look at the StorageClass definition for Portworx
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/px-repl3-sc.yaml
+   cat <<EOF > /tmp/px-repl3-sc.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1
    metadata:
@@ -40,7 +40,7 @@ Take a look at the Persistent Volume Claim
 
 ::
 
-   cat <<'EOF' > /tmp/px-postgres-pvc.yaml
+   cat <<EOF > /tmp/px-postgres-pvc.yaml
    kind: PersistentVolumeClaim
    apiVersion: v1
    metadata:
@@ -73,7 +73,7 @@ First we will create rules to monitor Postgres !
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/pwx-monitoring.yaml
+   cat <<EOF > /tmp/pwx-monitoring.yaml
    apiVersion: monitoring.coreos.com/v1
    kind: ServiceMonitor
    metadata:
@@ -264,7 +264,7 @@ Now that we have the volumes created, let’s deploy Postgres !
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/postgres-app.yaml
+   cat <<EOF > /tmp/postgres-app.yaml
    apiVersion: apps/v1
    kind: Deployment
    metadata:
@@ -389,7 +389,7 @@ View the AutoPilot Rule
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/pvc-resize-rule.yaml
+   cat <<EOF > /tmp/pvc-resize-rule.yaml
    apiVersion: autopilot.libopenstorage.org/v1alpha1
    kind: AutopilotRule
    metadata:

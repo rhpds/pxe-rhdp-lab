@@ -15,7 +15,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/create-mongo.yaml
+   cat <<EOF > /tmp/create-mongo.yaml
    apiVersion: v1
    kind: Service
    metadata:
@@ -84,7 +84,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/create-mysql.yaml
+   cat <<EOF > /tmp/create-mysql.yaml
    ---
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
@@ -161,7 +161,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/testpolicy.yaml
+   cat <<EOF > /tmp/testpolicy.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: SchedulePolicy
    metadata:
@@ -214,7 +214,7 @@ specifications:
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/pre-mysql.yaml
+   cat <<EOF > /tmp/pre-mysql.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: Rule
    metadata:
@@ -253,7 +253,7 @@ use of the pre-snapshot rule ``mysql-presnap-rule'`` with PVC
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/vs.yaml
+   cat <<EOF > /tmp/vs.yaml
    apiVersion: volumesnapshot.external-storage.k8s.io/v1
    kind: VolumeSnapshot
    metadata:
@@ -277,7 +277,7 @@ below specifications:
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/pre-mongo.yaml
+   cat <<EOF > /tmp/pre-mongo.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: Rule
    metadata:
@@ -311,7 +311,7 @@ below specifications:
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/post-mongo.yaml
+   cat <<EOF > /tmp/post-mongo.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: Rule
    metadata:
@@ -346,7 +346,7 @@ makes use of the pre and snapshot rules ``mongodb-presnap-rule`` and
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/gvs.yaml
+   cat <<EOF > /tmp/gvs.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: GroupVolumeSnapshot
    metadata:  

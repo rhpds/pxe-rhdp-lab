@@ -17,7 +17,7 @@ Take a look at the StorageClass definition for Cassandra:
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/cassandra-sc.yaml
+   cat <<EOF > /tmp/cassandra-sc.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1
    metadata:
@@ -66,7 +66,7 @@ that uses a Portworx PVC.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/cassandra.yaml
+   cat <<EOF > /tmp/cassandra.yaml
    apiVersion: v1
    kind: Service
    metadata:
@@ -448,7 +448,7 @@ their snapshots.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/px-snap.yaml
+   cat <<EOF > /tmp/px-snap.yaml
    apiVersion: stork.libopenstorage.org/v1alpha1
    kind: Rule
    metadata:
@@ -509,7 +509,7 @@ from the above ``oc get volumesnapshots`` output.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/vols-from-snaps.yaml
+   cat <<EOF > /tmp/vols-from-snaps.yaml
    apiVersion: v1
    kind: PersistentVolumeClaim
    metadata:
@@ -577,7 +577,7 @@ create the new cassandra statefulset based on our cloned snapshots.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/cassandra-app-restore.yaml
+   cat <<EOF > /tmp/cassandra-app-restore.yaml
    apiVersion: v1
    kind: Service
    metadata:

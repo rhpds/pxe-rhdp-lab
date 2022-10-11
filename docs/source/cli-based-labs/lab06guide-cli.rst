@@ -12,7 +12,7 @@ Create a storageClass for use by Minio
 
 ::
 
-   cat <<'EOF' > /tmp/px-ha-sc.yaml
+   cat <<EOF > /tmp/px-ha-sc.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1
    metadata:
@@ -165,7 +165,7 @@ successfully backed up to the object store.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/cloud-snap.yaml
+   cat <<EOF > /tmp/cloud-snap.yaml
    apiVersion: volumesnapshot.external-storage.k8s.io/v1
    kind: VolumeSnapshot
    metadata:
@@ -202,7 +202,7 @@ the snapshot ``mysql-snapshot``.
 
 .. code:: text
 
-   cat <<'EOF' > /tmp/restore.yaml
+   cat <<EOF > /tmp/restore.yaml
    apiVersion: v1
    kind: PersistentVolumeClaim
    metadata:

@@ -10,7 +10,7 @@ you to explore.
 
 .. code-block:: shell
 
-   cat <<'EOF' > /tmp/create-pvc.yaml
+   cat <<EOF > /tmp/create-pvc.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
    metadata:
@@ -59,7 +59,7 @@ you to explore.
 
 .. code-block:: shell
 
-   cat <<'EOF' > /tmp/create-nginx-sts.yaml
+   cat <<EOF > /tmp/create-nginx-sts.yaml
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
    metadata:
