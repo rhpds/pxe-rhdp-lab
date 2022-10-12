@@ -105,22 +105,22 @@ How many PVCs have been created for MYSQL?
 
 .. dropdown:: Show Solution
    
-   Run: oc get pvc -l app=mysql –all-namespaces
-   Answer: 1
+  Run: oc get pvc -l app=mysql –all-namespaces
+  Answer: 1
 
 What is the name of the storage class used to create this PVC?
 
 .. dropdown:: Show Solution
    
-   Run: oc -n mysql-app describe pvc px-mysql-pvc \| grep storage-class
-   Answer: px-db-sc
+  Run: oc -n mysql-app describe pvc px-mysql-pvc \| grep storage-class
+  Answer: px-db-sc
 
 What is the ``io_profile`` used for this storage class?
 
 .. dropdown:: Show Solution
    
-   Run: oc describe sc px-db-sc \| grep io_profile
-   Answer: db
+  Run: oc describe sc px-db-sc \| grep io_profile
+  Answer: db
 
 Create a snapshot for MySQL
 ---------------------------
@@ -141,7 +141,7 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
  
 Run the below command to create the snapshot: 
 
-.. code-block::shell
+.. code-block:: shell
 
   oc create -f /tmp/mysql-snap.yaml
 
