@@ -728,9 +728,8 @@ session before finishing.
 Thank you for trying the playground. To view all our scenarios, go
 `here <https://rhpds-portworx.readthedocs.io/en/latest/index.html>`__
 
-To learn more about `Portworx <https://portworx.com/>`__, below are some
-useful references. - `Deploy Portworx on
-Kubernetes <https://docs.portworx.com/scheduler/kubernetes/install.html>`__
-- `Create Portworx
-volumes <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/>`__
+To learn more about `Portworx <https://portworx.com/>`__, below are some useful references. 
+
+- `Deploy Portworx on Kubernetes <https://docs.portworx.com/scheduler/kubernetes/install.html>`__
+- `Create Portworx volumes <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/>`__
 - `Use cases <https://portworx.com/use-case/kubernetes-storage/>`__
