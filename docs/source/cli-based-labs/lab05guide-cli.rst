@@ -106,11 +106,11 @@ How many PVCs have been created for MYSQL?
 4. 4
 
 .. dropdown:: Show Solution
-   
- .. code-block:: shell
 
+  .. code-block:: shell
+    
     oc get pvc -l app=mysql --all-namespaces
-  
+    
   Answer: 1
 
 What is the name of the storage class used to create this PVC?
