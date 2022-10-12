@@ -93,7 +93,7 @@ this cluster (all namespaces)?
 
 .. dropdown:: Show Solution
    
-  Run: oc get pods –all-namespaces -l app=mysql
+  Run: oc get pods --all-namespaces -l app=mysql
   Answer: 1
 
 How many PVCs have been created for MYSQL?
@@ -105,14 +105,14 @@ How many PVCs have been created for MYSQL?
 
 .. dropdown:: Show Solution
    
-  Run: oc get pvc -l app=mysql –all-namespaces
+  Run: oc get pvc -l app=mysql --all-namespaces
   Answer: 1
 
 What is the name of the storage class used to create this PVC?
 
 .. dropdown:: Show Solution
    
-  Run: oc -n mysql-app describe pvc px-mysql-pvc \| grep storage-class
+  Run: oc -n mysql-app describe pvc px-mysql-pvc \| grep StorageClass
   Answer: px-db-sc
 
 What is the ``io_profile`` used for this storage class?
@@ -142,7 +142,7 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
 Run the below command to create the snapshot: 
 
 .. code-block:: shell
-
+  
   oc create -f /tmp/mysql-snap.yaml
 
 Restore the snapshot for MySQL
