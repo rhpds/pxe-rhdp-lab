@@ -4,7 +4,7 @@ Lab 09 - PVC Auto Resize using AutoPilot
 
 In this step, we will create a Portworx volume (PVC) for postgres.
 
-Step: Create StorageClass and PersistentVolumeClaim
+Create StorageClass and PersistentVolumeClaim
 ---------------------------------------------------
 
 Take a look at the StorageClass definition for Portworx

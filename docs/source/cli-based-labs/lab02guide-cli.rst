@@ -62,7 +62,7 @@ Let’s proceed to creating volumes that use this storage class.
 
 In this step, we will deploy a ``PersistentVolumeClaim`` using Portworx.
 
-Step: Understand PersistentVolumeClaim
+Understand PersistentVolumeClaim
 --------------------------------------
 
 A
@@ -86,7 +86,7 @@ Storage class we created before this step.
        requests:
          storage: 2Gi
 
-Step: Create PersistentVolumeClaim
+Create PersistentVolumeClaim
 ----------------------------------
 
 Let’s create the above PersistentVolumeClaim.
@@ -116,7 +116,7 @@ create this PVC. Each PVC has a unique one-one mapping to a
 `PersistentVolume <https://kubernetes.io/docs/concepts/storage/persistent-volumes/>`__
 which is the actual volume backing the PVC.
 
-Step: Validate PersistentVolumeClaim
+Validate PersistentVolumeClaim
 ------------------------------------
 
 A PersistentVolumeClaim is successfully provisioned once it gets into
