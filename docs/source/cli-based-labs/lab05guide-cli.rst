@@ -299,6 +299,7 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
 ``web-clone-0`` in the ``default`` namespace.
 
 .. code-block:: shell
+  :emphasize-lines: 7
 
   cat <<EOF > /tmp/restore-nginx.yaml
   apiVersion: v1
