@@ -78,7 +78,7 @@ MySQL Deployment
   EOF
 
 .. code-block:: shell
-
+  
   oc create -f /tmp/create-mysql.yaml
 
 Before proceeding to the next step, please make sure the mysql pod is
@@ -92,8 +92,11 @@ How many pods have been created for MYSQL with label ``app=mysql`` in
 this cluster (all namespaces)?
 
 .. dropdown:: Show Solution
-   
-  Run: oc get pods --all-namespaces -l app=mysql
+  
+  .. code-block:: shell
+
+    oc get pods --all-namespaces -l app=mysql
+
   Answer: 1
 
 How many PVCs have been created for MYSQL?
@@ -105,21 +108,30 @@ How many PVCs have been created for MYSQL?
 
 .. dropdown:: Show Solution
    
-  Run: oc get pvc -l app=mysql --all-namespaces
+ .. code-block:: shell
+
+    oc get pvc -l app=mysql --all-namespaces
+  
   Answer: 1
 
 What is the name of the storage class used to create this PVC?
 
 .. dropdown:: Show Solution
-   
-  Run: oc -n mysql-app describe pvc px-mysql-pvc \| grep StorageClass
+
+  .. code-block:: shell
+
+    oc -n mysql-app describe pvc px-mysql-pvc \| grep StorageClass
+
   Answer: px-db-sc
 
 What is the ``io_profile`` used for this storage class?
 
 .. dropdown:: Show Solution
-   
-  Run: oc describe sc px-db-sc \| grep io_profile
+
+  .. code-block:: shell
+
+    oc describe sc px-db-sc \| grep io_profile
+
   Answer: db
 
 Create a snapshot for MySQL
@@ -139,11 +151,11 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
     persistentVolumeClaimName: px-mysql-pvc
   EOF
  
-Run the below command to create the snapshot: 
+Run the below command to create the snapshot:
 
 .. code-block:: shell
-  
-  oc create -f /tmp/mysql-snap.yaml
+
+  oc create -f /tmp/mysql-snap.conf
 
 Restore the snapshot for MySQL
 ------------------------------
@@ -168,9 +180,10 @@ Namespace as the source. Call the restore object as
    
 Run the below command to create the snapshot: 
 
-.. code-block::shell
+.. code-block:: shell
 
   oc create -f /tmp/restore-mysql.yaml
+
 
 We will create a Statefulset to use with snapshots and restores.
 ----------------------------------------------------------------
@@ -276,7 +289,7 @@ nginx StatefulSet.
 
 Run the below command to create the snapshot: 
 
-.. code-block::shell
+.. code-block:: shell
 
   oc create -f /tmp/nginx-snap.yaml
 
