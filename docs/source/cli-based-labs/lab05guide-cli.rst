@@ -298,6 +298,28 @@ Restore the snapshot for Nginx
 Restore the snapshot taken for the pod ``web-0`` to a new PVC
 ``web-clone-0`` in the ``default`` namespace.
 
+.. note:: 
+   
+  Use this command to find the volumesnapshot identifier for web-0: 
+
+  .. code-block:: shell
+
+    oc describe volumesnapshot.volumesnapshot \| grep “web-0” 
+
+  Copy the identifier that will be found in the Name after “nginx-group-snap-www-web-0-”. Now, use the below template to create a clone from the volumesnapshot for PVC of "pod - 0" of the nginx StatefulSet. You must modify the yaml file to add the volumesnapshot identifier for web-0. The line to be edited is highlighted. 
+
+  .. code-block:: shell
+
+    vi /tmp/restore-nginx.yaml 
+    
+  Create the restore object after editing. 
+  
+  .. code-block:: shell
+
+    oc apply -f /tmp/restore-nginx.yaml
+
+
+
 .. code-block:: shell
   :emphasize-lines: 7
 
@@ -316,14 +338,3 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
       requests:
         storage: 1Gi
   EOF
-
-.. dropdown:: Show Solution
-   
-   Use this command to find the volumesnapshot identifier for web-0: oc
-   describe volumesnapshot.volumesnapshot \| grep “web-0” Copy the
-   identifier that will be found in the Name after
-   “nginx-group-snap-www-web-0-” Now, use the below template to create a
-   clone from the volumesnapshot for PVC of ‘pod - 0’ of the nginx
-   StatefulSet: You must modify the yaml file to add the volumesnapshot
-   identifier for web-0 vi /tmp/restore-nginx.yaml Create the restore
-   object after editing. oc apply -f /tmp/restore-nginx.yaml
