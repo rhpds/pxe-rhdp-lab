@@ -16,7 +16,7 @@ Take a look at the StorageClass definition for Portworx
   apiVersion: storage.k8s.io/v1
   metadata:
       name: px-repl3-sc
-  provisioner: kubernetes.io/portworx-volume
+  provisioner: pxd.portworx.com
   parameters:
      repl: "3"
      io_profile: "db"
@@ -44,17 +44,16 @@ Take a look at the Persistent Volume Claim
   kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:
-     name: px-postgres-pvc
-     labels:
-        app: postgres
-     annotations:
-       volume.beta.kubernetes.io/storage-class: px-repl3-sc
+    name: px-postgres-pvc
+    labels:
+      app: postgres
   spec:
-     accessModes:
-       - ReadWriteOnce
-     resources:
-       requests:
-         storage: 1Gi
+    storageClassName: px-repl3-sc
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
   EOF
 
 This defines the maximum volume size. Portworx will thin provision the

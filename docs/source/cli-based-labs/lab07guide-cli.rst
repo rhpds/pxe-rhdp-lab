@@ -72,9 +72,8 @@ We will deploy a couple of Databases. Once ready, inspect them.
     volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
-        annotations:
-          volume.beta.kubernetes.io/storage-class: px-ha-sc
       spec:
+        storageClassName: px-ha-sc
         accessModes: [ "ReadWriteOnce" ]
         storageClassName: px-ha-sc
         resources:
@@ -90,7 +89,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
   apiVersion: storage.k8s.io/v1beta1
   metadata:
       name: px-ha-sc
-  provisioner: kubernetes.io/portworx-volume
+  provisioner: pxd.portworx.com
   parameters:
      repl: "3"
      io_profile: "db"
@@ -100,9 +99,8 @@ We will deploy a couple of Databases. Once ready, inspect them.
   apiVersion: v1
   metadata:
      name: px-mysql-pvc
-     annotations:
-       volume.beta.kubernetes.io/storage-class: px-ha-sc
   spec:
+    storageClassName: px-ha-sc
      accessModes:
        - ReadWriteOnce
      resources:

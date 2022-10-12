@@ -185,7 +185,7 @@ schedule policy ``daily-schedule``
   apiVersion: storage.k8s.io/v1
   metadata:
       name: px-nginx-scheduled
-  provisioner: kubernetes.io/portworx-volume
+  provisioner: pxd.portworx.com
   parameters:
      repl: "2"
      io_priority: "high"
@@ -253,9 +253,8 @@ deployment.
     volumeClaimTemplates:
     - metadata:
         name: www
-        annotations:
-          volume.beta.kubernetes.io/storage-class: px-nginx-scheduled
       spec:
+        storageClassName: px-nginx-scheduled
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:

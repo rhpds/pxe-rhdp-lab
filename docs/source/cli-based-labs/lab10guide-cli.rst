@@ -15,7 +15,7 @@ you to explore.
   apiVersion: storage.k8s.io/v1beta1
   metadata:
       name: px-default-sc
-  provisioner: kubernetes.io/portworx-volume
+  provisioner: pxd.portworx.com
   parameters:
      repl: "2"
      io_priority: "high"
@@ -64,7 +64,7 @@ you to explore.
   apiVersion: storage.k8s.io/v1beta1
   metadata:
       name: px-sc
-  provisioner: kubernetes.io/portworx-volume
+  provisioner: pxd.portworx.com
   parameters:
      repl: "2"
      io_priority: "high"
@@ -111,9 +111,8 @@ you to explore.
     volumeClaimTemplates:
     - metadata:
         name: www
-        annotations:
-          volume.beta.kubernetes.io/storage-class: px-sc
       spec:
+        storageClassName: px-sc
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:

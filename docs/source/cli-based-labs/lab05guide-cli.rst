@@ -14,7 +14,7 @@ MySQL Deployment
   apiVersion: storage.k8s.io/v1beta1
   metadata:
       name: px-db-sc
-  provisioner: kubernetes.io/portworx-volume
+  provisioner: pxd.portworx.com
   parameters:
      repl: "3"
      io_profile: "db"
@@ -34,9 +34,8 @@ MySQL Deployment
      labels:
        app: mysql
      namespace: mysql-app
-     annotations:
-       volume.beta.kubernetes.io/storage-class: px-db-sc
   spec:
+    storageClassName: px-db-sc
      accessModes:
        - ReadWriteOnce
      resources:

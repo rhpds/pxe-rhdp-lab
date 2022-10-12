@@ -194,7 +194,7 @@ Take a look at the yaml:
 Observe that the stateful set is exposed through a headless service.
 Also note how PVCs will be dynamically created with each member of the
 stateful set based on the ``volumeClaimTemplates`` and it’s
-``storage-class`` sections. Finally, you will also see that we are
+``StorageClass`` sections. Finally, you will also see that we are
 starting with a single node (replicas: 1).
 
 Now use oc to deploy Cassandra.
