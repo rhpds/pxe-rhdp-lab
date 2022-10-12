@@ -11,7 +11,7 @@ Q1: How many master nodes do you see in the cluster?
 
 Hint:
 
-.. code-block:: text
+.. code-block:: shell
     
     oc get nodes
 
@@ -27,7 +27,7 @@ Q2: What is the version of Kubernetes installed in this environment?
 
 Hint:
 
-.. code-block:: text
+.. code-block:: shell
     
     oc version
 
@@ -44,7 +44,7 @@ Q3: What is the status of the `kube-apiserver`?
 
 Hint:
 
-.. code-block:: text
+.. code-block:: shell
     
     oc cluster-info
 
@@ -59,7 +59,7 @@ Q4: Are there any pods running on the default name space?
 
 Hint:
 
-.. code-block:: text
+.. code-block:: shell
     
     oc get pods
 
@@ -75,7 +75,7 @@ Q5: What is the name of the dns daemonset in the cluster?
 
 Hint:
 
-.. code-block:: text
+.. code-block:: shell
     
     oc get daemonset -n openshift-dns
 
@@ -92,7 +92,7 @@ Q6: How many replicas are configured for this deployment?
 
 Hint:
 
-.. code-block:: text
+.. code-block:: shell
     
     oc -n openshift-dns get daemonset -l dns.operator.openshift.io/owning-dns=default
 
@@ -112,13 +112,13 @@ What does Portworx need to be installed?
 3. **Specification**: Portworx is defined by a spec file, we will create the Portworx cluster using the spec URL.
 
 
-.. code-block:: text
+.. code-block:: shell
 
    oc get pods -o wide -n portworx -l name=portworx
 
 Check the installation logs:
 
-.. code-block:: text
+.. code-block:: shell
 
     PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') 
     oc -n portworx logs -f $PX_POD -c portworx
@@ -135,7 +135,7 @@ Q1: How many storage nodes do you see in the PX cluster?
 
 Hint:
 
-.. code-block:: text
+.. code-block:: shell
 
     oc -n portworx exec $PX_POD -c portworx -it -- /opt/pwx/bin/pxctl status
 
