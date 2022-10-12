@@ -86,7 +86,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
   cat <<EOF > /tmp/create-mysql.yaml
   ---
   kind: StorageClass
-  apiVersion: storage.k8s.io/v1beta1
+  apiVersion: storage.k8s.io/v1
   metadata:
       name: px-ha-sc
   provisioner: pxd.portworx.com

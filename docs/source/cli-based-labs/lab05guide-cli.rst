@@ -11,7 +11,7 @@ MySQL Deployment
 
   cat <<EOF > /tmp/create-mysql.yaml
   kind: StorageClass
-  apiVersion: storage.k8s.io/v1beta1
+  apiVersion: storage.k8s.io/v1
   metadata:
       name: px-db-sc
   provisioner: pxd.portworx.com
@@ -195,7 +195,7 @@ NGinx statefulSet
 
   cat <<EOF > /tmp/create-nginx-sts.yaml
   kind: StorageClass
-  apiVersion: storage.k8s.io/v1beta1
+  apiVersion: storage.k8s.io/v1
   metadata:
       name: px-sc
   provisioner: pxd.portworx.com

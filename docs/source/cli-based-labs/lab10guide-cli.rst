@@ -12,7 +12,7 @@ you to explore.
 
   cat <<EOF > /tmp/create-pvc.yaml
   kind: StorageClass
-  apiVersion: storage.k8s.io/v1beta1
+  apiVersion: storage.k8s.io/v1
   metadata:
       name: px-default-sc
   provisioner: pxd.portworx.com
@@ -61,7 +61,7 @@ you to explore.
 
   cat <<EOF > /tmp/create-nginx-sts.yaml
   kind: StorageClass
-  apiVersion: storage.k8s.io/v1beta1
+  apiVersion: storage.k8s.io/v1
   metadata:
       name: px-sc
   provisioner: pxd.portworx.com

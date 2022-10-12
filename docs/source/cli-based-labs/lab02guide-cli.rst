@@ -23,7 +23,7 @@ are classified into the high IO profile (for e.g SSDs).
 .. code-block:: yaml
    
    kind: StorageClass
-   apiVersion: storage.k8s.io/v1beta1
+   apiVersion: storage.k8s.io/v1
    metadata:
      name: px-repl3-sc
    provisioner: pxd.portworx.com
