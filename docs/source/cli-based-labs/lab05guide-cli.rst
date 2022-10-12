@@ -7,92 +7,94 @@ We will create a Deployment to use with snapshots and restores.
 
 MySQL Deployment
 
-.. code:: text
+.. code-block:: shell
 
-   cat <<EOF > /tmp/create-mysql.yaml
-   kind: StorageClass
-   apiVersion: storage.k8s.io/v1beta1
-   metadata:
-       name: px-db-sc
-   provisioner: kubernetes.io/portworx-volume
-   parameters:
-      repl: "3"
-      io_profile: "db"
-      io_priority: "high"
-   ---
-   apiVersion: v1
-   kind: Namespace
-   metadata:
-     name: mysql-app
-   spec: {}
-   status: {}
-   ---
-   kind: PersistentVolumeClaim
-   apiVersion: v1
-   metadata:
-      name: px-mysql-pvc
-      labels:
-        app: mysql
-      namespace: mysql-app
-      annotations:
-        volume.beta.kubernetes.io/storage-class: px-db-sc
-   spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-   ---
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata:
-     name: mysql
+  cat <<EOF > /tmp/create-mysql.yaml
+  kind: StorageClass
+  apiVersion: storage.k8s.io/v1beta1
+  metadata:
+      name: px-db-sc
+  provisioner: kubernetes.io/portworx-volume
+  parameters:
+     repl: "3"
+     io_profile: "db"
+     io_priority: "high"
+  ---
+  apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: mysql-app
+  spec: {}
+  status: {}
+  ---
+  kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+     name: px-mysql-pvc
+     labels:
+       app: mysql
      namespace: mysql-app
-   spec:
-     selector:
-       matchLabels:
-         app: mysql
-     replicas: 1
-     template:
-       metadata:
-         labels:
-           app: mysql
-       spec:
-         schedulerName: stork
-         containers:
-         - name: mysql
-           image: mysql:5.6
-           imagePullPolicy: "Always"
-           env:
-           - name: MYSQL_ALLOW_EMPTY_PASSWORD
-             value: "1"
-           ports:
-           - containerPort: 3306
-           volumeMounts:
-           - mountPath: /var/lib/mysql
-             name: mysql-data
-         volumes:
-         - name: mysql-data
-           persistentVolumeClaim:
-             claimName: px-mysql-pvc
-   EOF
+     annotations:
+       volume.beta.kubernetes.io/storage-class: px-db-sc
+  spec:
+     accessModes:
+       - ReadWriteOnce
+     resources:
+       requests:
+         storage: 1Gi
+  ---
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: mysql
+    namespace: mysql-app
+  spec:
+    selector:
+      matchLabels:
+        app: mysql
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: mysql
+      spec:
+        schedulerName: stork
+        containers:
+        - name: mysql
+          image: mysql:5.6
+          imagePullPolicy: "Always"
+          env:
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: "1"
+          ports:
+          - containerPort: 3306
+          volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: mysql-data
+        volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: px-mysql-pvc
+  EOF
 
-.. code:: text
+.. code-block:: shell
 
-   oc create -f /tmp/create-mysql.yaml
+  oc create -f /tmp/create-mysql.yaml
 
 Before proceeding to the next step, please make sure the mysql pod is
 running:
 
-``oc get pods -n mysql-app  -l app=mysql``
+.. code-block:: shell
+
+  oc get pods -n mysql-app  -l app=mysql
 
 How many pods have been created for MYSQL with label ``app=mysql`` in
 this cluster (all namespaces)?
 
 .. dropdown:: Show Solution
    
-   Run: oc get pods –all-namespaces -l app=mysql
-   Answer: 1
+  Run: oc get pods –all-namespaces -l app=mysql
+  Answer: 1
 
 How many PVCs have been created for MYSQL?
 
@@ -125,22 +127,23 @@ Create a snapshot for MySQL
 
 Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
 
-.. code:: text
+.. code-block:: shell
 
-   cat <<EOF > /tmp/mysql-snap.yaml
-   apiVersion: volumesnapshot.external-storage.k8s.io/v1
-   kind: VolumeSnapshot
-   metadata:
-     name: mysql-snap
-     namespace: mysql-app
-   spec:
-     persistentVolumeClaimName: px-mysql-pvc
-   EOF
+  cat <<EOF > /tmp/mysql-snap.yaml
+  apiVersion: volumesnapshot.external-storage.k8s.io/v1
+  kind: VolumeSnapshot
+  metadata:
+    name: mysql-snap
+    namespace: mysql-app
+  spec:
+    persistentVolumeClaimName: px-mysql-pvc
+  EOF
+ 
+Run the below command to create the snapshot: 
 
-.. dropdown:: Show Solution
-   
-   Run the below command to create the snapshot: 
-   oc create -f /tmp/mysql-snap.yaml
+.. code-block::shell
+
+  oc create -f /tmp/mysql-snap.yaml
 
 Restore the snapshot for MySQL
 ------------------------------
@@ -149,24 +152,25 @@ Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same
 Namespace as the source. Call the restore object as
 ``mysql-snap-restore``.
 
-.. code:: text
+.. code-block:: shell
 
-   cat <<EOF > /tmp/restore-mysql.yaml
-   apiVersion: stork.libopenstorage.org/v1alpha1
-   kind: VolumeSnapshotRestore
-   metadata:
-     name: mysql-snap-restore
-     namespace: mysql-app
-   spec:
-     groupSnapshot: false
-     sourceName: mysql-snap
-     sourceNamespace: mysql-app
-   EOF
-
-.. dropdown:: Show Solution
+  cat <<EOF > /tmp/restore-mysql.yaml
+  apiVersion: stork.libopenstorage.org/v1alpha1
+  kind: VolumeSnapshotRestore
+  metadata:
+    name: mysql-snap-restore
+    namespace: mysql-app
+  spec:
+    groupSnapshot: false
+    sourceName: mysql-snap
+    sourceNamespace: mysql-app
+  EOF
    
-   Run the below command to create the snapshot: 
-   oc create -f /tmp/restore-mysql.yaml
+Run the below command to create the snapshot: 
+
+.. code-block::shell
+
+  oc create -f /tmp/restore-mysql.yaml
 
 We will create a Statefulset to use with snapshots and restores.
 ----------------------------------------------------------------
@@ -175,78 +179,77 @@ We will create a new StatefulSet for you to explore.
 
 NGinx statefulSet
 
-.. code:: text
+.. code-block:: shell
 
-   cat <<EOF > /tmp/create-nginx-sts.yaml
-   kind: StorageClass
-   apiVersion: storage.k8s.io/v1beta1
-   metadata:
-       name: px-sc
-   provisioner: kubernetes.io/portworx-volume
-   parameters:
-      repl: "2"
-      io_priority: "high"
-   ---
-   apiVersion: v1
-   kind: Service
-   metadata:
-     name: nginx
-     labels:
-       app: nginx
-   spec:
-     ports:
-     - port: 80
-       name: web
-     clusterIP: None
-     selector:
-       app: nginx
-   ---
-   apiVersion: apps/v1
-   kind: StatefulSet
-   metadata:
-     name: web
-   spec:
-     serviceName: "nginx"
-     replicas: 2
-     selector:
-       matchLabels:
-         app: nginx
-     template:
-       metadata:
-         labels:
-           app: nginx
-       spec:
-         containers:
-         - name: nginx
-           image: k8s.gcr.io/nginx-slim:0.8
-           ports:
-           - containerPort: 80
-             name: web
-           volumeMounts:
-           - name: www
-             mountPath: /usr/share/nginx/html
-     volumeClaimTemplates:
-     - metadata:
-         name: www
-         annotations:
-           volume.beta.kubernetes.io/storage-class: px-sc
-       spec:
-         accessModes: [ "ReadWriteOnce" ]
-         resources:
-           requests:
-             storage: 1Gi
-   EOF
+  cat <<EOF > /tmp/create-nginx-sts.yaml
+  kind: StorageClass
+  apiVersion: storage.k8s.io/v1beta1
+  metadata:
+      name: px-sc
+  provisioner: pxd.portworx.com
+  parameters:
+     repl: "2"
+     io_priority: "high"
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: nginx
+    labels:
+      app: nginx
+  spec:
+    ports:
+    - port: 80
+      name: web
+    clusterIP: None
+    selector:
+      app: nginx
+  ---
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: web
+  spec:
+    serviceName: "nginx"
+    replicas: 2
+    selector:
+      matchLabels:
+        app: nginx
+    template:
+      metadata:
+        labels:
+          app: nginx
+      spec:
+        containers:
+        - name: nginx
+          image: k8s.gcr.io/nginx-slim:0.8
+          ports:
+          - containerPort: 80
+            name: web
+          volumeMounts:
+          - name: www
+            mountPath: /usr/share/nginx/html
+    volumeClaimTemplates:
+    - metadata:
+        name: www
+      spec:
+        storageClassName: px-sc
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+  EOF
 
-.. code:: text
+.. code-block:: shell
 
-   oc create -f /tmp/create-nginx-sts.yaml
+  oc create -f /tmp/create-nginx-sts.yaml
 
 Before proceeding to the next step, please make sure all the resources
 are up:
 
-.. code:: text
+.. code-block:: shell
    
-   oc get pods  -l app=nginx
+  oc get pods  -l app=nginx
 
 Note: Please wait until both pods are in a ``Running`` state.
 
@@ -256,25 +259,26 @@ Create a snapshot for Nginx
 Create a group snapshot called ``nginx-group-snap`` for the PVC’s of the
 nginx StatefulSet.
 
-.. code:: text
+.. code-block:: shell
 
-   cat <<EOF > /tmp/nginx-snap.yaml
-   apiVersion: stork.libopenstorage.org/v1alpha1
-   kind: GroupVolumeSnapshot
-   metadata:
-     name: nginx-group-snap
-   spec:
-     pvcSelector:
-       matchLabels:
-         app: nginx
-     restoreNamespaces:
-      - default
-   EOF
+  cat <<EOF > /tmp/nginx-snap.yaml
+  apiVersion: stork.libopenstorage.org/v1alpha1
+  kind: GroupVolumeSnapshot
+  metadata:
+    name: nginx-group-snap
+  spec:
+    pvcSelector:
+      matchLabels:
+        app: nginx
+    restoreNamespaces:
+     - default
+  EOF
 
-.. dropdown:: Show Solution
-   
-   Run the below command to create the snapshot: 
-   oc create -f /tmp/nginx-snap.yaml
+Run the below command to create the snapshot: 
+
+.. code-block::shell
+
+  oc create -f /tmp/nginx-snap.yaml
 
 Restore the snapshot for Nginx
 ------------------------------
@@ -282,23 +286,23 @@ Restore the snapshot for Nginx
 Restore the snapshot taken for the pod ``web-0`` to a new PVC
 ``web-clone-0`` in the ``default`` namespace.
 
-.. code:: text
+.. code-block:: shell
 
-   cat <<EOF > /tmp/restore-nginx.yaml
-   apiVersion: v1
-   kind: PersistentVolumeClaim
-   metadata:
-     name: web-clone-0
-     annotations:
-       snapshot.alpha.kubernetes.io/snapshot: nginx-group-snap-www-web-0-<snapshot_id>
-   spec:
-     accessModes:
-        - ReadWriteOnce
-     storageClassName: stork-snapshot-sc
-     resources:
-       requests:
-         storage: 1Gi
-   EOF
+  cat <<EOF > /tmp/restore-nginx.yaml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: web-clone-0
+    annotations:
+      snapshot.alpha.kubernetes.io/snapshot: nginx-group-snap-www-web-0-<snapshot_id>
+  spec:
+    accessModes:
+       - ReadWriteOnce
+    storageClassName: stork-snapshot-sc
+    resources:
+      requests:
+        storage: 1Gi
+  EOF
 
 .. dropdown:: Show Solution
    

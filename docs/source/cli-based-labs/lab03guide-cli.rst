@@ -13,10 +13,6 @@ Take a look at the StorageClass definition for Cassandra:
 
 .. code-block:: shell
 
-  cat /tmp/cassandra-sc.yaml
-
-.. code-block:: shell
-
   cat <<EOF > /tmp/cassandra-sc.yaml
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
@@ -58,7 +54,7 @@ stateful set. To learn more about stateful sets follow this
 `link <https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/>`__.
 
 Step: Create the Cassandra StatefulSet
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------
 
 Create a Cassandra
 `StatefulSet <https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/>`__
@@ -437,13 +433,12 @@ that the snapshot will take the latest available data:
   quit
 
 We’re going to use STORK to take a 3DSnapshot of our Cassandra cluster.
-Take a look at the px-snap.yaml file ``cat /tmp/px-snap.yaml`` and
-notice that we are going to force a ``nodetool flush`` command on each
-cluster member before we take the snapshot. As explained before, that
-will force all data to be written to disk in order to ensure consistency
-of the snapshot. We also defined the volume group name (cassandra_vg) so
-Portworx will synchronously quiesce I/O on all volumes before triggering
-their snapshots.
+Take a look at the px-snap.yaml file and notice that we are going to force 
+a ``nodetool flush`` command on eachcluster member before we take the snapshot.
+As explained before, that will force all data to be written to disk in order 
+to ensure consistency of the snapshot. We also defined the volume group 
+name (cassandra_vg) so Portworx will synchronously quiesce I/O on all volumes 
+before triggering their snapshots.
 
 .. code-block:: shell
 
