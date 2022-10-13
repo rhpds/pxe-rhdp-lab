@@ -48,7 +48,7 @@ Take a look at the Persistent Volume Claim
   spec:
     storageClassName: px-shared-sc
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     resources:
       requests:
         storage: 1Gi
@@ -87,7 +87,7 @@ Step deploy 3 instances of nginx
     labels:
       app: webapp1
   spec:
-    selector: 
+    selector:
       matchLabels:
         app: webapp1
     replicas: 1
@@ -97,11 +97,23 @@ Step deploy 3 instances of nginx
           app: webapp1
           group: webapp
       spec:
+        securityContext:
+          runAsNonRoot: true
+          seLinuxOptions: 
+            level: "s0:c1,c0"
+          seccompProfile: 
+            type: RuntimeDefault
         containers:
         - name: webapp1
-          image: k8s.gcr.io/nginx-slim:0.8
+          securityContext:
+            allowPrivilegeEscalation: false
+            seLinuxOptions: 
+              level: "s0:c1,c0"
+            capabilities:
+              drop: ["ALL"]
+          image: nginxinc/nginx-unprivileged
           ports:
-          - containerPort: 80
+          - containerPort: 8080
           volumeMounts:
           - mountPath: /usr/share/nginx/html
             name: shared-data
@@ -127,11 +139,23 @@ Step deploy 3 instances of nginx
           app: webapp2
           group: webapp
       spec:
+        securityContext:
+          runAsNonRoot: true
+          seLinuxOptions: 
+            level: "s0:c1,c0"
+          seccompProfile: 
+            type: RuntimeDefault
         containers:
         - name: webapp2
-          image: k8s.gcr.io/nginx-slim:0.8
+          securityContext:
+            allowPrivilegeEscalation: false
+            seLinuxOptions: 
+              level: "s0:c1,c0"
+            capabilities:
+              drop: ["ALL"]
+          image: nginxinc/nginx-unprivileged
           ports:
-          - containerPort: 80
+          - containerPort: 8080
           volumeMounts:
           - mountPath: /usr/share/nginx/html
             name: shared-data
@@ -157,11 +181,24 @@ Step deploy 3 instances of nginx
           app: webapp3
           group: webapp
       spec:
+        securityContext:
+          runAsNonRoot: true
+          seLinuxOptions: 
+            level: "s0:c1,c0"
+          seccompProfile: 
+            type: RuntimeDefault
         containers:
         - name: webapp3
-          image: k8s.gcr.io/nginx-slim:0.8
+          securityContext:
+          securityContext:
+            allowPrivilegeEscalation: false
+            seLinuxOptions: 
+              level: "s0:c1,c0"
+            capabilities:
+              drop: ["ALL"]
+          image: nginxinc/nginx-unprivileged
           ports:
-          - containerPort: 80
+          - containerPort: 8080
           volumeMounts:
           - mountPath: /usr/share/nginx/html
             name: shared-data
@@ -179,6 +216,7 @@ Step deploy 3 instances of nginx
   spec:
     ports:
     - port: 80
+      targetPort: 8080
     selector:
       app: webapp1
   ---
@@ -191,6 +229,7 @@ Step deploy 3 instances of nginx
   spec:
     ports:
     - port: 80
+      targetPort: 8080
     selector:
       app: webapp2
   ---
@@ -203,6 +242,7 @@ Step deploy 3 instances of nginx
   spec:
     ports:
     - port: 80
+      targetPort: 8080
     selector:
       app: webapp3
   EOF
@@ -312,7 +352,7 @@ Copy index.html into webapp1’s pod:
 .. code-block:: shell
 
   POD=`oc get pods -l app=webapp1 | grep Running | awk '{print $1}'`
-  oc cp /tmp/index.html $POD:usr/share/nginx/html/index.html
+  oc cp /tmp/index.html $POD:/usr/share/nginx/html/index.html
 
 Now let’s try all three URLs and see our hello world message is showing
 up on all three. This is because all three are attached to the same
