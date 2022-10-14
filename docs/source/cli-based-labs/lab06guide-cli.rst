@@ -248,11 +248,10 @@ the snapshot ``mysql-snapshot``.
 
 .. dropdown:: Show Solution
   
-  We have created a solution file under ‘/tmp/restore.yaml’. Create it by
-  running: 
-   
-  .. code-block::shell 
-
+  We have created a solution file under ‘/tmp/restore.yaml’. Create it by running: 
+  
+  .. code-block:: shell
+  
     oc apply -f /tmp/restore.yaml 
   
   Make sure the volume becomes bound oc get pvc

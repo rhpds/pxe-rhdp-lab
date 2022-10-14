@@ -207,8 +207,7 @@ Wait until all Mongo nodes are ``Ready 3/3``
 Create a post-snapshot rule for MongoDB
 ---------------------------------------
 
-Create a pre-snapshot rule called ``mysql-presnap-rule`` with the below
-specifications:
+Create a pre-snapshot rule called ``mysql-presnap-rule`` with the below specifications:
 
 .. code-block:: shell
 
@@ -229,7 +228,7 @@ specifications:
 
 Rules:
 
-::
+.. code-block:: 
 
   Pod Selector:app=mysql,
   type: command,
@@ -239,8 +238,13 @@ Rules:
 
 .. dropdown:: Show Solution
   
-  We have created a solution file for you under ‘/tmp/pre-mysql.yaml’.
-  Run: oc apply -f /tmp/pre-mysql.yaml
+  We have created a solution file for you under ``/tmp/pre-mysql.yaml``.
+  Run: 
+  
+  .. code-block:: shell
+    
+    oc apply -f /tmp/pre-mysql.yaml
+
 
 Create an application consistent snapshot of MySQL
 --------------------------------------------------
@@ -324,7 +328,7 @@ below specifications:
 
 Rules:
 
-::
+.. code-block:: 
 
   Pod Selector:role=mongo
   type: command
@@ -332,8 +336,12 @@ Rules:
 
 .. dropdown:: Show Solution
   
-  We have created a solution file for you under ‘/tmp/post-mongo.yaml’.
-  Run: oc apply -f /tmp/post-mongo.yaml
+  We have created a solution file for you under ``/tmp/post-mongo.yaml``.
+  Run: 
+
+  .. code-block:: shell
+    
+    oc apply -f /tmp/post-mongo.yaml
 
 Create an application consistent snapshot of MongoDB
 ----------------------------------------------------
@@ -369,4 +377,7 @@ Spec:
 .. dropdown:: Show Solution
 
       We have created a solution file for you under ``/tmp/gvs.yaml`` 
-      Run: oc apply -f /tmp/gvs.yaml
+      Run: 
+      .. code-block:: shell
+        
+        oc apply -f /tmp/gvs.yaml
