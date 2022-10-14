@@ -387,6 +387,9 @@ Open a terminal for webapp1: *Terminal 1*.
 
   POD=`oc get pods -l app=webapp1 | grep Running | awk '{print $1}'`
   oc exec -it $POD -- bash
+
+.. code-block:: shell
+
   cd /usr/share/nginx/html/
   clear
   PS1="ping-pong-1# "
@@ -398,6 +401,9 @@ Open a terminal for webapp2: *Terminal 2*.
 
   POD=`oc get pods -l app=webapp2 | grep Running | awk '{print $1}'`
   oc exec -it $POD -- bash
+
+.. code-block:: shell
+  
   cd /usr/share/nginx/html/
   clear
   PS1="ping-pong-2# "
@@ -409,6 +415,9 @@ Open a terminal for webapp3: *Terminal 3*.
 
   POD=`oc get pods -l app=webapp3 | grep Running | awk '{print $1}'`
   oc exec -it $POD -- bash
+
+.. code-block:: shell
+  
   cd /usr/share/nginx/html/
   clear
   PS1="ping-pong-3# "
