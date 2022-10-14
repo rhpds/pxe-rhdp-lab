@@ -5,8 +5,7 @@ Lab 10 - PVC Manual Resize Volume
 Lab setup
 ---------
 
-First we will create a few PVCs and a StatefulSet with 2 replicas for
-you to explore.
+First we will create a few PVCs and a StatefulSet with 2 replicas for you to explore.
 
 .. code-block:: shell
 
@@ -14,11 +13,11 @@ you to explore.
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
-      name: px-default-sc
+    name: px-default-sc
   provisioner: pxd.portworx.com
   parameters:
-     repl: "2"
-     io_priority: "high"
+    repl: "2"
+    io_priority: "high"
   ---
   kind: PersistentVolumeClaim
   apiVersion: v1
@@ -63,11 +62,11 @@ you to explore.
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
-      name: px-sc
+    name: px-sc
   provisioner: pxd.portworx.com
   parameters:
-     repl: "2"
-     io_priority: "high"
+    repl: "2"
+    io_priority: "high"
   allowVolumeExpansion: true
   ---
   apiVersion: v1
@@ -211,8 +210,7 @@ Are you able to do it? Inspect the storage class used by this PVC.
 
 .. dropdown:: Show Solution
 
-   The storage class ‘px-default-sc’ does not have ‘allowVolumeExpansion’
-   enabled. As a result you cannot resize this PVC! 
+  The storage class ``px-default-sc`` does not have ``allowVolumeExpansion`` enabled. As a result you cannot resize this PVC! 
 
    .. code-block:: 
       
@@ -258,6 +256,4 @@ Once ExpandVolume succeds, run the below command:
 
   oc exec web-0 -- df -hP /usr/share/nginx/html
 
-In this lab we successfully resized a PVC manually. This can be done
-automatically using Autopilot. We will discuss this in the upcoming
-lectures.
+In this lab we successfully resized a PVC manually. This can be done automatically using Autopilot. We will discuss this in the upcoming lectures.
