@@ -1,5 +1,5 @@
 =======================================
-Lab 02 - Understand Kubernetest Storage
+Lab 02 - Understand Kubernetes Storage
 =======================================
 
 

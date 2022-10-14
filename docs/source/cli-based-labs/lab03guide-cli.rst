@@ -121,7 +121,7 @@ that uses a Portworx PVC.
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "PID=$(pidof java) && kill $PID && while ps -p $PID > /dev/null; do sleep 1; done"]
+                command: ["/bin/sh", "-c", "PID=\$(pidof java) && kill $PID && while ps -p $PID > /dev/null; do sleep 1; done"]
           env:
             - name: MAX_HEAP_SIZE
               value: 512M
