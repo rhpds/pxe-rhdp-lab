@@ -96,7 +96,8 @@ that uses a Portworx PVC.
         terminationGracePeriodSeconds: 1800
         containers:
         - name: cassandra
-          image: gcr.io/google-samples/cassandra:v14
+          # image: gcr.io/google-samples/cassandra:v14
+          image: bitnami/cassandra
           imagePullPolicy: Always
           ports:
           - containerPort: 7000
