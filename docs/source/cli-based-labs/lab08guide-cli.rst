@@ -11,12 +11,12 @@ Deploy MySQL and create a schedulePolicies
   apiVersion: storage.k8s.io/v1
   kind: StorageClass
   metadata:
-      name: px-db-sc
+    name: px-db-sc
   provisioner: pxd.portworx.com
   parameters:
-     repl: "3"
-     io_profile: "db"
-     io_priority: "high"
+    repl: "3"
+    io_profile: "db"
+    io_priority: "high"
   ---
   apiVersion: v1
   kind: Namespace
@@ -28,8 +28,8 @@ Deploy MySQL and create a schedulePolicies
   kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:
-     name: px-mysql-pvc
-     namespace: mysql-app
+    name: px-mysql-pvc
+    namespace: mysql-app
   spec:
     storageClassName: px-db-sc
     accessModes:
@@ -122,7 +122,12 @@ How many schedule policies have been created?
 
 .. dropdown:: Show Solution
    
-  Run: oc get schedulepolicies
+  Run: 
+
+  .. code-block:: shell
+
+    oc get schedulepolicies
+
   Answer: 8
 
 What is the retenton period of the ``weekly`` policy?
@@ -134,7 +139,12 @@ What is the retenton period of the ``weekly`` policy?
 
 .. dropdown:: Show Solution
 
-  Run: oc describe schedulepolicies weekly
+  Run: 
+  
+  .. code-block:: shell
+    
+    oc describe schedulepolicies weekly
+
   Answer: 5
 
 What is snapshot frequency set for the policy ``pol1``?
@@ -145,7 +155,12 @@ What is snapshot frequency set for the policy ``pol1``?
 
 .. dropdown:: Show Solution
    
-  Run: oc describe schedulepolicies pol1
+  Run: 
+
+  .. code-block:: shell
+    
+    oc describe schedulepolicies pol1
+
   Answer: Every 60 minutes
 
 Create a new snapshot schedule policy
@@ -170,13 +185,16 @@ Create a daily snapshot schedule policy called ``daily-schedule`` at
 .. dropdown:: Show Solution
 
   Run the below command to create the snapshot: 
-  oc create -f /tmp/sched-pol.yaml
+
+  .. code-block:: shell
+
+    oc create -f /tmp/sched-pol.yaml
+
 
 Create a storageClass that uses this schedule policy
 ----------------------------------------------------
 
-Create a storage class ``px-nginx-scheduled`` with the newly created
-schedule policy ``daily-schedule``
+Create a storage class ``px-nginx-scheduled`` with the newly created schedule policy ``daily-schedule``
 
 .. code-block:: shell
 
@@ -184,30 +202,32 @@ schedule policy ``daily-schedule``
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
-      name: px-nginx-scheduled
+    name: px-nginx-scheduled
   provisioner: pxd.portworx.com
   parameters:
-     repl: "2"
-     io_priority: "high"
-     snapshotschedule.stork.libopenstorage.org/default-schedule: |
-       schedulePolicyName: daily-schedule
-       annotations:
-         portworx/snapshot-type: local
+    repl: "2"
+    io_priority: "high"
+    snapshotschedule.stork.libopenstorage.org/default-schedule: |
+      schedulePolicyName: daily-schedule
+      annotations:
+        portworx/snapshot-type: local
   EOF
 
 .. dropdown:: Show Solution
    
    Run the below command to create the storage class: 
-   oc create -f /tmp/px-nginx-scheduled.yaml
+  
+  .. code-block:: shell
+  
+    oc create -f /tmp/px-nginx-scheduled.yaml
+
 
 Create a Nginx StatefulSet that utilizes this storageClass
 ----------------------------------------------------------
 
-Create a new NGINX StatefulSet, making use of the ``px-nginx-scheduled``
-storage class.
+Create a new NGINX StatefulSet, making use of the ``px-nginx-scheduled`` storage class.
 
-Use the YAML file ``/tmp/create-nginx-sts.yaml`` to create the
-deployment.
+Use the YAML file ``/tmp/create-nginx-sts.yaml`` to create the deployment.
 
 .. code-block:: shell
 
@@ -261,10 +281,12 @@ deployment.
             storage: 1Gi
   EOF
 
-The PVC’s created by the StatefulSet will be backed up automatically as
-per the schedule policy ``daily-schedule``.
+The PVC’s created by the StatefulSet will be backed up automatically as per the schedule policy ``daily-schedule``.
 
 .. dropdown:: Show Solution
 
   Run the below command to create the NGINX sts: 
-  oc create -f /tmp/create-nginx-sts.yaml
+
+  .. code-block:: shell
+    
+    oc create -f /tmp/create-nginx-sts.yaml

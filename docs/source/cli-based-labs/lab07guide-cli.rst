@@ -5,8 +5,7 @@ Lab 07 - Application Consistent Snapshots
 3D Snapshots
 ------------
 
-In the upcoming steps, we will set up 3D snapshots for the Portworx
-volumes consumed by these deployment and StatefulSets.
+In the upcoming steps, we will set up 3D snapshots for the Portworx volumes consumed by these deployment and StatefulSets.
 
 Deploy a MySQL Deployment and MongoDB statefulSet
 -------------------------------------------------
@@ -294,7 +293,7 @@ below specifications:
 
 Rules:
 
-::
+.. code-block:: 
 
   Pod Selector:role=mongo
   type: command
@@ -302,8 +301,13 @@ Rules:
 
 .. dropdown:: Show Solution
   
-  We have created a solution file for you under ‘/tmp/pre-mongo.yaml’ Run:
-  oc apply -f /tmp/pre-mongo.yaml
+  We have created a solution file for you under ``/tmp/pre-mongo.yaml`` 
+  Run:
+
+  .. code-block:: shell
+
+    oc apply -f /tmp/pre-mongo.yaml
+
 
 Create a post-snapshot rule for MongoDB
 ---------------------------------------
