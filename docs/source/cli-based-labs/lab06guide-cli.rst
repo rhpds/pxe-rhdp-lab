@@ -2,8 +2,7 @@
 Lab 06 - Cloud Snapshots
 =========================================
 
-**Important Note:** We will again make use of Minio object store in this
-Lab. We will use it as the endpoint for our cloud snapshots.
+.. important:: We will again make use of Minio object store in this Lab. We will use it as the endpoint for our cloud snapshots.
 
 Deploy Minio as target for Portworx Cloud Snapshots
 ---------------------------------------------------
@@ -219,9 +218,9 @@ To check for the backed up objects in the object store:
 
 .. code-block:: shell
 
-    oc debug node/$WORKER_NODE
-    chroot /host 
-    mc ls px/
+  oc debug node/$WORKER_NODE
+  chroot /host 
+  /tmp/mc ls px/
 
 Clone PVC
 ---------
