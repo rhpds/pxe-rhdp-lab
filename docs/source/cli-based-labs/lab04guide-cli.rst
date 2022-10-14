@@ -74,13 +74,12 @@ and see how the shared volumes work!
 In this step, we will deploy the nginx application using the
 ``PersistentVolumeClaim`` created before.
 
-.. note:: Notice in the below specification we have set the securityContext.seLinuxOptions. Without this setting the pods may be assigned random selinux labels, in which case only the last pod to come online would have access to the shared volume. We have highlighted the lines below for your review.  
+.. note:: Notice in the below specification we have set the securityContext.seLinuxOptions. Without this setting the pods may be assigned random selinux labels, in which case only the last pod to come online would have access to the shared volume.   
 
 Step deploy 3 instances of nginx
 --------------------------------
 
 .. code-block:: shell
-  :emphasize-lines: 19,21-22
 
   cat <<EOF > /tmp/deploy-webapps.yaml
   apiVersion: apps/v1
