@@ -318,10 +318,8 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
 
     oc apply -f /tmp/restore-nginx.yaml
 
-
-
 .. code-block:: shell
-  :emphasize-lines: 7
+
 
   cat <<EOF > /tmp/restore-nginx.yaml
   apiVersion: v1
