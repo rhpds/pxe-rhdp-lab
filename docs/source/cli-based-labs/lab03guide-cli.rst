@@ -358,7 +358,7 @@ Select rows from the keyspace we previously created:
 Now that we have verify our data survived the node failure let’s
 ``quit`` the cqlsh session before continuing to the next step.
 
-*THIS STEP IS OPTIONAL, (Click “Next” to move to snapshot and restore)*
+.. attention:: THIS STEP IS OPTIONAL Continue to create snapshots and restore
 
 Scale the cluster
 -----------------------
@@ -429,6 +429,9 @@ that the snapshot will take the latest available data:
 .. code-block:: shell
 
   oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+
+.. code-block:: shell
+
   INSERT INTO portworx.features (id, name, value) VALUES ('px-6', '3DSnaps', 'Application/Cluster aware snapshots!');
   SELECT id, name, value FROM portworx.features;
   quit
@@ -490,6 +493,9 @@ Katacoda and we’re here to learn.
 .. code-block:: shell
 
   oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+
+.. code-block:: shell
+
   DROP TABLE IF EXISTS portworx.features;
   SELECT id, name, value FROM portworx.features;
   quit
@@ -698,6 +704,9 @@ create the new cassandra statefulset based on our cloned snapshots.
 .. code-block:: shell
 
   oc delete -f /tmp/cassandra.yaml
+
+.. code-block:: shell
+
   oc create -f /tmp/cassandra-app-restore.yaml
 
 Wait for restored cassandra database to be Running (1/1). *Note there
