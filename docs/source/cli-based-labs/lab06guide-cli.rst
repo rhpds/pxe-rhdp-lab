@@ -22,6 +22,7 @@ Create a storageClass for use by Minio
     repl: "3"
     io_priority: "high"
     group: "minio"
+  EOF
 
 .. code-block:: shell
 
@@ -35,31 +36,51 @@ Deploy Minio onto the OCP cluster
   curl -L https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash -s -- --version v3.8.2
   helm repo add stable https://charts.helm.sh/stable
   echo "Helm installed!"
-  echo "Installing mc"
-  ssh node01 "sudo wget -qO /usr/bin/mc https://dl.minio.io/client/mc/release/linux-amd64/mc"
-  ssh node01 "sudo chmod +x /usr/bin/mc"
-  echo "mc installed!"
-
-  echo "Setting Up Minio" 
-  helm install px-minio stable/minio --namespace minio --create-namespace --set accessKey=ZZYYXXWWVVUUTT --setsecretKey=0ldSup3rS3cr3t --set persistence.storageClass=px-ha-sc --set resources.requests.memory=1Gi > /dev/null 2>&1
-  helm install px-minio-2 stable/minio --namespace minio --create-namespace --set accessKey=AABBCCDDEEFF --setsecretKey=N3wSup3rS3cret --set persistence.storageClass=px-ha-sc --set resources.requests.memory=1Gi > /dev/null 2>&1
-  until [[ `oc -n minio get pods | grep px-minio | grep Running | grep 1/1 | wc -l` -eq 2 ]]; do echo "Waiting for px-minioand px-minio-2 to be ready...."; sleep 1 ;done
-  echo "Setup Complete ..."
-
-  MINIO_ENDPOINT=http://$(oc -n minio get svc px-minio -o jsonpath='{.spec.clusterIP}:9000')
-  echo "Configure Minio's endpoints"
-  ssh node01 "mc config host add px $MINIO_ENDPOINT ZZYYXXWWVVUUTT 0ldSup3rS3cr3t --api S3v4"
-  echo "Configuration Complete"
-
-Once the set-up is complete, you can run the following command to make
-sure the minio servers are up:
 
 .. code-block:: shell
 
-  ssh node01 mc admin info px
+  echo "Installing mc"
+  export WORKER_NODE=$(oc get node -l node-role.kubernetes.io/worker= | grep -Eiv "infra|NAME" | awk '{print $1}' | head -1)
+  oc debug node/$WORKER_NODE
+  chroot /host
+  curl --output /tmp/mc https://dl.minio.io/client/mc/release/linux-amd64/mc
+  chmod +x /tmp/mc
+  echo "mc installed!"
 
-Create a new Portworx credential called ``my-cloud-credentials`` with
-the below parameters:
+.. code-block:: shell
+
+  echo "Setting Up Minio" 
+  oc -n minio adm policy add-scc-to-user anyuid -z px-minio
+  helm install px-minio stable/minio --namespace minio --create-namespace --set accessKey=ZZYYXXWWVVUUTT --setsecretKey=0ldSup3rS3cr3t --set persistence.storageClass=px-ha-sc --set resources.requests.memory=1Gi > /dev/null 2>&1
+  until [[ `oc -n minio get pods | grep px-minio | grep Running | grep 1/1 | wc -l` -eq 2 ]]; do echo "Waiting for px-minioand px-minio-2 to be ready...."; sleep 1 ;done
+  echo "Setup Complete ..."
+
+.. code-block:: shell
+
+  oc debug node/$WORKER_NODE
+  chroot /host
+  MINIO_ENDPOINT=http://$(oc --kubeconfig /var/lib/kubelet/kubeconfig -n minio get svc px-minio -o jsonpath='{.spec.clusterIP:9000')
+  echo "Configure Minio's endpoints"
+  /tmp/mc config host add px $MINIO_ENDPOINT ZZYYXXWWVVUUTT 0ldSup3rS3cr3t --api S3v4
+  echo "Configuration Complete"
+
+Once the set-up is complete, you can run the following command to make sure the minio servers are up:
+
+.. code-block:: shell
+
+  oc debug node/$WORKER_NODE
+  chroot /host 
+  /tmp/mc admin info px
+  
+To check for the backed up objects in the object store:
+
+.. code-block:: shell
+
+  oc debug node/$WORKER_NODE
+  chroot /host 
+  /tmp/mc ls px/
+
+Create a new Portworx credential called ``my-cloud-credentials`` with the below parameters:
 
 .. code-block:: 
 
@@ -72,16 +93,18 @@ Run the below command to obtain the object store endpoint:
 
 .. code-block:: shell
 
-  MINIO_ENDPOINT=http://$(oc -n minio get svc px-minio -o jsonpath='{.spec.clusterIP}:9000');echo $MINIO_ENDPOINT
+  MINIO_ENDPOINT=http://$(oc -n minio get svc px-minio -o jsonpath='{.spec.clusterIP}:9000'); echo $MINIO_ENDPOINT
 
 .. dropdown:: Show Solution
 
-  Get the minio endpoint from the ‘px-minio-1’ service and use it to
-  create portworx credential: MINIO_ENDPOINT=http://$(oc -n minio get svc
-  px-minio -o jsonpath=‘{.spec.clusterIP}:9000’) ssh -o
-  strictHostKeyChecking=no node01 sudo pxctl credentials create –provider
-  s3 –s3-access-key ZZYYXXWWVVUUTT –s3-secret-key 0ldSup3rS3cr3t
-  –s3-endpoint $MINIO_ENDPOINT –s3-region us-east-1 my-cloud-credentials
+  Get the minio endpoint from the ‘px-minio-1’ service and use it to create portworx credential: 
+  
+  .. code-block:: shell
+
+    oc debug node/$WORKER_NODE
+    chroot /host 
+    MINIO_ENDPOINT=http://$(oc --kubeconfig /var/lib/kubelet/kubeconfig -n minio get svc px-minio -o jsonpath='{.spec.clusterIP:9000')
+    pxctl credentials create --providers3 --s3-access-key ZZYYXXWWVVUUTT --s3-secret-key 0ldSup3rS3cr3t --s3-endpoint $MINIO_ENDPOINT --s3-region us-east-1 my-cloud-credentials
 
 
 Provision MySQL Database
@@ -95,24 +118,24 @@ We will not create a MySQL database to use with Cloud Snapshots
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
-      name: px-mysql-sc
+    name: px-mysql-sc
   provisioner: pxd.portworx.com
   parameters:
-     repl: "3"
-     io_profile: "db"
-     io_priority: "high"
+    repl: "3"
+    io_profile: "db"
+    io_priority: "high"
   ---
   kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:
-     name: px-mysql-pvc
+    name: px-mysql-pvc
   spec:
     storageClassName: px-mysql-sc
-     accessModes:
-       - ReadWriteOnce
-     resources:
-       requests:
-         storage: 1Gi
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
   ---
   apiVersion: apps/v1
   kind: Deployment
@@ -160,9 +183,7 @@ We will not create a MySQL database to use with Cloud Snapshots
 Take Cloud Snapshot
 -------------------
 
-We have deployed a mysql pod that uses PortWorx volume. Take a cloud
-snapshot of this PVC called ``mysql-snapshot``. The snapshot should be
-successfully backed up to the object store.
+We have deployed a mysql pod that uses PortWorx volume. Take a cloud snapshot of this PVC called ``mysql-snapshot``. The snapshot should be successfully backed up to the object store.
 
 .. code-block:: shell
 
@@ -181,20 +202,26 @@ successfully backed up to the object store.
 .. dropdown:: Show Solution
 
    We have created a solution file under ‘/tmp/cloud-snap.yaml’. 
-   Create it by running: oc apply -f /tmp/cloud-snap.yaml
+   Create it by running: 
+   
+   .. code-block:: shell
+    
+    oc apply -f /tmp/cloud-snap.yaml
 
 If the cloud credentials and volume snapshot were set up correctly, you
 can check the status by running the below command:
 
 .. code-block:: shell
 
-  oc describe volumesnapshot.volumesnapshot mysql-snapshot
+  oc describe stork-volumesnapshot mysql-snapshot
 
 To check for the backed up objects in the object store:
 
 .. code-block:: shell
 
-  ssh node01 mc ls px/
+    oc debug node/$WORKER_NODE
+    chroot /host 
+    mc ls px/
 
 Clone PVC
 ---------
@@ -223,5 +250,10 @@ the snapshot ``mysql-snapshot``.
 .. dropdown:: Show Solution
   
    We have created a solution file under ‘/tmp/restore.yaml’. Create it by
-   running: oc apply -f /tmp/restore.yaml Make sure the volume becomes
-   bound oc get pvc
+   running: 
+   
+ .. code-block::shell 
+
+  oc apply -f /tmp/restore.yaml 
+  
+  Make sure the volume becomes bound oc get pvc

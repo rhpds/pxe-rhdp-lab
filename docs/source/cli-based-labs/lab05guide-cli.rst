@@ -304,7 +304,7 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
 
   .. code-block:: shell
 
-    oc describe volumesnapshot.volumesnapshot | grep “web-0” 
+    oc describe stork-volumesnapshot | grep “web-0” 
 
   Copy the identifier that will be found in the Name after “nginx-group-snap-www-web-0-”. Now, use the below template to create a clone from the volumesnapshot for PVC of ``pod - 0`` of the nginx StatefulSet. You must modify the yaml file to add the volumesnapshot identifier for web-0. The line to be edited is highlighted. 
 

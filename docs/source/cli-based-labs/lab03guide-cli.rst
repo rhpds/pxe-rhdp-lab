@@ -479,7 +479,7 @@ You can see the snapshots using the following command:
 
 .. code-block:: shell
 
-  watch oc get volumesnapshot.volumesnapshot
+  watch oc get stork-volumesnapshot
 
 When you see all 3 volumesnapshots appear, take note of the names and
 hit ``ctrl-c`` to exit the screen.
@@ -497,6 +497,9 @@ Katacoda and we’re here to learn.
 .. code-block:: shell
 
   DROP TABLE IF EXISTS portworx.features;
+
+.. code-block:: shell
+
   SELECT id, name, value FROM portworx.features;
   quit
 
@@ -506,7 +509,7 @@ we deleted our database, what now?
 Create clones from your snapshots and restore from those snapshots.
 
 First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names
-from the above ``oc get volumesnapshots`` output.
+from the above ``oc get stork-volumesnapshots`` output.
 
 .. code-block:: shell
 
