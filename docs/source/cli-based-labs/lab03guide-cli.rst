@@ -1,5 +1,5 @@
 =========================
-Lab 03 - Deploy Cassandra
+Lab 03 - Apache Cassandra
 =========================
 
 Before we deploy cassandra, we will need to create a Portworx volume
@@ -255,7 +255,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
+  oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
 
 Create a keyspace with replication of 3 and insert some data:
 
@@ -347,7 +347,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
+  oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
 
 Select rows from the keyspace we previously created:
 
@@ -428,7 +428,7 @@ that the snapshot will take the latest available data:
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
+  oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
   INSERT INTO portworx.features (id, name, value) VALUES ('px-6', '3DSnaps', 'Application/Cluster aware snapshots!');
   SELECT id, name, value FROM portworx.features;
   quit
@@ -489,7 +489,7 @@ Katacoda and we’re here to learn.
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
+  oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
   DROP TABLE IF EXISTS portworx.features;
   SELECT id, name, value FROM portworx.features;
   quit
@@ -715,7 +715,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cqlsh-restored -- cqlsh cassandra-restored-0.cassandra-restored.default.svc.cluster.local --cqlversion=3.4.4
+  oc exec -it cassandra-0 -- cqlsh cassandra-restored-0.cassandra-restored.default.svc.cluster.local
 
 Select rows from the keyspace we previously created:
 
