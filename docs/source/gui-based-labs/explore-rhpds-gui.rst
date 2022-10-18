@@ -155,6 +155,8 @@ Hint:
     Select one of the pods named, portworx-cluster-XXXX
     Go to Terminal tab to review the cluster status. Run: 
 
+.. code-block:: shell
+
     /opt/pwx/bin/pxctl status
 
 .. dropdown:: Show Solution
