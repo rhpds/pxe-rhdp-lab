@@ -12,8 +12,8 @@ Create StorageClass
 Take a look at the StorageClass definition for Portworx
 
 .. code-block:: yaml
-
   :name: px-shared-sc.yaml
+  
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
