@@ -36,11 +36,11 @@ MySQL Deployment
      namespace: mysql-app
   spec:
     storageClassName: px-db-sc
-     accessModes:
-       - ReadWriteOnce
-     resources:
-       requests:
-         storage: 1Gi
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
   ---
   apiVersion: apps/v1
   kind: Deployment
@@ -95,6 +95,8 @@ this cluster (all namespaces)?
 
     Workloads -> Pods, filter by label: app=mysql
 
+  .. image:: images/mysql-app-pod.png
+
   Answer: 1
 
 How many PVCs have been created for MYSQL?
@@ -116,8 +118,8 @@ What is the name of the storage class used to create this PVC?
 
 .. dropdown:: Show Solution
 
-  .. image::
-    
+  .. image:: images/px-mysql-pvc.png
+
   Answer: px-db-sc
 
 What is the ``io_profile`` used for this storage class?
