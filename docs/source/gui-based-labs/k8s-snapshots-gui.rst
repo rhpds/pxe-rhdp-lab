@@ -13,12 +13,12 @@ MySQL Deployment
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
-      name: px-db-sc
+    name: px-db-sc
   provisioner: pxd.portworx.com
   parameters:
-     repl: "3"
-     io_profile: "db"
-     io_priority: "high"
+    repl: "3"
+    io_profile: "db"
+    io_priority: "high"
   ---
   apiVersion: v1
   kind: Namespace
@@ -30,10 +30,10 @@ MySQL Deployment
   kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:
-     name: px-mysql-pvc
-     labels:
-       app: mysql
-     namespace: mysql-app
+    name: px-mysql-pvc
+    labels:
+      app: mysql
+    namespace: mysql-app
   spec:
     storageClassName: px-db-sc
     accessModes:
