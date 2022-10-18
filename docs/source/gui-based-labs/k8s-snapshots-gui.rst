@@ -75,19 +75,15 @@ MySQL Deployment
           persistentVolumeClaim:
             claimName: px-mysql-pvc
 
-.. code-block:: shell
-  
-  oc create -f /tmp/create-mysql.yaml
+Copy the above code block and paste it into the Import YAML.   
 
-Before proceeding to the next step, please make sure the mysql pod is
-running:
+Before proceeding to the next step, please make sure the mysql pod is running:
 
 .. code-block:: shell
 
   Workloads -> Pods
 
-How many pods have been created for MYSQL with label ``app=mysql`` in
-this cluster (all namespaces)?
+How many pods have been created for MYSQL with label ``app=mysql`` in this cluster (all namespaces)?
 
 .. dropdown:: Show Solution
   
@@ -247,8 +243,7 @@ NGinx statefulSet
 
 Copy the above code block and paste it into the Import YAML.   
 
-Before proceeding to the next step, please make sure all the resources
-are up:
+Before proceeding to the next step, please make sure all the resources are up:
 
 .. code-block:: shell
    
@@ -259,8 +254,7 @@ Note: Please wait until both pods are in a ``Running`` state.
 Create a snapshot for Nginx
 ---------------------------
 
-Create a group snapshot called ``nginx-group-snap`` for the PVC's of the
-nginx StatefulSet.
+Create a group snapshot called ``nginx-group-snap`` for the PVC's of the nginx StatefulSet.
 
 .. code-block:: yaml
   :name: nginx-snap.yaml
@@ -282,8 +276,7 @@ Copy the above code block and paste it into the Import YAML.
 Restore the snapshot for Nginx
 ------------------------------
 
-Restore the snapshot taken for the pod ``web-0`` to a new PVC
-``web-clone-0`` in the ``default`` namespace.
+Restore the snapshot taken for the pod ``web-0`` to a new PVC ``web-clone-0`` in the ``default`` namespace.
 
 .. note:: 
    
@@ -291,11 +284,12 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
 
   .. code-block:: shell
 
-    oc describe stork-volumesnapshot | grep “web-0” 
+    Home -> Search -> Resources 
+    Enter GroupVolumeSnapshots
 
   Copy the identifier that will be found in the Name after “nginx-group-snap-www-web-0-”. Now, use the below template to create a clone from the volumesnapshot for PVC of ``pod - 0`` of the nginx StatefulSet. You must modify the yaml file to add the volumesnapshot identifier for web-0. The line to be edited is highlighted. 
 
-  .. code-block:: shell
+  .. important:: 
 
     Edit the below section and use the snapshot ID found from above.
     
