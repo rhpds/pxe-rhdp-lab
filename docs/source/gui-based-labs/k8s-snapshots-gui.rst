@@ -117,7 +117,7 @@ How many PVCs have been created for MYSQL?
 What is the name of the storage class used to create this PVC?
 
 .. dropdown:: Show Solution
-
+  
   .. image:: images/px-mysql-pvc.png
 
   Answer: px-db-sc
@@ -128,7 +128,9 @@ What is the ``io_profile`` used for this storage class?
 
   .. code-block:: shell
 
-    oc describe sc px-db-sc \| grep io_profile
+    Storage -> StorageClasses -> px-db-sc -> YAML
+
+  .. image:: images/px-db-sc-describe.png
 
   Answer: db
 
@@ -137,9 +139,9 @@ Create a snapshot for MySQL
 
 Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: mysql-snap.yaml
 
-  cat <<EOF > /tmp/mysql-snap.yaml
   apiVersion: volumesnapshot.external-storage.k8s.io/v1
   kind: VolumeSnapshot
   metadata:
@@ -149,11 +151,7 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
     persistentVolumeClaimName: px-mysql-pvc
   EOF
  
-Run the below command to create the snapshot:
-
-.. code-block:: shell
-
-  oc create -f /tmp/mysql-snap.conf
+Copy the above code block and paste it into the Import YAML.   
 
 Restore the snapshot for MySQL
 ------------------------------
@@ -162,9 +160,9 @@ Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same
 Namespace as the source. Call the restore object as
 ``mysql-snap-restore``.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: restore-mysql.yaml
 
-  cat <<EOF > /tmp/restore-mysql.yaml
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: VolumeSnapshotRestore
   metadata:
@@ -176,11 +174,7 @@ Namespace as the source. Call the restore object as
     sourceNamespace: mysql-app
   EOF
    
-Run the below command to create the snapshot: 
-
-.. code-block:: shell
-
-  oc create -f /tmp/restore-mysql.yaml
+Copy the above code block and paste it into the Import YAML.   
 
 
 We will create a Statefulset to use with snapshots and restores.
@@ -190,9 +184,9 @@ We will create a new StatefulSet for you to explore.
 
 NGinx statefulSet
 
-.. code-block:: shell
-
-  cat <<EOF > /tmp/create-nginx-sts.yaml
+.. code-block:: yaml
+  :name: create-nginx-sts.yaml
+  
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -251,28 +245,26 @@ NGinx statefulSet
             storage: 1Gi
   EOF
 
-.. code-block:: shell
-
-  oc create -f /tmp/create-nginx-sts.yaml
+Copy the above code block and paste it into the Import YAML.   
 
 Before proceeding to the next step, please make sure all the resources
 are up:
 
 .. code-block:: shell
    
-  oc get pods  -l app=nginx
+  Workloads -> Pods
 
 Note: Please wait until both pods are in a ``Running`` state.
 
 Create a snapshot for Nginx
 ---------------------------
 
-Create a group snapshot called ``nginx-group-snap`` for the PVC’s of the
+Create a group snapshot called ``nginx-group-snap`` for the PVC's of the
 nginx StatefulSet.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: nginx-snap.yaml
 
-  cat <<EOF > /tmp/nginx-snap.yaml
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: GroupVolumeSnapshot
   metadata:
@@ -285,11 +277,7 @@ nginx StatefulSet.
      - default
   EOF
 
-Run the below command to create the snapshot: 
-
-.. code-block:: shell
-
-  oc create -f /tmp/nginx-snap.yaml
+Copy the above code block and paste it into the Import YAML.   
 
 Restore the snapshot for Nginx
 ------------------------------
@@ -309,18 +297,13 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
 
   .. code-block:: shell
 
-    vi /tmp/restore-nginx.yaml 
+    Edit the below section and use the snapshot ID found from above.
     
   Create the restore object after editing. 
   
-  .. code-block:: shell
+.. code-block:: yaml
+  :name: restore-nginx.yaml
 
-    oc apply -f /tmp/restore-nginx.yaml
-
-.. code-block:: shell
-
-
-  cat <<EOF > /tmp/restore-nginx.yaml
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -335,3 +318,5 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC
       requests:
         storage: 1Gi
   EOF
+
+Copy the above code block and paste it into the Import YAML.   
