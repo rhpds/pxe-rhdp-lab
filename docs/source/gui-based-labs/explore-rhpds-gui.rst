@@ -15,7 +15,9 @@ Hint:
 
 .. code-block:: text
     
-    oc get nodes
+    Compute -> Nodes and filter by label for master
+
+    .. image:: images/master-nodes.png
 
 .. dropdown:: Show Solution
     
@@ -31,7 +33,9 @@ Hint:
 
 .. code-block:: text
     
-    oc version
+    Admininistration -> Cluster Settings
+
+    .. image:: images/cluster-version.png
 
 .. dropdown:: Show Solution
     
@@ -48,7 +52,9 @@ Hint:
 
 .. code-block:: text
     
-    oc cluster-info
+    Workloads -> Pods -> Namespace: openshift-kube-apiserver.  Filter for kube-apiserver.
+
+    .. image:: images/kubeapiserver.png
 
 .. dropdown:: Show Solution
     
@@ -63,7 +69,7 @@ Hint:
 
 .. code-block:: text
     
-    oc get pods
+    Workloads -> Pods -> Namespace: default
 
 .. dropdown:: Show Solution
     
@@ -79,15 +85,17 @@ Hint:
 
 .. code-block:: text
     
-    oc get deployments -n openshift-dns
+    Workloads -> Pods -> Namespace: openshift-dns
+
+    .. image:: images/dns-default.png
 
 .. dropdown:: Show Solution
     
-    Answer: coredns
+    Answer: dns-default
 
 Q6: How many replicas are configured for this deployment?
 
-1. 2
+1. 6
 2. 4
 3. 1
 4. 3
@@ -96,11 +104,13 @@ Hint:
 
 .. code-block:: text
     
-    oc -n openshift-dns get deployments -l k8s-app=kube-dns
+    Workloads -> Daemonsets -> Namespace: openshift-dns
+
+    .. image:: images/dns-default-ds.png
 
 .. dropdown:: Show Solution
     
-    Answer: 3
+    Answer: 6
 
 Portworx configuration review
 -----------------------------
@@ -122,8 +132,11 @@ Check the installation logs:
 
 .. code-block:: text
 
-    PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}'); oc -n portworx logs -f $PX_POD -c portworx
+    Workloads -> Pods -> 
+    Select one of the pods named, portworx-cluster-XXXX
+    Go to Logs tab to review the logs
 
+    .. image:: images/portworx-logs.png
 
 Lets explore the cluster using pxctl utility.
 
@@ -138,7 +151,10 @@ Hint:
 
 .. code-block:: text
 
-    oc -n portworx exec $PX_POD -c portworx -it -- /opt/pwx/bin/pxctl status
+    Workloads -> Pods -> 
+    Select one of the pods named, portworx-cluster-XXXX
+    Go to Terminal tab to review the cluster status
+    ``/opt/pwx/bin/pxctl status``
 
 .. dropdown:: Show Solution
     
