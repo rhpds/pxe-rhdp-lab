@@ -15,3 +15,4 @@ Red Hat Product Demo System GUI Labs
    explore-rhpds-gui
    review-k8s-storage-gui
    shared-volumes-gui
+   k8s-snapshots-gui
