@@ -268,7 +268,7 @@ use of the pre-snapshot rule ``mysql-presnap-rule'`` with PVC
 
 .. dropdown:: Show Solution
   
-  We have created a solution file for you under ``/tmp/vs.yaml ``
+  We have created a solution file for you under ``/tmp/vs.yaml``
   Run:
   
  .. code-block:: shell
