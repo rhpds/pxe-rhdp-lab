@@ -13,5 +13,5 @@ Red Hat Product Demo System GUI Labs
    :glob:
 
    explore-rhpds-gui
-   
+   review-k8s-storage-gui
 
