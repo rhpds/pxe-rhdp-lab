@@ -87,23 +87,11 @@ Validate PersistentVolumeClaim
 ------------------------------------
 
 A PersistentVolumeClaim is successfully provisioned once it gets into
-“Bound” state. Let’s run the below script to check that.
+“Bound” state. Let's check on the status of the PersistentVolumeClaim.
 
-.. code-block:: shell
+You can watch the volume being created after importing the YAML. Copy the PersistentVolume name as we will pass it to pxctl in the next step.  
 
-  echo "Checking if the PersistentVolumeClaim was created successfully..."
-
-  while true; do
-      PVC_STATUS=`oc get pvc px-pvc | grep -v NAME | awk '{print $2}'`
-      if [ "${PVC_STATUS}" == "Bound" ]; then
-          echo "px-pvc is ${PVC_STATUS}"
-          oc get pvc px-pvc
-          break
-      else
-          echo "Waiting for px-pvc to be Bound..."
-      fi
-      sleep 2
-  done
+.. image:: images/px-pvc.png
 
 Let's proceed to the next step to further inspect the volume.
 
@@ -118,12 +106,16 @@ that can be used to manage Portworx.
 
 Below we will use pxctl to inspect the underlying volume for our PVC.
 
+.. code-block:: text
+
+    Workloads -> Pods -> 
+    Select one of the pods named, portworx-cluster-XXXX
+    Go to Terminal tab to review the volume status. Run: 
+
 .. code-block:: shell
 
-  VOL=`oc get pvc | grep px-pvc | awk '{print $3}'`
-  PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
-  oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect ${VOL}
-
+    /opt/pwx/bin/pxctl volume inspect <PVC-ID>
+  
 Make the following observations in the inspect output \* ``HA`` shows
 the number of configured replcas for this volume \* ``Labels`` show the
 name of the PVC for this volume \* ``Replica sets on nodes`` shows the
