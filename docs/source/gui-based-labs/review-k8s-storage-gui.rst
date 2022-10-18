@@ -27,7 +27,7 @@ Create StorageClass
 Let's create the above storage class.
 
 .. code-block:: yaml
-  :caption: px-repl3-sc.yaml
+  :name: px-repl3-sc.yaml
 
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
@@ -62,7 +62,7 @@ Create PersistentVolumeClaim
 Lets create the above PersistentVolumeClaim.
 
 .. code-block:: yaml
-  :caption: px-pvc.yaml
+  :name: px-pvc.yaml
 
   kind: PersistentVolumeClaim
   apiVersion: v1
