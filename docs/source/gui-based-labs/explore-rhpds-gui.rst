@@ -17,7 +17,7 @@ Hint:
     
     Compute -> Nodes and filter by label for master
 
-    .. image:: images/master-nodes.png
+.. image:: images/master-nodes.png
 
 .. dropdown:: Show Solution
     
@@ -35,7 +35,7 @@ Hint:
     
     Admininistration -> Cluster Settings
 
-    .. image:: images/cluster-version.png
+.. image:: images/cluster-version.png
 
 .. dropdown:: Show Solution
     
@@ -54,7 +54,7 @@ Hint:
     
     Workloads -> Pods -> Namespace: openshift-kube-apiserver.  Filter for kube-apiserver.
 
-    .. image:: images/kubeapiserver.png
+.. image:: images/kubeapiserver.png
 
 .. dropdown:: Show Solution
     
@@ -87,7 +87,7 @@ Hint:
     
     Workloads -> Pods -> Namespace: openshift-dns
 
-    .. image:: images/dns-default.png
+.. image:: images/dns-default.png
 
 .. dropdown:: Show Solution
     
@@ -106,7 +106,7 @@ Hint:
     
     Workloads -> Daemonsets -> Namespace: openshift-dns
 
-    .. image:: images/dns-default-ds.png
+.. image:: images/dns-default-ds.png
 
 .. dropdown:: Show Solution
     
