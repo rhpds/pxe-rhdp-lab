@@ -126,7 +126,7 @@ What does Portworx need to be installed?
 
 .. code-block:: text
 
-   oc get pods -o wide -n portworx -l name=portworx
+   Workloads -> Pods -> Filter by Label: name=portworx
 
 Check the installation logs:
 
@@ -136,7 +136,7 @@ Check the installation logs:
     Select one of the pods named, portworx-cluster-XXXX
     Go to Logs tab to review the logs
 
-    .. image:: images/portworx-logs.png
+.. image:: images/portworx-logs.png
 
 Lets explore the cluster using pxctl utility.
 
@@ -153,8 +153,9 @@ Hint:
 
     Workloads -> Pods -> 
     Select one of the pods named, portworx-cluster-XXXX
-    Go to Terminal tab to review the cluster status
-    ``/opt/pwx/bin/pxctl status``
+    Go to Terminal tab to review the cluster status. Run: 
+
+    /opt/pwx/bin/pxctl status
 
 .. dropdown:: Show Solution
     
