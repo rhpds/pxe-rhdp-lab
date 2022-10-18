@@ -132,8 +132,8 @@ echo “Waiting for Nginx to be ready….”
 
 .. code-block:: shell
 
-  oc wait pod web-0 –for=condition=Ready –timeout=-1s 
-  oc exec web-0 – dd if=/dev/zero of=/usr/share/nginx/html/file2.txt count=4101024 bs=1024
+  oc wait pod web-0 --for=condition=Ready --timeout=-1s 
+  oc exec web-0 -- dd if=/dev/zero of=/usr/share/nginx/html/file2.txt count=4101024 bs=1024
   echo “Nginx initialized successfully….”
 
 Before proceeding, please make sure all the pods are up:

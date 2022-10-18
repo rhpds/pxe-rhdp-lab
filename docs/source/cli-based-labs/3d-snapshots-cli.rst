@@ -187,6 +187,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
   oc create -f /tmp/create-mysql.yaml
   sleep 5
   oc create -f /tmp/create-mongo.yaml
+  oc create -f /tmp/testpolicy.yaml
 
 Verify the creation of the MySQL and MongoDB pods are Ready
 -----------------------------------------------------------
@@ -267,8 +268,12 @@ use of the pre-snapshot rule ``mysql-presnap-rule'`` with PVC
 
 .. dropdown:: Show Solution
   
-  We have created a solution file for you under ‘/tmp/vs.yaml’ 
-  Run: oc apply -f /tmp/vs.yaml
+  We have created a solution file for you under ``/tmp/vs.yaml ``
+  Run:
+  
+ .. code-block:: shell
+  
+    oc apply -f /tmp/vs.yaml
 
 Create a pre-snapshot rule for MongoDB
 --------------------------------------
@@ -382,6 +387,7 @@ Spec:
 
       We have created a solution file for you under ``/tmp/gvs.yaml`` 
       Run: 
+
       .. code-block:: shell
         
         oc apply -f /tmp/gvs.yaml

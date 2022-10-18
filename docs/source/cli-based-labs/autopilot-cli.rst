@@ -60,179 +60,16 @@ Create the PersistentVolumeClaim using:
 
   oc create -f /tmp/px-postgres-pvc.yaml
 
-Configuring monitoring rules
+Reviewing monitoring rules
 ----------------------------
 
-First we will create rules to monitor Postgres !
+First we will review rules to monitor Postgres !
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/pwx-monitoring.yaml
-  apiVersion: monitoring.coreos.com/v1
-  kind: ServiceMonitor
-  metadata:
-    namespace: portworx
-    name: portworx-prometheus-sm
-    labels:
-      name: portworx-prometheus-sm
-  spec:
-    selector:
-      matchLabels:
-        name: portworx
-    namespaceSelector:
-      any: true
-    endpoints:
-      - port: px-api
-        targetPort: 9001
-      - port: px-kvdb
-        targetPort: 9019
-  ---
-  apiVersion: monitoring.coreos.com/v1
-  kind: PrometheusRule
-  metadata:
-    labels:
-      prometheus: portworx
-      role: prometheus-portworx-rulefiles
-    name: prometheus-portworx-rules-portworx.rules.yaml
-    namespace: portworx
-  spec:
-    groups:
-    - name: portworx.rules
-      rules:
-      - alert: PortworxVolumeUsageCritical
-        annotations:
-          description: Portworx volume {{$labels.volumeid}} on {{$labels.host}} is over 80% used for
-            more than 10 minutes.
-          summary: Portworx volume capacity is at {{$value}}% used.
-        expr: 100 * (px_volume_usage_bytes / px_volume_capacity_bytes) > 80
-        for: 5m
-        labels:
-          issue: Portworx volume {{$labels.volumeid}} usage on {{$labels.host}} is high.
-          severity: critical
-      - alert: PortworxVolumeUsage
-        annotations:
-          description: Portworx volume {{$labels.volumeid}} on {{$labels.host}} is over 70% used for
-            more than 10 minutes.
-          summary: Portworx volume {{$labels.volumeid}} on {{$labels.host}} is at {{$value}}% used.
-        expr: 100 * (px_volume_usage_bytes / px_volume_capacity_bytes) > 70
-        for: 5m
-        labels:
-          issue: Portworx volume {{$labels.volumeid}} usage on {{$labels.host}} is critical.
-          severity: warning
-      - alert: PortworxVolumeWillFill
-        annotations:
-          description: Disk volume {{$labels.volumeid}} on {{$labels.host}} is over 70% full and has
-            been predicted to fill within 2 weeks for more than 10 minutes.
-          summary: Portworx volume {{$labels.volumeid}} on {{$labels.host}} is over 70% full and is
-            predicted to fill within 2 weeks.
-        expr: (px_volume_usage_bytes / px_volume_capacity_bytes) > 0.7 and predict_linear(px_cluster_disk_available_bytes[1h],
-          14 * 86400) < 0
-        for: 10m
-        labels:
-          issue: Disk volume {{$labels.volumeid}} on {{$labels.host}} is predicted to fill within
-            2 weeks.
-          severity: warning
-      - alert: PortworxStorageUsageCritical
-        annotations:
-          description: Portworx storage {{$labels.volumeid}} on {{$labels.host}} is over 80% used
-            for more than 10 minutes.
-          summary: Portworx storage capacity is at {{$value}}% used.
-        expr: 100 * (1 - px_cluster_disk_utilized_bytes / px_cluster_disk_total_bytes)
-          < 20
-        for: 5m
-        labels:
-          issue: Portworx storage {{$labels.volumeid}} usage on {{$labels.host}} is high.
-          severity: critical
-      - alert: PortworxStorageUsage
-        annotations:
-          description: Portworx storage {{$labels.volumeid}} on {{$labels.host}} is over 70% used
-            for more than 10 minutes.
-          summary: Portworx storage {{$labels.volumeid}} on {{$labels.host}} is at {{$value}}% used.
-        expr: 100 * (1 - (px_cluster_disk_utilized_bytes / px_cluster_disk_total_bytes))
-          < 30
-        for: 5m
-        labels:
-          issue: Portworx storage {{$labels.volumeid}} usage on {{$labels.host}} is critical.
-          severity: warning
-      - alert: PortworxStorageWillFill
-        annotations:
-          description: Portworx storage {{$labels.volumeid}} on {{$labels.host}} is over 70% full
-            and has been predicted to fill within 2 weeks for more than 10 minutes.
-          summary: Portworx storage {{$labels.volumeid}} on {{$labels.host}} is over 70% full and
-            is predicted to fill within 2 weeks.
-        expr: (100 * (1 - (px_cluster_disk_utilized_bytes / px_cluster_disk_total_bytes)))
-          < 30 and predict_linear(px_cluster_disk_available_bytes[1h], 14 * 86400) <
-          0
-        for: 10m
-        labels:
-          issue: Portworx storage {{$labels.volumeid}} on {{$labels.host}} is predicted to fill within
-            2 weeks.
-          severity: warning
-      - alert: PortworxStorageNodeDown
-        annotations:
-          description: Portworx Storage Node has been offline for more than 5 minutes.
-          summary: Portworx Storage Node is Offline.
-        expr: max(px_cluster_status_nodes_storage_down) > 0
-        for: 5m
-        labels:
-          issue: Portworx Storage Node is Offline.
-          severity: critical
-      - alert: PortworxQuorumUnhealthy
-        annotations:
-          description: Portworx cluster Quorum Unhealthy for more than 5 minutes.
-          summary: Portworx Quorum Unhealthy.
-        expr: max(px_cluster_status_cluster_quorum) > 1
-        for: 5m
-        labels:
-          issue: Portworx Quorum Unhealthy.
-          severity: critical
-      - alert: PortworxMemberDown
-        annotations:
-          description: Portworx cluster member(s) has(have) been down for more than
-            5 minutes.
-          summary: Portworx cluster member(s) is(are) down.
-        expr: (max(px_cluster_status_cluster_size) - count(px_cluster_status_cluster_size))
-          > 0
-        for: 5m
-        labels:
-          issue: Portworx cluster member(s) is(are) down.
-          severity: critical
-  ---
-  apiVersion: monitoring.coreos.com/v1
-  kind: Prometheus
-  metadata:
-    name: prometheus
-    namespace: portworx
-  spec:
-    replicas: 2
-    logLevel: debug
-    serviceAccountName: prometheus
-    alerting:
-      alertmanagers:
-        - namespace: portworx
-          name: alertmanager-portworx
-          port: web
-    serviceMonitorSelector:
-      matchLabels:
-        name: portworx-prometheus-sm
-      namespaceSelector:
-        matchNames:
-          - portworx
-      resources:
-        requests:
-          memory: 400Mi
-    ruleSelector:
-      matchLabels:
-        role: prometheus-portworx-rulefiles
-        prometheus: portworx
-      namespaceSelector:
-        matchNames:
-          - portworx
-
-.. code-block:: shell
-
-  #oc apply -f /tmp/portworx-pxc-operator.yaml
-  oc apply -f /tmp/pwx-monitoring.yaml
+  oc -n kube-system get servicemonitors.monitoring.coreos.com portworx -o yaml
+  oc get prometheusrules.monitoring.coreos.com -n kube-system portworx -o yaml
+  oc -n kube-system get prometheuses.monitoring.coreos.com px-prometheus -o yaml
 
 In this step, we will deploy the postgres application using the ``PersistentVolumeClaim`` created before.
 
@@ -243,8 +80,8 @@ Below we are creating a Secret to store the postgres password.
 
 .. code-block:: shell
 
-  echo -n mysql123 > password.txt
-  oc create secret generic postgres-pass --from-file=password.txt
+  echo -n mysql123 > /tmp/password.txt
+  oc create secret generic postgres-pass --from-file=/tmp/password.txt
 
 Below we will create a Postgres `Deployment <https://kubernetes.io/docs/concepts/workloads/controllers/deployment/>`__ that uses a Portworx PVC.
 

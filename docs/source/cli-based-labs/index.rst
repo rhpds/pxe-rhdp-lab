@@ -12,5 +12,14 @@ Red Hat Product Demo System Command Line Labs
    :numbered:
    :glob:
 
-   *-cli
+   explore-rhpds-cli
+   review-k8s-storage-cli
+   apache-cassandra-cli
+   shared-volumes-cli
+   k8s-snapshots-cli
+   cloud-snapshots-cli
+   3d-snapshots-cli
+   snapshot-schedules-cli
+   autopilot-cli
+   pvc-manual-resize-cli
 
