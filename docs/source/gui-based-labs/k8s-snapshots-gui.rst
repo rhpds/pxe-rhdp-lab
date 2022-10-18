@@ -2,6 +2,8 @@
 Lab 05 - Kubernetes Snapshots
 =========================================
 
+.. include:: import-yaml.rst
+
 We will create a Deployment to use with snapshots and restores.
 ---------------------------------------------------------------
 
@@ -145,7 +147,6 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
     namespace: mysql-app
   spec:
     persistentVolumeClaimName: px-mysql-pvc
-  EOF
  
 Copy the above code block and paste it into the Import YAML.   
 
@@ -168,7 +169,6 @@ Namespace as the source. Call the restore object as
     groupSnapshot: false
     sourceName: mysql-snap
     sourceNamespace: mysql-app
-  EOF
    
 Copy the above code block and paste it into the Import YAML.   
 
@@ -239,7 +239,6 @@ NGinx statefulSet
         resources:
           requests:
             storage: 1Gi
-  EOF
 
 Copy the above code block and paste it into the Import YAML.   
 
@@ -269,7 +268,6 @@ Create a group snapshot called ``nginx-group-snap`` for the PVC's of the nginx S
         app: nginx
     restoreNamespaces:
      - default
-  EOF
 
 Copy the above code block and paste it into the Import YAML.   
 
@@ -311,6 +309,5 @@ Restore the snapshot taken for the pod ``web-0`` to a new PVC ``web-clone-0`` in
     resources:
       requests:
         storage: 1Gi
-  EOF
 
 Copy the above code block and paste it into the Import YAML.   

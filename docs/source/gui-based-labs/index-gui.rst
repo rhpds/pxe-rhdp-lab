@@ -16,3 +16,4 @@ Red Hat Product Demo System GUI Labs
    review-k8s-storage-gui
    shared-volumes-gui
    k8s-snapshots-gui
+   cloud-snapshots-gui

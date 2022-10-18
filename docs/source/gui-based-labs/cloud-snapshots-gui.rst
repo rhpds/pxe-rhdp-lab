@@ -2,6 +2,8 @@
 Lab 06 - Cloud Snapshots
 =========================================
 
+.. include:: import-yaml.rst
+
 .. important:: We will make use of Minio object store in this Lab. We will use it as the endpoint for our cloud snapshots.
 
 Deploy Minio as target for Portworx Cloud Snapshots
@@ -9,9 +11,9 @@ Deploy Minio as target for Portworx Cloud Snapshots
 
 Create a storageClass for use by Minio
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: px-ha-sc.yaml
 
-  cat <<EOF > /tmp/px-ha-sc.yaml
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -21,13 +23,10 @@ Create a storageClass for use by Minio
     repl: "3"
     io_priority: "high"
     group: "minio"
-  EOF
 
-.. code-block:: shell
+Copy the above code block and paste it into the Import YAML.   
 
-  oc create -f /tmp/px-ha-sc.yaml
-
-Deploy Minio onto the OCP cluster
+Deploy Minio onto the OCP cluster from the jump host
 
 .. code-block:: shell
 
@@ -111,9 +110,9 @@ Provision MySQL Database
 
 We will not create a MySQL database to use with Cloud Snapshots
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: create-objects.yaml
 
-  cat <<EOF > /tmp/create-objects.yaml
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -167,7 +166,6 @@ We will not create a MySQL database to use with Cloud Snapshots
         - name: mysql-data
           persistentVolumeClaim:
             claimName: px-mysql-pvc
-  EOF
 
 .. code-block:: shell
 
@@ -184,9 +182,9 @@ Take Cloud Snapshot
 
 We have deployed a mysql pod that uses PortWorx volume. Take a cloud snapshot of this PVC called ``mysql-snapshot``. The snapshot should be successfully backed up to the object store.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: cloud-snap.yaml
 
-  cat <<EOF > /tmp/cloud-snap.yaml
   apiVersion: volumesnapshot.external-storage.k8s.io/v1
   kind: VolumeSnapshot
   metadata:
@@ -196,7 +194,7 @@ We have deployed a mysql pod that uses PortWorx volume. Take a cloud snapshot of
       portworx/snapshot-type: cloud
   spec:
     persistentVolumeClaimName: px-mysql-pvc
-  EOF
+
 
 .. dropdown:: Show Solution
 
@@ -228,9 +226,9 @@ Clone PVC
 Create a clone PVC called ``px-mysql-clone-pvc`` by restoring data from
 the snapshot ``mysql-snapshot``.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: restore.yaml
 
-  cat <<EOF > /tmp/restore.yaml
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -244,7 +242,6 @@ the snapshot ``mysql-snapshot``.
     resources:
       requests:
         storage: 1Gi
-  EOF
 
 .. dropdown:: Show Solution
   
