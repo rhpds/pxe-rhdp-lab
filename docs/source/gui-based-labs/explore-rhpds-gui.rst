@@ -2,6 +2,8 @@
 Lab 01 - Explore Red Hat Product Demo System cluster
 ====================================================
 
+.. include:: import-yaml.rst
+
 We will begin with a quick tour of the lab environment. This lab consists of a multi-node kubernetes cluster which has been deployed exclusively for you. This is a sandbox environment. Feel free to play around.
 
 Red Hat Openshift Container Platform configuration review

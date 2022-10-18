@@ -12,5 +12,6 @@ Red Hat Product Demo System GUI Labs
    :numbered:
    :glob:
 
-   *-gui
+   explore-rhpds-gui
+   
 
