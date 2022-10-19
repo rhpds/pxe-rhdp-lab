@@ -17,3 +17,7 @@ Red Hat Product Demo System GUI Labs
    shared-volumes-gui
    k8s-snapshots-gui
    cloud-snapshots-gui
+   3d-snapshots-gui
+   snapshot-schedules-gui
+   autopilot-gui
+   pvc-manual-resize-gui

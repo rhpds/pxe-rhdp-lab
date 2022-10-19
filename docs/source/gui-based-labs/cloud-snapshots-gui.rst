@@ -167,15 +167,15 @@ We will not create a MySQL database to use with Cloud Snapshots
           persistentVolumeClaim:
             claimName: px-mysql-pvc
 
+Copy the above code block and paste it into the Import YAML.   
+
+Create a demodb database
+
+Workloads -> Pods -> mysql pod -> Terminal
+
 .. code-block:: shell
 
-   oc create -f /tmp/create-objects.yaml
-   oc wait pod --for=condition=Ready -l app=mysql --timeout=-1s
-
-.. code-block:: shell
-
-  POD=`oc get pods -l app=mysql | grep Running | grep 1/1 | awk '{print $1}'`
-  oc exec -it $POD -- mysql -u root -e "Create database demodb"
+  mysql -u root -e "Create database demodb"
 
 Take Cloud Snapshot
 -------------------
@@ -195,22 +195,17 @@ We have deployed a mysql pod that uses PortWorx volume. Take a cloud snapshot of
   spec:
     persistentVolumeClaimName: px-mysql-pvc
 
+Copy the above code block and paste it into the Import YAML.   
 
-.. dropdown:: Show Solution
-
-   We have created a solution file under ‘/tmp/cloud-snap.yaml’. 
-   Create it by running: 
-   
-   .. code-block:: shell
-    
-    oc apply -f /tmp/cloud-snap.yaml
-
-If the cloud credentials and volume snapshot were set up correctly, you
-can check the status by running the below command:
+If the cloud credentials and volume snapshot were set up correctly, you can check the status by checking the status of the volumeSnapshot:
 
 .. code-block:: shell
 
-  oc describe stork-volumesnapshot mysql-snapshot
+  Home -> Search -> Resources 
+  Search for VolumeSnapshots.volumesnapshot.external-storage.k8s.io/v1
+  mysql-snapshot -> YAML
+
+.. image:: images/mysql-snapshot-yaml.png 
 
 To check for the backed up objects in the object store:
 
@@ -223,8 +218,7 @@ To check for the backed up objects in the object store:
 Clone PVC
 ---------
 
-Create a clone PVC called ``px-mysql-clone-pvc`` by restoring data from
-the snapshot ``mysql-snapshot``.
+Create a clone PVC called ``px-mysql-clone-pvc`` by restoring data from the snapshot ``mysql-snapshot``.
 
 .. code-block:: yaml
   :name: restore.yaml
@@ -243,12 +237,6 @@ the snapshot ``mysql-snapshot``.
       requests:
         storage: 1Gi
 
-.. dropdown:: Show Solution
-  
-  We have created a solution file under ‘/tmp/restore.yaml’. Create it by running: 
-  
-  .. code-block:: shell
-  
-    oc apply -f /tmp/restore.yaml 
-  
-  Make sure the volume becomes bound oc get pvc
+Copy the above code block and paste it into the Import YAML.
+
+Verify the new persistentVolumeClaim becomes bound.

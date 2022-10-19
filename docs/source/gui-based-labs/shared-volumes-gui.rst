@@ -29,6 +29,7 @@ of supported parameters. In our case the key parameter is sharedv4 =
 true.
 
 Create the storage class using:
+
 Copy the above code block and paste it into the Import YAML.   
 
 Create PersistentVolumeClaim
