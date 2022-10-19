@@ -95,7 +95,7 @@ Run the below command to obtain the object store endpoint:
 
 .. dropdown:: Show Solution
 
-  Get the minio endpoint from the ‘px-minio-1’ service and use it to create portworx credential: 
+  Get the minio endpoint from the ``px-minio`` service and use it to create portworx credential: 
   
   .. code-block:: shell
 
@@ -108,10 +108,10 @@ Run the below command to obtain the object store endpoint:
 Provision MySQL Database
 ------------------------
 
-We will not create a MySQL database to use with Cloud Snapshots
+We will now create a MySQL database to use with Cloud Snapshots
 
 .. code-block:: yaml
-  :name: create-objects.yaml
+  :name: create-px-mysql-sc.yaml
 
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
@@ -122,7 +122,10 @@ We will not create a MySQL database to use with Cloud Snapshots
     repl: "3"
     io_profile: "db"
     io_priority: "high"
-  ---
+
+.. code-block:: yaml
+  :name: create-objects.yaml
+
   kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:
@@ -167,11 +170,13 @@ We will not create a MySQL database to use with Cloud Snapshots
           persistentVolumeClaim:
             claimName: px-mysql-pvc
 
-Copy the above code block and paste it into the Import YAML.   
+Copy the above code blocks and paste it into the Import YAML.   
 
 Create a demodb database
 
-Workloads -> Pods -> mysql pod -> Terminal
+.. code-block:: shell
+  
+  Workloads -> Pods -> mysql pod -> Terminal
 
 .. code-block:: shell
 

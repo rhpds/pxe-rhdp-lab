@@ -96,7 +96,7 @@ Run the below command to obtain the object store endpoint:
 
 .. dropdown:: Show Solution
 
-  Get the minio endpoint from the ‘px-minio-1’ service and use it to create portworx credential: 
+  Get the minio endpoint from the ``px-minio`` service and use it to create portworx credential: 
   
   .. code-block:: shell
 
@@ -109,7 +109,7 @@ Run the below command to obtain the object store endpoint:
 Provision MySQL Database
 ------------------------
 
-We will not create a MySQL database to use with Cloud Snapshots
+We will now create a MySQL database to use with Cloud Snapshots
 
 .. code-block:: shell
 
@@ -200,15 +200,14 @@ We have deployed a mysql pod that uses PortWorx volume. Take a cloud snapshot of
 
 .. dropdown:: Show Solution
 
-   We have created a solution file under ‘/tmp/cloud-snap.yaml’. 
+   We have created a solution file under ``/tmp/cloud-snap.yaml``. 
    Create it by running: 
    
    .. code-block:: shell
     
     oc apply -f /tmp/cloud-snap.yaml
 
-If the cloud credentials and volume snapshot were set up correctly, you
-can check the status by running the below command:
+If the cloud credentials and volume snapshot were set up correctly, you can check the status by running the below command:
 
 .. code-block:: shell
 
@@ -225,8 +224,7 @@ To check for the backed up objects in the object store:
 Clone PVC
 ---------
 
-Create a clone PVC called ``px-mysql-clone-pvc`` by restoring data from
-the snapshot ``mysql-snapshot``.
+Create a clone PVC called ``px-mysql-clone-pvc`` by restoring data from the snapshot ``mysql-snapshot``.
 
 .. code-block:: shell
 
@@ -248,7 +246,7 @@ the snapshot ``mysql-snapshot``.
 
 .. dropdown:: Show Solution
   
-  We have created a solution file under ‘/tmp/restore.yaml’. Create it by running: 
+  We have created a solution file under ``/tmp/restore.yaml``. Create it by running: 
   
   .. code-block:: shell
   

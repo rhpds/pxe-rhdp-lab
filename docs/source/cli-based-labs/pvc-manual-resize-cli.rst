@@ -147,7 +147,7 @@ Challenge questions
 
 Inspect the PersistentVolumeClaims on this cluster (default namespace)
 
-Q1: How many PVC’s have been created?
+Q1: How many PVC's have been created?
 
 1. 2
 2. 5
@@ -164,7 +164,7 @@ Q1: How many PVC’s have been created?
    
    Answer: 5
 
-Q2: What is the Size of the PVC called ‘pvc1’?
+Q2: What is the Size of the PVC called ``pvc1``?
 
 1. 1Gi
 2. 3Gi
@@ -181,7 +181,7 @@ Q2: What is the Size of the PVC called ‘pvc1’?
    
    Answer: 2Gi
 
-Q3: What is the Access Mode used for the PVC called ‘pvc3’?
+Q3: What is the Access Mode used for the PVC called ``pvc3``?
 
 1. RWX
 2. RWO

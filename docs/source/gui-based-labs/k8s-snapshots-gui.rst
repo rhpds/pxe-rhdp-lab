@@ -10,7 +10,7 @@ We will create a Deployment to use with snapshots and restores.
 MySQL Deployment
 
 .. code-block:: yaml
-  :name: create-mysql.yaml
+  :name: create-px-db-sc.yaml
 
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
@@ -21,7 +21,10 @@ MySQL Deployment
     repl: "3"
     io_profile: "db"
     io_priority: "high"
-  ---
+
+.. code-block:: yaml
+  :name: create-mysql.yaml
+
   apiVersion: v1
   kind: Namespace
   metadata:
@@ -77,7 +80,7 @@ MySQL Deployment
           persistentVolumeClaim:
             claimName: px-mysql-pvc
 
-Copy the above code block and paste it into the Import YAML.   
+Copy the above code blocks and paste it into the Import YAML.   
 
 Before proceeding to the next step, please make sure the mysql pod is running:
 
@@ -181,7 +184,7 @@ We will create a new StatefulSet for you to explore.
 NGinx statefulSet
 
 .. code-block:: yaml
-  :name: create-nginx-sts.yaml
+  :name: create-px-sc.yaml
   
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
@@ -191,7 +194,10 @@ NGinx statefulSet
   parameters:
      repl: "2"
      io_priority: "high"
-  ---
+
+.. code-block:: yaml
+  :name: create-nginx-sts.yaml
+
   apiVersion: v1
   kind: Service
   metadata:
@@ -240,7 +246,7 @@ NGinx statefulSet
           requests:
             storage: 1Gi
 
-Copy the above code block and paste it into the Import YAML.   
+Copy the above code blocks and paste it into the Import YAML.   
 
 Before proceeding to the next step, please make sure all the resources are up:
 

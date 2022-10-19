@@ -166,8 +166,7 @@ What is snapshot frequency set for the policy ``pol1``?
 Create a new snapshot schedule policy
 -------------------------------------
 
-Create a daily snapshot schedule policy called ``daily-schedule`` at
-``10 PM``, ``retain 5``.
+Create a daily snapshot schedule policy called ``daily-schedule`` at ``10 PM``, ``retain 5``.
 
 .. code-block:: shell
 
@@ -214,8 +213,8 @@ Create a storage class ``px-nginx-scheduled`` with the newly created schedule po
   EOF
 
 .. dropdown:: Show Solution
-   
-   Run the below command to create the storage class: 
+  
+  Run the below command to create the storage class: 
   
   .. code-block:: shell
   
@@ -281,7 +280,7 @@ Use the YAML file ``/tmp/create-nginx-sts.yaml`` to create the deployment.
             storage: 1Gi
   EOF
 
-The PVC’s created by the StatefulSet will be backed up automatically as per the schedule policy ``daily-schedule``.
+The PVC's created by the StatefulSet will be backed up automatically as per the schedule policy ``daily-schedule``.
 
 .. dropdown:: Show Solution
 

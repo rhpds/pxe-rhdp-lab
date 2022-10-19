@@ -80,15 +80,13 @@ MySQL Deployment
   
   oc create -f /tmp/create-mysql.yaml
 
-Before proceeding to the next step, please make sure the mysql pod is
-running:
+Before proceeding to the next step, please make sure the mysql pod is running:
 
 .. code-block:: shell
 
   oc get pods -n mysql-app  -l app=mysql
 
-How many pods have been created for MYSQL with label ``app=mysql`` in
-this cluster (all namespaces)?
+How many pods have been created for MYSQL with label ``app=mysql`` in this cluster (all namespaces)?
 
 .. dropdown:: Show Solution
   
@@ -159,9 +157,7 @@ Run the below command to create the snapshot:
 Restore the snapshot for MySQL
 ------------------------------
 
-Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same
-Namespace as the source. Call the restore object as
-``mysql-snap-restore``.
+Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same Namespace as the source. Call the restore object as ``mysql-snap-restore``.
 
 .. code-block:: shell
 
@@ -256,8 +252,7 @@ NGinx statefulSet
 
   oc create -f /tmp/create-nginx-sts.yaml
 
-Before proceeding to the next step, please make sure all the resources
-are up:
+Before proceeding to the next step, please make sure all the resources are up:
 
 .. code-block:: shell
    
@@ -268,8 +263,7 @@ Note: Please wait until both pods are in a ``Running`` state.
 Create a snapshot for Nginx
 ---------------------------
 
-Create a group snapshot called ``nginx-group-snap`` for the PVC’s of the
-nginx StatefulSet.
+Create a group snapshot called ``nginx-group-snap`` for the PVC's of the nginx StatefulSet.
 
 .. code-block:: shell
 
@@ -295,8 +289,7 @@ Run the below command to create the snapshot:
 Restore the snapshot for Nginx
 ------------------------------
 
-Restore the snapshot taken for the pod ``web-0`` to a new PVC
-``web-clone-0`` in the ``default`` namespace.
+Restore the snapshot taken for the pod ``web-0`` to a new PVC ``web-clone-0`` in the ``default`` namespace.
 
 .. note:: 
    

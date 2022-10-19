@@ -249,9 +249,7 @@ Rules:
 Create an application consistent snapshot of MySQL
 --------------------------------------------------
 
-Create a new volume snapshot called ``mysql-3d-snapshot`` which makes
-use of the pre-snapshot rule ``mysql-presnap-rule'`` with PVC
-\`px-mysql-pvc’.
+Create a new volume snapshot called ``mysql-3d-snapshot`` which makes use of the pre-snapshot rule ``mysql-presnap-rule'`` with PVC ``px-mysql-pvc``.
 
 .. code-block:: shell
 
@@ -317,8 +315,7 @@ Rules:
 Create a post-snapshot rule for MongoDB
 ---------------------------------------
 
-Create a pre-snapshot rule called ``mongodb-postsnap-rule`` with the
-below specifications:
+Create a pre-snapshot rule called ``mongodb-postsnap-rule`` with the below specifications:
 
 .. code-block:: shell
 
@@ -355,9 +352,7 @@ Rules:
 Create an application consistent snapshot of MongoDB
 ----------------------------------------------------
 
-Create a new group volume snapshot called ``mongodb-3d-snapshot`` which
-makes use of the pre and snapshot rules ``mongodb-presnap-rule`` and
-``mongodb-postsnap-rule``.
+Create a new group volume snapshot called ``mongodb-3d-snapshot`` which makes use of the pre and snapshot rules ``mongodb-presnap-rule`` and ``mongodb-postsnap-rule``.
 
 .. code-block:: shell
 

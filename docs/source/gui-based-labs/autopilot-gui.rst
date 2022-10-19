@@ -92,7 +92,7 @@ Below we will create a Postgres `Deployment <https://kubernetes.io/docs/concepts
 Deploy Postgres
 ~~~~~~~~~~~~~~~
 
-Now that we have the volumes created, let's deploy Postgres !
+Now that we have the volumes created, let's deploy Postgres!
 
 .. code-block:: yaml
   :name: postgres-app.yaml
@@ -169,11 +169,15 @@ Portworx ships with a `pxctl <https://docs.portworx.com/reference/cli/basics/>`_
 
 Below we will use pxctl to inspect the underlying volume for our PVC.
 
+.. code-block:: text
+
+    Workloads -> Pods -> 
+    Select one of the pods named, portworx-cluster-XXXX
+    Go to Terminal tab to review the volume status. Run: 
+
 .. code-block:: shell
 
-  VOL=`oc get pvc | grep px-postgres-pvc | awk '{print $3}'`
-  PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
-  oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect ${VOL}
+    /opt/pwx/bin/pxctl volume inspect <PVC-ID>
 
 Make the following observations in the inspect output \* ``State`` indicates the volume is attached and shows the node on which it is attached. This is the node where the Kubernetes pod is running. \* ``HA`` shows the number of configured replicas for this volume \* ``Labels`` show the name of the PVC for this volume \* ``Replica sets on nodes`` shows the px nodes on which volume is replicated \* ``Size`` of the volume is 1GB. We'll check this later to see our volume property expanded.
 

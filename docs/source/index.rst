@@ -2,7 +2,7 @@ Welcome to Portworx documentation for the Red Hat Product Demo System!
 =======================================================================
 
 
-.. warning:: The steps assume you are using the Red Hat Demo System**
+.. warning:: The steps assume you are using the Red Hat Demo System
 
 .. note::
 

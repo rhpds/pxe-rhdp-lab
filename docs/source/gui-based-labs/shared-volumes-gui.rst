@@ -23,10 +23,7 @@ Take a look at the StorageClass definition for Portworx
      repl: "3"
      sharedv4: "true"
 
-The parameters are declarative policies for your storage volume. See
-`here <https://docs.portworx.com/manage/volumes.html>`__ for a full list
-of supported parameters. In our case the key parameter is sharedv4 =
-true.
+The parameters are declarative policies for your storage volume. See `here <https://docs.portworx.com/manage/volumes.html>`__ for a full list of supported parameters. In our case the key parameter is sharedv4 = true.
 
 Create the storage class using:
 
@@ -52,19 +49,15 @@ Take a look at the Persistent Volume Claim
       requests:
         storage: 1Gi
 
-Here we're pointing at the storage class defined above and giving our
-volume a maximum size (Portworx thinly provisions volumes so that space
-will not be reserved up-front).
+Here we're pointing at the storage class defined above and giving our volume a maximum size (Portworx thinly provisions volumes so that space will not be reserved up-front).
 
 Create the PersistentVolumeClaim using:
 
 Copy the above code block and paste it into the Import YAML.   
 
-Now that we have the volumes created, let's deploy a few nginx instances
-and see how the shared volumes work!
+Now that we have the volumes created, let's deploy a few nginx instances and see how the shared volumes work!
 
-In this step, we will deploy the nginx application using the
-``PersistentVolumeClaim`` created before.
+In this step, we will deploy the nginx application using the ``PersistentVolumeClaim`` created before.
 
 .. note:: Notice in the below specification we have set the securityContext.seLinuxOptions. Without this setting the pods may be assigned random selinux labels, in which case only the last pod to come online would have access to the shared volume.   
 
@@ -242,8 +235,7 @@ Step deploy 3 instances of nginx
 
 Take a look at the yaml:
 
-Observe the ``volumeMounts`` and ``volumes`` sections where we mount the
-PVC.
+Observe the ``volumeMounts`` and ``volumes`` sections where we mount the PVC.
 
 Copy the above code block and paste it into the Import YAML.   
 
@@ -256,18 +248,14 @@ Wait till all three nginx pods are in ready state.
 
   Workloads -> Pods
 
-When all three pods are in ``Running`` state then then hit ``ctrl-c`` to
-clear the screen.. Be patient, if it's staying in Pending state for a
-while it's because it has to fetch the docker image on each node.
+When all three pods are in ``Running`` state then then hit ``ctrl-c`` to clear the screen.. Be patient, if it's staying in Pending state for a while it's because it has to fetch the docker image on each node.
 
 In this step, we will use pxctl to inspect the volume
 
 Inspect the Portworx volume
 ---------------------------------
 
-Portworx ships with a
-`pxctl <https://docs.portworx.com/control/status.html>`__ command line
-that can be used to manage Portworx.
+Portworx ships with a `pxctl <https://docs.portworx.com/control/status.html>`__ command line that can be used to manage Portworx.
 
 Below we will use ``pxctl`` to inspect the underlying volume for our
 PVC.
@@ -282,19 +270,9 @@ PVC.
 
     /opt/pwx/bin/pxctl volume inspect <PVC-ID>
 
-Make the following observations in the volume list \* ``Status``
-indicates the volume is attached and shows the node on which it is
-attached. For shared volumes, this is the transaction coordinator node
-which all other nodes will go through to write the data. \* ``HA`` shows
-the number of configured replicas for this volume (shared volumes can be
-replicated of course, you can try it by modifying the storage class in
-step 2) \* ``Shared`` shows if the volume is shared \* ``IO Priority``
-shows the relative priority of this volume's IO (high, medium, or low)
-\* ``Volume consumers`` shows which pods are accessing the volume
+Make the following observations in the volume list \* ``Status`` indicates the volume is attached and shows the node on which it is attached. For shared volumes, this is the transaction coordinator node which all other nodes will go through to write the data. \* ``HA`` shows the number of configured replicas for this volume (shared volumes can be replicated of course, you can try it by modifying the storage class in step 2) \* ``Shared`` shows if the volume is shared \* ``IO Priority`` shows the relative priority of this volume's IO (high, medium, or low) \* ``Volume consumers`` shows which pods are accessing the volume
 
-Now that we have our shared volumes created and mounted into all three
-nginx containers, let's proceed to write some data into the html folder
-of nginx and see how it gets read by all three containers.
+Now that we have our shared volumes created and mounted into all three nginx containers, let's proceed to write some data into the html folder of nginx and see how it gets read by all three containers.
 
 In this step, we will check the state of our nginx servers.
 
@@ -345,9 +323,7 @@ Create index.html into webapp1's pod:
   |__/      \______/ |__/         \___/   \_____/\___/  \______/ |__/      |__/  \__/
   EOF
 
-Now let's try all three URLs and see our hello world message is showing
-up on all three. This is because all three are attached to the same
-volume so updating one updates all three.
+Now let's try all three URLs and see our hello world message is showing up on all three. This is because all three are attached to the same volume so updating one updates all three.
 
 .. code-block:: shell
 
@@ -378,8 +354,7 @@ In this step, we will play some file ping pong
 Open some bash sessions in webapps 1-3
 --------------------------------------------
 
-Let's open a couple more terminals and have fun with shared volumes. You
-can navigate the terminals in the upper left corner of the screen:
+Let's open a couple more terminals and have fun with shared volumes. You can navigate the terminals in the upper left corner of the screen:
 
 Open a terminal for webapp1: *Terminal 1*.
 
@@ -420,8 +395,7 @@ Open a terminal for webapp3: *Terminal 3*.
   PS1="ping-pong-3# "
   echo "ping" > pingpong
 
-Use the following command in *Terminal 3* to watch Ping - Pong Match
-between webapp1 and webapp2
+Use the following command in *Terminal 3* to watch Ping - Pong Match between webapp1 and webapp2
 
 .. code-block:: shell
 
@@ -439,5 +413,4 @@ between webapp1 and webapp2
 
   while sleep 1; do  echo "pong" >> pingpong; done
 
-You can have some more fun by using terminals 1,2,3 to see how they all
-share data in the mounted /usr/share/nginx/html folder.
+You can have some more fun by using terminals 1,2,3 to see how they all share data in the mounted /usr/share/nginx/html folder.
