@@ -2,6 +2,8 @@
 Lab 10 - PVC Manual Resize Volume
 =================================
 
+.. include:: import-yaml.rst
+
 Lab setup
 ---------
 
