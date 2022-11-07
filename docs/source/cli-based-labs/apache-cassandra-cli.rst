@@ -78,8 +78,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
         terminationGracePeriodSeconds: 1800
         containers:
         - name: cassandra
-          # image: gcr.io/google-samples/cassandra:v14
-          image: bitnami/cassandra
+          image: gcr.io/google-samples/cassandra:v14
           imagePullPolicy: Always
           ports:
           - containerPort: 7000
@@ -98,6 +97,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
              cpu: "500m"
              memory: 1Gi
           securityContext:
+            privileged: true
             capabilities:
               add:
                 - IPC_LOCK
@@ -111,7 +111,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
             - name: HEAP_NEWSIZE
               value: 100M
             - name: CASSANDRA_SEEDS
-              value: "cassandra-0.cassandra.default.svc.cluster.local"
+              value: "cassandra-0.cassandra.default.svc.cluster.local" 
             - name: CASSANDRA_CLUSTER_NAME
               value: "K8Demo"
             - name: CASSANDRA_DC
@@ -221,7 +221,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
 
 Create a keyspace with replication of 3 and insert some data:
 
@@ -302,7 +302,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
 
 Select rows from the keyspace we previously created:
 
@@ -371,7 +371,7 @@ First let's insert a new record in our features table so we can show that the sn
 
 .. code-block:: shell
 
-  oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
 
 .. code-block:: shell
 
@@ -429,7 +429,7 @@ Katacoda and we’re here to learn.
 
 .. code-block:: shell
 
-  oc exec -it cassandra-0 -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
 
 .. code-block:: shell
 
@@ -571,6 +571,7 @@ create the new cassandra statefulset based on our cloned snapshots.
              cpu: "500m"
              memory: 1Gi
           securityContext:
+            privileged: true
             capabilities:
               add:
                 - IPC_LOCK
@@ -664,7 +665,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cassandra-0 -- cqlsh cassandra-restored-0.cassandra-restored.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-restored-0.cassandra-restored.default.svc.cluster.local
 
 Select rows from the keyspace we previously created:
 
