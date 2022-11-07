@@ -104,7 +104,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "PID=\$(pidof java) && kill $PID && while ps -p $PID > /dev/null; do sleep 1; done"]
+                command: ["/bin/sh", "-c", "PID=\$(pidof java) && kill \$PID && while ps -p \$PID > /dev/null; do sleep 1; done"]
           env:
             - name: MAX_HEAP_SIZE
               value: 512M
@@ -578,7 +578,7 @@ create the new cassandra statefulset based on our cloned snapshots.
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "PID=$(pidof java) && kill $PID && while ps -p $PID > /dev/null; do sleep 1; done"]
+                command: ["/bin/sh", "-c", "PID=$(pidof java) && kill \$PID && while ps -p \$PID > /dev/null; do sleep 1; done"]
           env:
             - name: MAX_HEAP_SIZE
               value: 512M
