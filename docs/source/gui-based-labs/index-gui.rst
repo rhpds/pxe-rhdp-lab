@@ -14,6 +14,7 @@ Red Hat Product Demo System GUI Labs
 
    explore-rhpds-gui
    review-k8s-storage-gui
+   apache-cassandra-gui
    shared-volumes-gui
    k8s-snapshots-gui
    cloud-snapshots-gui

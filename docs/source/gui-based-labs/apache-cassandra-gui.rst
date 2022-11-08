@@ -2,6 +2,8 @@
 Lab 03 - Apache Cassandra
 =========================
 
+.. include:: import-yaml.rst
+
 Before we deploy cassandra, we will need to create a Portworx volume (PVC) for Cassandra. In order to create PVCs, we need a StorageClass which defined the class of storage available to us.
 
 Create StorageClass
@@ -9,9 +11,9 @@ Create StorageClass
 
 Take a look at the StorageClass definition for Cassandra:
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: px-storageclass.yaml
 
-  cat <<EOF > /tmp/cassandra-sc.yaml
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -21,17 +23,12 @@ Take a look at the StorageClass definition for Cassandra:
     repl: "2"
     priority_io: "high"
     group: "cassandra_vg"
-  EOF
 
 Note that we define a replication factor of 2 to accelerate Cassandra node recovery and we also defined a group name for Cassandra so that we can take `3DSnapshots <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-snapshots/snaps-3d/>`__ which will be consistent across the whole Cassandra cluster. In production environment which larger clusters you would also add the “fg=true” parameter to your StorageClass to ensure that Portworx places each Cassandra volume and their replica on separate nodes so that in case of node failure we never failover Kafka to a node where it is already running. To enable this feature with a 3 volume group and 2 replicas you need a minimum of 6 worker nodes.
 
 The parameters are declarative policies for your storage volume. See `here <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/dynamic-provisioning/>`__ for a full list of supported parameters.
 
-Create the storage class using:
-
-.. code-block:: shell
-
-   oc create -f /tmp/cassandra-sc.yaml
+Copy the above code block and paste it into the Import YAML.   
 
 Now that we have the StorageClass created, let's deploy Cassandra!
 
@@ -42,9 +39,9 @@ Create the Cassandra StatefulSet
 
 Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/>`__ that uses a Portworx PVC.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: cassandra.YAML
 
-  cat <<EOF > /tmp/cassandra.yaml
   apiVersion: v1
   kind: Service
   metadata:
@@ -104,7 +101,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "PID=\$(pidof java) && kill \$PID && while ps -p \$PID > /dev/null; do sleep 1; done"]
+                command: ["/bin/sh", "-c", "PID=$(pidof java) && kill $PID && while ps -p $PID > /dev/null; do sleep 1; done"]
           env:
             - name: MAX_HEAP_SIZE
               value: 512M
@@ -166,21 +163,12 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
         - sh
         - -c
         - "exec tail -f /dev/null"
-  EOF
 
-Take a look at the yaml:
-
-.. code-block:: shell
-
-  cat /tmp/cassandra.yaml
+Take a look at the yaml.
 
 Observe that the stateful set is exposed through a headless service. Also note how PVCs will be dynamically created with each member of the stateful set based on the ``volumeClaimTemplates`` and it's ``StorageClass`` sections. Finally, you will also see that we are starting with a single node (replicas: 1).
 
-Now use oc to deploy Cassandra.
-
-.. code-block:: shell
-
-  oc create -f /tmp/cassandra.yaml
+Copy the above code block and paste it into the Import YAML.   
 
 Verify Cassandra pod is ready
 -----------------------------------
@@ -189,7 +177,7 @@ Below commands wait till the Cassandra pod are in ready state. Take note of the 
 
 .. code-block:: shell
 
-  watch oc get pods  -o wide
+  Workloads -> Pods
 
 This takes a few minutes, when the cassandra-0 and cqlsh pods are in STATUS ``Running`` and ``READY 1/1``, hit ``ctrl-c`` to exit.
 
@@ -202,11 +190,15 @@ Portworx ships with a `pxctl <https://docs.portworx.com/reference/cli/basics/>`_
 
 Below we will use ``pxctl`` to inspect the underlying volumes for our Cassandra pod.
 
+.. code-block:: text
+
+    Workloads -> Pods -> 
+    Select one of the pods named, portworx-cluster-XXXX
+    Go to Terminal tab to review the volume status. Run: 
+
 .. code-block:: shell
 
-  VOLS=`oc get pvc | grep cassandra | awk '{print $3}'`
-  PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
-  oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect $VOLS
+    /opt/pwx/bin/pxctl volume inspect <PVC-ID>
 
 Make the following observations in the inspect output \* ``State`` indicates the volume is attached and shows the node on which it is attached. This is the node where the Kubernetes pod is running. \* ``HA`` shows the number of configured replicas for this volume \* ``Labels`` show the name of the PVC for this volume \* ``Replica sets on nodes`` shows the px nodes on which volume is replicated
 
@@ -381,9 +373,9 @@ First let's insert a new record in our features table so we can show that the sn
 
 We're going to use STORK to take a 3DSnapshot of our Cassandra cluster. Take a look at the px-snap.yaml file and notice that we are going to force  a ``nodetool flush`` command on eachcluster member before we take the snapshot. As explained before, that will force all data to be written to disk in order  to ensure consistency of the snapshot. We also defined the volume group  name (cassandra_vg) so Portworx will synchronously quiesce I/O on all volumes  before triggering their snapshots.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: px-snap.yaml
 
-  cat <<EOF > /tmp/px-snap.yaml
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: Rule
   metadata:
@@ -404,13 +396,11 @@ We're going to use STORK to take a 3DSnapshot of our Cassandra cluster. Take a l
     pvcSelector:
       matchLabels:
         app: cassandra
-  EOF
+  
 
-Now let’s take a snapshot.
+Now let's take a snapshot.
 
-.. code-block:: shell
-
-  oc create -f /tmp/px-snap.yaml
+Copy the above code block and paste it into the Import YAML.   
 
 You can see the snapshots using the following command:
 
@@ -424,8 +414,8 @@ hit ``ctrl-c`` to exit the screen.
 Drop features table
 -------------------------
 
-Now we’re going to go ahead and do something stupid because it’s
-Katacoda and we’re here to learn.
+Now we're going to go ahead and do something stupid because it's
+Katacoda and we're here to learn.
 
 .. code-block:: shell
 
@@ -440,17 +430,15 @@ Katacoda and we’re here to learn.
   SELECT id, name, value FROM portworx.features;
   quit
 
-You should have received an “Error” since the table is deleted. Ok, so
-we deleted our database, what now?
+You should have received an “Error” since the table is deleted. Ok, so we deleted our database, what now?
 
 Create clones from your snapshots and restore from those snapshots.
 
-First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names
-from the above ``oc get stork-volumesnapshots`` output.
+First edit ``vols-from-snaps`` and insert the volumesnapshots names from the above ``oc get stork-volumesnapshots`` output.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: vols-from-snaps.yaml
 
-  cat <<EOF > /tmp/vols-from-snaps.yaml
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -494,17 +482,8 @@ from the above ``oc get stork-volumesnapshots`` output.
     resources:
       requests:
         storage: 10Gi
-  EOF
 
-.. code-block:: shell
-
-  vim /tmp/vols-from-snaps.yaml
-
-Then create the clones.
-
-.. code-block:: shell
-
-  oc create -f /tmp/vols-from-snaps.yaml
+Copy the above code block and paste it into the Import YAML and edit the <REPLACE> value with the values from stork-volumesnapshots.
 
 View the PVCs
 
@@ -516,9 +495,9 @@ Restore cassandra. We delete the original Cassandra deployment only
 because we dont have enough nodes in this lab to host two. Then we
 create the new cassandra statefulset based on our cloned snapshots.
 
-.. code-block:: shell
+.. code-block:: yaml
+  :name: cassandra-app-restore.yaml
 
-  cat <<EOF > /tmp/cassandra-app-restore.yaml
   apiVersion: v1
   kind: Service
   metadata:
@@ -578,7 +557,7 @@ create the new cassandra statefulset based on our cloned snapshots.
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "PID=\$(pidof java) && kill \$PID && while ps -p \$PID > /dev/null; do sleep 1; done"]
+                command: ["/bin/sh", "-c", "PID=$(pidof java) && kill $PID && while ps -p $PID > /dev/null; do sleep 1; done"]
           env:
             - name: MAX_HEAP_SIZE
               value: 512M
@@ -640,7 +619,6 @@ create the new cassandra statefulset based on our cloned snapshots.
         - sh
         - -c
         - "exec tail -f /dev/null"
-  EOF
 
 .. code-block:: shell
 
