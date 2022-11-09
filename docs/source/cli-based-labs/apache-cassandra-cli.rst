@@ -221,7 +221,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
 Create a keyspace with replication of 3 and insert some data:
 
@@ -242,7 +242,7 @@ Select rows from the keyspace we just created:
 
   SELECT id, name, value FROM portworx.features;
 
-Now that we have data created let’s ``quit`` the cqlsh session.
+Now that we have data created let's ``quit`` the cqlsh session.
 
 Flush data to disk
 ------------------------
@@ -302,7 +302,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
 Select rows from the keyspace we previously created:
 
@@ -337,7 +337,7 @@ After all pods are ``READY 1/1`` and ``Running`` you can hit ``ctrl-c`` to exit 
 
   oc exec -it cassandra-0 -- nodetool status
 
-It will take a minute or two for all three Cassandra nodes to come online and discover each other. When it’s ready you should see the following output in from the ``nodetool status`` command (address and host ID will vary):
+It will take a minute or two for all three Cassandra nodes to come online and discover each other. When it's ready you should see the following output in from the ``nodetool status`` command (address and host ID will vary):
 
 .. code-block:: shell
 
@@ -371,7 +371,7 @@ First let's insert a new record in our features table so we can show that the sn
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
 .. code-block:: shell
 
@@ -406,7 +406,7 @@ We're going to use STORK to take a 3DSnapshot of our Cassandra cluster. Take a l
         app: cassandra
   EOF
 
-Now let’s take a snapshot.
+Now let's take a snapshot.
 
 .. code-block:: shell
 
@@ -424,12 +424,12 @@ hit ``ctrl-c`` to exit the screen.
 Drop features table
 -------------------------
 
-Now we’re going to go ahead and do something stupid because it’s
-Katacoda and we’re here to learn.
+Now we're going to go ahead and do something stupid because it's
+Katacoda and we're here to learn.
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
 .. code-block:: shell
 
@@ -440,13 +440,11 @@ Katacoda and we’re here to learn.
   SELECT id, name, value FROM portworx.features;
   quit
 
-You should have received an “Error” since the table is deleted. Ok, so
-we deleted our database, what now?
+You should have received an “Error” since the table is deleted. Ok, so we deleted our database, what now?
 
 Create clones from your snapshots and restore from those snapshots.
 
-First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names
-from the above ``oc get stork-volumesnapshots`` output.
+First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names from the above ``oc get stork-volumesnapshots`` output.
 
 .. code-block:: shell
 
@@ -512,9 +510,7 @@ View the PVCs
 
   oc get pvc
 
-Restore cassandra. We delete the original Cassandra deployment only
-because we dont have enough nodes in this lab to host two. Then we
-create the new cassandra statefulset based on our cloned snapshots.
+Restore cassandra. We delete the original Cassandra deployment only because we dont have enough nodes in this lab to host two. Then we create the new cassandra statefulset based on our cloned snapshots.
 
 .. code-block:: shell
 
@@ -650,8 +646,7 @@ create the new cassandra statefulset based on our cloned snapshots.
 
   oc create -f /tmp/cassandra-app-restore.yaml
 
-Wait for restored cassandra database to be Running (1/1). *Note there
-will be only 1 replica restored*
+Wait for restored cassandra database to be Running (1/1). *Note there will be only 1 replica restored*
 
 .. code-block:: shell
 
@@ -665,7 +660,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-restored-0.cassandra-restored.default.svc.cluster.local
+  oc exec -it cqlsh -- cqlsh cassandra-restored-0.cassandra-restored.default.svc.cluster.local --cqlversion=3.4.4
 
 Select rows from the keyspace we previously created:
 

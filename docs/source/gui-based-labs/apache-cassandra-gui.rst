@@ -179,7 +179,7 @@ Below commands wait till the Cassandra pod are in ready state. Take note of the 
 
   Workloads -> Pods
 
-This takes a few minutes, when the cassandra-0 and cqlsh pods are in STATUS ``Running`` and ``READY 1/1``, hit ``ctrl-c`` to exit.
+This takes a few minutes, when the cassandra-0 and cqlsh pods are in STATUS ``Running`` and ``READY 1/1``.
 
 In this step, we will use pxctl to inspect the volume
 
@@ -188,10 +188,18 @@ Inspect the Portworx volume
 
 Portworx ships with a `pxctl <https://docs.portworx.com/reference/cli/basics/>`__ command line that can be used to manage Portworx.
 
-Below we will use ``pxctl`` to inspect the underlying volumes for our Cassandra pod.
+Below we will use ``pxctl`` to inspect the underlying volumes for our Cassandra pod. First we need to copy the pvc-id.
 
 .. code-block:: text
 
+  Select storage -> persistentVolumeClaim
+  Select cassandra-data-cassandra-0 and copy the persistentVolume id (pvc-xxxxxxxx-xxxx-xxxx-xxxxxxxx)
+
+Next we will connect to one of the portworx pods and access the Terminal. 
+
+.. code-block:: text
+
+    Select namespace -> portworx
     Workloads -> Pods -> 
     Select one of the pods named, portworx-cluster-XXXX
     Go to Terminal tab to review the volume status. Run: 
@@ -211,9 +219,15 @@ Create a table and insert data
 
 Start a CQL Shell session:
 
+.. code-block:: text
+
+    Select namespace -> default
+    Workloads -> Pods -> 
+    Select the pod named, cqlsh
+
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
 Create a keyspace with replication of 3 and insert some data:
 
@@ -234,23 +248,31 @@ Select rows from the keyspace we just created:
 
   SELECT id, name, value FROM portworx.features;
 
-Now that we have data created let’s ``quit`` the cqlsh session.
+Now that we have data created let's ``quit`` the cqlsh session.
 
 Flush data to disk
 ------------------------
 
 Before we proceed to the failover test we will flush the in-memory data onto disk so that when the cassandra-0 starts on another node it will have access to the data that was just written (Cassandra keeps data in memory and only flushes it to disk after 10 minutes by default).
 
+.. code-block:: text
+
+  Select namespace -> default
+  Workloads -> Pods -> 
+  Select the pod named, cassandra-0
+
 .. code-block:: shell
 
-  oc exec -it cassandra-0 -- nodetool flush
+  nodetool flush
 
 In this step, we will simulate failure by cordoning the node where Cassandra is running and then deleting the Cassandra pod. The pod will then be resheduled by the `STorage ORchestrator for Kubernetes (STORK) <https://github.com/libopenstorage/stork/>`__ to make sure it lands on one of the nodes that has of replica of the data.
 
 Simulate a node failure to force Cassandra to restart
 -----------------------------------------------------------
 
-First we will cordon the node where Cassandra is running to simulate a node failure or network partition:
+First we will cordon the node where Cassandra is running to simulate a node failure or network partition. 
+
+From the admin host:
 
 .. code-block:: shell
 
@@ -273,7 +295,7 @@ Below commands wait till the new cassandra pod is ready.
 
 .. code-block:: shell
 
-  watch oc get pods -l app=cassandra -o wide
+  Workloads -> Pods
 
 Once the pod is in ``Running`` and ``READY(1/1)`` state. Hit ctrl-c to exit.
 
@@ -292,9 +314,15 @@ Verify data is still available
 
 Start a CQL Shell session:
 
+.. code-block:: text
+
+  Select namespace -> default
+  Workloads -> Pods -> 
+  Select the pod named, cqlsh
+
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
 Select rows from the keyspace we previously created:
 
@@ -313,23 +341,31 @@ In this step, we will scale our Cassandra stateful set to 3 replicas to show how
 
 Run this command to add two nodes to the Cassandra cluster:
 
-.. code-block:: shell
+.. code-block:: text
 
-  oc scale sts cassandra --replicas=3
+  Workloads -> StatufulSets
+  select cassandra
+  Under statefulset details hit the ^ (up arrow) to add 2 replicas
 
 You can watch the cassandra-1 and cassandra-2 pods get added:
 
 .. code-block:: shell
 
-  watch oc get pods -o wide
+  Workloads -> Pods
 
 After all pods are ``READY 1/1`` and ``Running`` you can hit ``ctrl-c`` to exit the watch screen. Now, to verify that Cassandra is in a running state you can run the nodetool status utility to verify the health of our Cassandra cluster
 
+.. code-block:: text
+
+  Select namespace -> default
+  Workloads -> Pods -> 
+  Select the pod named, cassandra-0
+
 .. code-block:: shell
 
-  oc exec -it cassandra-0 -- nodetool status
+  nodetool status
 
-It will take a minute or two for all three Cassandra nodes to come online and discover each other. When it’s ready you should see the following output in from the ``nodetool status`` command (address and host ID will vary):
+It will take a minute or two for all three Cassandra nodes to come online and discover each other. When it's ready you should see the following output in from the ``nodetool status`` command (address and host ID will vary):
 
 .. code-block:: shell
 
@@ -352,7 +388,9 @@ Get the pods and the knowledge of the Hosts on which they are scheduled.
 
 .. code-block:: shell
 
-  oc get pods -l app=cassandra -o json | jq '.items[] | {"name": .metadata.name,"hostname": .spec.nodeName, "hostIP": .status.hostIP, "PodIP": .status.podIP}'
+  Workloads -> Pods
+  Select Manage Columns, next to the "Search by Name" input box
+  Uncheck Created and Check IP Address
 
 In this step, we will take a snapshot of all volumes for our Cassandra cluster, then drop our database table.
 
@@ -361,11 +399,17 @@ Take snapshot using oc
 
 First let's insert a new record in our features table so we can show that the snapshot will take the latest available data:
 
+.. code-block:: text
+
+  Select namespace -> default
+  Workloads -> Pods -> 
+  Select the pod named, cqlsh
+
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
-.. code-block:: shell
+.. code-block:: sql
 
   INSERT INTO portworx.features (id, name, value) VALUES ('px-6', '3DSnaps', 'Application/Cluster aware snapshots!');
   SELECT id, name, value FROM portworx.features;
@@ -406,10 +450,10 @@ You can see the snapshots using the following command:
 
 .. code-block:: shell
 
-  watch oc get stork-volumesnapshot
+  Home -> Search
+  Enter volumesnapshots (volumesnapshot.external-storage.k8s.io/v1) in the Resouce field
 
-When you see all 3 volumesnapshots appear, take note of the names and
-hit ``ctrl-c`` to exit the screen.
+When you see all 3 volumesnapshots appear, take note of the names.
 
 Drop features table
 -------------------------
@@ -417,9 +461,15 @@ Drop features table
 Now we're going to go ahead and do something stupid because it's
 Katacoda and we're here to learn.
 
+.. code-block:: text
+
+  Select namespace -> default
+  Workloads -> Pods -> 
+  Select the pod named, cqlsh
+
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local
+  cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
 .. code-block:: shell
 
@@ -487,13 +537,11 @@ Copy the above code block and paste it into the Import YAML and edit the <REPLAC
 
 View the PVCs
 
-.. code-block:: shell
+.. code-block:: text
 
-  oc get pvc
+  Storage -> persistentVolumeClaim
 
-Restore cassandra. We delete the original Cassandra deployment only
-because we dont have enough nodes in this lab to host two. Then we
-create the new cassandra statefulset based on our cloned snapshots.
+Restore cassandra. We create the new cassandra statefulset based on our cloned snapshots.
 
 .. code-block:: yaml
   :name: cassandra-app-restore.yaml
@@ -620,20 +668,13 @@ create the new cassandra statefulset based on our cloned snapshots.
         - -c
         - "exec tail -f /dev/null"
 
-.. code-block:: shell
+Copy the above code block and paste it into the Import YAML.   
 
-  oc delete -f /tmp/cassandra.yaml
+Wait for restored cassandra database to be Running (1/1). *Note there will be only 1 replica restored*
 
-.. code-block:: shell
+.. code-block:: text
 
-  oc create -f /tmp/cassandra-app-restore.yaml
-
-Wait for restored cassandra database to be Running (1/1). *Note there
-will be only 1 replica restored*
-
-.. code-block:: shell
-
-  watch oc get pods
+  Workloads -> Pods
 
 When you see all pods Running (1/1), hit ``ctrl-c`` to exit the screen.
 
@@ -643,7 +684,17 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  oc exec -it cqlsh -- cqlsh cassandra-restored-0.cassandra-restored.default.svc.cluster.local
+  /opt/pwx/bin/pxctl volume inspect <PVC-ID>
+
+.. code-block:: text
+
+  Select namespace -> default
+  Workloads -> Pods -> 
+  Select the pod named, cqlsh
+
+.. code-block:: shell
+
+  cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 
 Select rows from the keyspace we previously created:
 
