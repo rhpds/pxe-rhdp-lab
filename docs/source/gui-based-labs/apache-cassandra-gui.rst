@@ -381,8 +381,8 @@ It will take a minute or two for all three Cassandra nodes to come online and di
 
 When you see your Cassandra node is in Status=Up and State=Normal (UN) that means the cluster is fully operational.
 
-Pro Tip: Use jq to get useful cluster configuration summary
------------------------------------------------------------
+Pro Tip: Add the IP Address column to get useful cluster information
+--------------------------------------------------------------------
 
 Get the pods and the knowledge of the Hosts on which they are scheduled.
 
@@ -394,7 +394,7 @@ Get the pods and the knowledge of the Hosts on which they are scheduled.
 
 In this step, we will take a snapshot of all volumes for our Cassandra cluster, then drop our database table.
 
-Take snapshot using oc
+Take snapshot
 ----------------------------
 
 First let's insert a new record in our features table so we can show that the snapshot will take the latest available data:
