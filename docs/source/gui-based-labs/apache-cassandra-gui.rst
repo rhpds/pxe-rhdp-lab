@@ -694,7 +694,7 @@ Start a CQL Shell session:
 
 .. code-block:: shell
 
-  cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
+  cqlsh cassandra-restored-0.cassandra-restored.default.svc.cluster.local --cqlversion=3.4.4
 
 Select rows from the keyspace we previously created:
 

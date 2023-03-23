@@ -177,7 +177,6 @@ Step deploy 3 instances of nginx
         containers:
         - name: webapp3
           securityContext:
-          securityContext:
             allowPrivilegeEscalation: false
             seLinuxOptions: 
               level: "s0:c1,c0"
