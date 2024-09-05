@@ -19,11 +19,11 @@ Hint:
     
     Answer: 3
 
-Q2: What is the version of Kubernetes installed in this environment?
+Q2: What is the version of Openshift installed in this environment?
 
-1. 1.20
-2. 1.22
-3. 1.24
+1. 4.14
+2. 4.15
+3. 4.16
 
 Hint:
 
@@ -33,7 +33,7 @@ Hint:
 
 .. dropdown:: Show Solution
     
-    Answer: 1.24
+    Answer: 4.16
 
 Q3: What is the status of the `kube-apiserver`?
 
@@ -120,8 +120,7 @@ Check the installation logs:
 
 .. code-block:: shell
 
-    PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') 
-    oc -n portworx logs -f $PX_POD -c portworx
+    oc -n portworx logs -f $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')  -c portworx
 
 
 Lets explore the cluster using pxctl utility.
@@ -137,8 +136,19 @@ Hint:
 
 .. code-block:: shell
 
-    oc -n portworx exec $PX_POD -c portworx -it -- /opt/pwx/bin/pxctl status
+    oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl status
 
 .. dropdown:: Show Solution
     
     Answer: 3
+
+
+Add PXCTL alias
+---------------------
+
+To make it easier to run pxctl commands, we will add an alias to the shell.
+
+.. code-block:: shell
+    
+    alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl"
+    echo 'alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl"' >> ~/.bashrc
