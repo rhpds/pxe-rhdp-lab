@@ -64,7 +64,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
     name: cassandra
   spec:
     serviceName: cassandra
-    replicas: 1
+    replicas: 2
     selector:
       matchLabels:
         app: cassandra
@@ -91,27 +91,26 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
             name: cql
           resources:
             limits:
-              cpu: "500m"
-              memory: 1Gi
+              cpu: "1500m"
+              memory: 3Gi
             requests:
-             cpu: "500m"
-             memory: 1Gi
+            cpu: "1500m"
+            memory: 3Gi
           securityContext:
-            privileged: true
             capabilities:
               add:
                 - IPC_LOCK
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "PID=\$(pidof java) && kill \$PID && while ps -p \$PID > /dev/null; do sleep 1; done"]
+                command: ["/bin/sh", "-c", "PID=$(pidof java) && kill $PID && while ps -p $PID > /dev/null; do sleep 1; done"]
           env:
             - name: MAX_HEAP_SIZE
-              value: 512M
+              value: 1024M
             - name: HEAP_NEWSIZE
-              value: 100M
+              value: 200M
             - name: CASSANDRA_SEEDS
-              value: "cassandra-0.cassandra.default.svc.cluster.local" 
+              value: "cassandra-0.cassandra.groupsnaps.svc.cluster.local"
             - name: CASSANDRA_CLUSTER_NAME
               value: "K8Demo"
             - name: CASSANDRA_DC
@@ -147,12 +146,13 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
     volumeClaimTemplates:
     - metadata:
         name: cassandra-data
+        annotations:
+          volume.beta.kubernetes.io/storage-class: group-sc
       spec:
-        storageClassName: px-storageclass
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: 1Gi
+            storage: 2Gi
   ---
   apiVersion: v1
   kind: Pod
@@ -166,6 +166,17 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
         - sh
         - -c
         - "exec tail -f /dev/null"
+  ---
+  apiVersion: stork.libopenstorage.org/v1alpha1
+  kind: Rule
+  metadata:
+    name: cassandra-presnap-rule
+  rules:
+    - podSelector:
+        app: cassandra
+      actions:
+      - type: command
+        value: nodetool flush
   EOF
 
 Take a look at the yaml:
@@ -180,7 +191,7 @@ Now use oc to deploy Cassandra.
 
 .. code-block:: shell
 
-  oc create -f /tmp/cassandra.yaml
+  oc apply -f /tmp/cassandra.yaml
 
 Verify Cassandra pod is ready
 -----------------------------------
@@ -204,9 +215,8 @@ Below we will use ``pxctl`` to inspect the underlying volumes for our Cassandra 
 
 .. code-block:: shell
 
-  VOLS=`oc get pvc | grep cassandra | awk '{print $3}'`
-  PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
-  oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect $VOLS
+  VOLS=$(oc get pvc | grep cassandra | awk '{print $3}')
+  pxctl volume inspect $VOLS
 
 Make the following observations in the inspect output \* ``State`` indicates the volume is attached and shows the node on which it is attached. This is the node where the Kubernetes pod is running. \* ``HA`` shows the number of configured replicas for this volume \* ``Labels`` show the name of the PVC for this volume \* ``Replica sets on nodes`` shows the px nodes on which volume is replicated
 
@@ -262,14 +272,14 @@ First we will cordon the node where Cassandra is running to simulate a node fail
 
 .. code-block:: shell
 
-  NODE=`oc get pods -o wide | grep cassandra-0 | awk '{print $7}'`
+  NODE=$(oc get pods -o wide | grep cassandra-0 | awk '{print $7}')
   oc adm cordon ${NODE}
 
 Then delete the Cassandra pod:
 
 .. code-block:: shell
 
-  POD=`oc get pods -l app=cassandra -o wide | grep -v NAME | awk '{print $1}'`
+  POD=$(oc get pods -l app=cassandra -o wide | grep -v NAME | awk '{print $1}')
   oc delete pod ${POD}
 
 Once the cassandra pod gets deleted, Kubernetes will start to create a new cassandra pod on another node.
@@ -383,18 +393,7 @@ We're going to use STORK to take a 3DSnapshot of our Cassandra cluster. Take a l
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/px-snap.yaml
-  apiVersion: stork.libopenstorage.org/v1alpha1
-  kind: Rule
-  metadata:
-    name: cassandra-presnap-rule
-  rules:
-    - podSelector:
-        app: cassandra
-      actions:
-      - type: command
-        value: nodetool flush
-  ---
+  cat << EOF > /tmp/cassandra-groupsnapshot.yaml
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: GroupVolumeSnapshot
   metadata:
@@ -410,7 +409,7 @@ Now let's take a snapshot.
 
 .. code-block:: shell
 
-  oc create -f /tmp/px-snap.yaml
+  oc create -f /tmp/cassandra-groupsnapshot.yaml
 
 You can see the snapshots using the following command:
 
@@ -674,6 +673,6 @@ Thank you for trying the playground. To view all our scenarios, go `here <https:
 
 To learn more about `Portworx <https://portworx.com/>`__, below are some useful references. 
 
-- `Deploy Portworx on Kubernetes <https://docs.portworx.com/scheduler/kubernetes/install.html>`__
-- `Create Portworx volumes <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/>`__
+- `Deploy Portworx on Openshift <https://docs.portworx.com/portworx-enterprise/platform/openshift/ocp-bare-metal/install-on-ocp-bare-metal>`__
+- `Create Portworx volumes <https://docs.portworx.com/portworx-enterprise/platform/openshift/ocp-bare-metal/operations/storage-operations/create-pvcs>`__
 - `Use cases <https://portworx.com/use-case/kubernetes-storage/>`__

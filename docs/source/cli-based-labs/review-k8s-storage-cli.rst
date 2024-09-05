@@ -130,7 +130,7 @@ In this step, we will use ``pxctl`` to inspect the volume.
 Inspect the Portworx volume
 ---------------------------
 
-Portworx ships with a `pxctl <https://docs.portworx.com/control/status.html>`__ command line that can be used to manage Portworx.
+Portworx ships with a `pxctl <https://docs.portworx.com/portworx-enterprise/reference/cli/pxctl-reference/status-reference>`__ command line that can be used to manage Portworx.
 
 Below we will use pxctl to inspect the underlying volume for our PVC.
 
