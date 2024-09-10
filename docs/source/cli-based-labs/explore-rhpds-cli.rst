@@ -21,9 +21,9 @@ Hint:
 
 Q2: What is the version of Openshift installed in this environment?
 
-1. 4.14
-2. 4.15
-3. 4.16
+1. 4.14.x
+2. 4.15.x
+3. 4.16.x
 
 Hint:
 
@@ -33,7 +33,7 @@ Hint:
 
 .. dropdown:: Show Solution
     
-    Answer: 4.16
+    Answer: 4.16.x
 
 Q3: What is the status of the `kube-apiserver`?
 

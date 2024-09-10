@@ -9,7 +9,7 @@ MySQL Deployment
 
 .. code-block:: shell
 
-  cat <<EOF | oc apply -f -
+  cat <<EOF > /tmp/create-mysql.yaml
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -76,6 +76,9 @@ MySQL Deployment
             claimName: px-mysql-pvc
   EOF
 
+.. code-block:: shell
+  
+  oc create -f /tmp/create-mysql.yaml
 
 Before proceeding to the next step, please make sure the mysql pod is running:
 
@@ -135,7 +138,7 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
 
 .. code-block:: shell
 
-  cat <<EOF | oc apply -f -
+  cat <<EOF > /tmp/mysql-snap.yaml
   apiVersion: volumesnapshot.external-storage.k8s.io/v1
   kind: VolumeSnapshot
   metadata:
@@ -145,6 +148,11 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
     persistentVolumeClaimName: px-mysql-pvc
   EOF
  
+Run the below command to create the snapshot:
+
+.. code-block:: shell
+
+  oc create -f /tmp/mysql-snap.conf
 
 Restore the snapshot for MySQL
 ------------------------------
@@ -153,7 +161,7 @@ Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same Namespace as t
 
 .. code-block:: shell
 
-  cat <<EOF | oc apply -f -
+  cat <<EOF > /tmp/restore-mysql.yaml
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: VolumeSnapshotRestore
   metadata:
@@ -165,7 +173,11 @@ Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same Namespace as t
     sourceNamespace: mysql-app
   EOF
    
+Run the below command to create the snapshot: 
 
+.. code-block:: shell
+
+  oc create -f /tmp/restore-mysql.yaml
 
 
 We will create a Statefulset to use with snapshots and restores.
@@ -177,7 +189,7 @@ NGinx statefulSet
 
 .. code-block:: shell
 
-  cat <<EOF | oc apply -f -
+  cat <<EOF > /tmp/create-nginx-sts.yaml
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -236,6 +248,9 @@ NGinx statefulSet
             storage: 1Gi
   EOF
 
+.. code-block:: shell
+
+  oc create -f /tmp/create-nginx-sts.yaml
 
 Before proceeding to the next step, please make sure all the resources are up:
 
@@ -252,7 +267,7 @@ Create a group snapshot called ``nginx-group-snap`` for the PVC's of the nginx S
 
 .. code-block:: shell
 
-  cat <<EOF | oc apply -f -
+  cat <<EOF > /tmp/nginx-snap.yaml
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: GroupVolumeSnapshot
   metadata:
@@ -265,6 +280,11 @@ Create a group snapshot called ``nginx-group-snap`` for the PVC's of the nginx S
      - default
   EOF
 
+Run the below command to create the snapshot: 
+
+.. code-block:: shell
+
+  oc create -f /tmp/nginx-snap.yaml
 
 Restore the snapshot for Nginx
 ------------------------------

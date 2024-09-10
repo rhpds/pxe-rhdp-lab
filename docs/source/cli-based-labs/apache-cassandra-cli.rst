@@ -7,11 +7,17 @@ Before we deploy cassandra, we will need to create a Portworx volume (PVC) for C
 Create StorageClass
 -------------------------
 
-Take a look at the StorageClass definition for Cassandra:
+Take a look the the below storage class.
+
+Note that we define a replication factor of 2 to accelerate Cassandra node recovery and we also defined a group name for Cassandra so that we can take `3DSnapshots <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-snapshots/snaps-3d/>`__ which will be consistent across the whole Cassandra cluster. In production environment which larger clusters you would also add the “fg=true” parameter to your StorageClass to ensure that Portworx places each Cassandra volume and their replica on separate nodes so that in case of node failure we never failover Kafka to a node where it is already running. To enable this feature with a 3 volume group and 2 replicas you need a minimum of 6 worker nodes.
+
+The parameters are declarative policies for your storage volume. See `here <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/dynamic-provisioning/>`__ for a full list of supported parameters.
+
+Create the storage class using:
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/cassandra-sc.yaml
+  cat <<EOF | oc apply -f -
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -23,15 +29,7 @@ Take a look at the StorageClass definition for Cassandra:
     group: "cassandra_vg"
   EOF
 
-Note that we define a replication factor of 2 to accelerate Cassandra node recovery and we also defined a group name for Cassandra so that we can take `3DSnapshots <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-snapshots/snaps-3d/>`__ which will be consistent across the whole Cassandra cluster. In production environment which larger clusters you would also add the “fg=true” parameter to your StorageClass to ensure that Portworx places each Cassandra volume and their replica on separate nodes so that in case of node failure we never failover Kafka to a node where it is already running. To enable this feature with a 3 volume group and 2 replicas you need a minimum of 6 worker nodes.
 
-The parameters are declarative policies for your storage volume. See `here <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/dynamic-provisioning/>`__ for a full list of supported parameters.
-
-Create the storage class using:
-
-.. code-block:: shell
-
-   oc create -f /tmp/cassandra-sc.yaml
 
 Now that we have the StorageClass created, let's deploy Cassandra!
 
@@ -64,7 +62,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
     name: cassandra
   spec:
     serviceName: cassandra
-    replicas: 2
+    replicas: 1
     selector:
       matchLabels:
         app: cassandra
@@ -91,26 +89,27 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
             name: cql
           resources:
             limits:
-              cpu: "1500m"
-              memory: 3Gi
+              cpu: "500m"
+              memory: 1Gi
             requests:
-            cpu: "1500m"
-            memory: 3Gi
+            cpu: "500m"
+            memory: 1Gi
           securityContext:
+            privileged: true
             capabilities:
               add:
                 - IPC_LOCK
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "PID=$(pidof java) && kill $PID && while ps -p $PID > /dev/null; do sleep 1; done"]
+                command: ["/bin/sh", "-c", "PID=\$(pidof java) && kill \$PID && while ps -p \$PID > /dev/null; do sleep 1; done"]
           env:
             - name: MAX_HEAP_SIZE
-              value: 1024M
+              value: 512M
             - name: HEAP_NEWSIZE
-              value: 200M
+              value: 100M
             - name: CASSANDRA_SEEDS
-              value: "cassandra-0.cassandra.groupsnaps.svc.cluster.local"
+              value: "cassandra-0.cassandra.default.svc.cluster.local"
             - name: CASSANDRA_CLUSTER_NAME
               value: "K8Demo"
             - name: CASSANDRA_DC
@@ -132,7 +131,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
               command:
               - /bin/bash
               - -c
-              - /ready-probe.sh
+              - true
             initialDelaySeconds: 15
             timeoutSeconds: 5
           # These volume mounts are persistent. They are like inline claims,
@@ -146,13 +145,12 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
     volumeClaimTemplates:
     - metadata:
         name: cassandra-data
-        annotations:
-          volume.beta.kubernetes.io/storage-class: group-sc
       spec:
+        storageClassName: px-storageclass
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: 2Gi
+            storage: 1Gi
   ---
   apiVersion: v1
   kind: Pod
@@ -166,32 +164,12 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
         - sh
         - -c
         - "exec tail -f /dev/null"
-  ---
-  apiVersion: stork.libopenstorage.org/v1alpha1
-  kind: Rule
-  metadata:
-    name: cassandra-presnap-rule
-  rules:
-    - podSelector:
-        app: cassandra
-      actions:
-      - type: command
-        value: nodetool flush
   EOF
 
-Take a look at the yaml:
-
-.. code-block:: shell
-
-  cat /tmp/cassandra.yaml
 
 Observe that the stateful set is exposed through a headless service. Also note how PVCs will be dynamically created with each member of the stateful set based on the ``volumeClaimTemplates`` and it's ``StorageClass`` sections. Finally, you will also see that we are starting with a single node (replicas: 1).
 
-Now use oc to deploy Cassandra.
 
-.. code-block:: shell
-
-  oc apply -f /tmp/cassandra.yaml
 
 Verify Cassandra pod is ready
 -----------------------------------

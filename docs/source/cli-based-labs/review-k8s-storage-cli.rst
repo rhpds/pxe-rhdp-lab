@@ -69,19 +69,9 @@ A PersistentVolumeClaim is successfully provisioned once it gets into â€œBoundâ€
 
 .. code-block:: shell
 
-  echo "Checking if the PersistentVolumeClaim was created successfully..."
+  oc get pvc
 
-  while true; do
-      PVC_STATUS=`oc get pvc px-pvc | grep -v NAME | awk '{print $2}'`
-      if [ "${PVC_STATUS}" == "Bound" ]; then
-          echo "px-pvc is ${PVC_STATUS}"
-          oc get pvc px-pvc
-          break
-      else
-          echo "Waiting for px-pvc to be Bound..."
-      fi
-      sleep 2
-  done
+we can see in the example output that our PVC is bound.
 
 Let's proceed to the next step to further inspect the volume.
 
