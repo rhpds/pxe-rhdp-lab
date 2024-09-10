@@ -12,28 +12,11 @@ A `StorageClass <https://kubernetes.io/docs/concepts/storage/storage-classes/>`_
 
 For example, the following is a Portworx StorageClass whose volumes have replication factor of 3 and high IO priority. \* Replication factor of 3 means the data for the volume is replicated on 3 different nodes in the cluster \* High IO priority means Portworx will use storage devices that are classified into the high IO profile (for e.g SSDs).
 
-.. code-block:: yaml
-   
-   kind: StorageClass
-   apiVersion: storage.k8s.io/v1
-   metadata:
-     name: px-repl3-sc
-   provisioner: pxd.portworx.com
-   parameters:
-     repl: "3"
-     priority_io: "high"
-   reclaimPolicy: Delete
-   volumeBindingMode: Immediate
-
-
-Create StorageClass
--------------------
-
-Let's create the above storage class.
+Create the storage class by running
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/px-repl3-sc.yaml
+  cat <<EOF | oc create -f -
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -46,9 +29,6 @@ Let's create the above storage class.
   volumeBindingMode: Immediate
   EOF
 
-.. code-block:: shell
-
-  oc create -f /tmp/px-repl3-sc.yaml
 
 Let's proceed to creating volumes that use this storage class.
 
@@ -61,28 +41,11 @@ A `PersistentVolumeClaim <https://kubernetes.io/docs/concepts/storage/persistent
 
 For example, below is the spec for a 2GB volume that uses the Portworx Storage class we created before this step.
 
-.. code-block:: yaml
-
-   kind: PersistentVolumeClaim
-   apiVersion: v1
-   metadata:
-     name: px-pvc
-   spec:
-     storageClassName: px-repl3-sc
-     accessModes:
-       - ReadWriteOnce
-     resources:
-       requests:
-         storage: 2Gi
-
-Create PersistentVolumeClaim
-----------------------------------
-
-Let's create the above PersistentVolumeClaim.
+Let's create the PersistentVolumeClaim:
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/px-pvc.yaml
+  cat <<EOF | oc create -f -
   kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:
@@ -96,9 +59,6 @@ Let's create the above PersistentVolumeClaim.
         storage: 2Gi
   EOF
 
-.. code-block:: shell
-
-  oc create -f /tmp/px-pvc.yaml
 
 Behind the scenes, Kubernetes talks to the Portworx native driver to create this PVC. Each PVC has a unique one-one mapping to a `PersistentVolume <https://kubernetes.io/docs/concepts/storage/persistent-volumes/>`__ which is the actual volume backing the PVC.
 

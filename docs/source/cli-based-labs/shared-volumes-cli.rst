@@ -278,7 +278,7 @@ Below we will use ``pxctl`` to inspect the underlying volume for our PVC.
 
 .. code-block:: shell
 
-  VOL=`oc get pvc | grep px-shared-pvc | awk '{print $3}'`
+  VOL=$(oc get pvc | grep px-shared-pvc | awk '{print $3}')
   PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
   oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect ${VOL}
 
@@ -357,7 +357,7 @@ Open a terminal for webapp1: *Terminal 1*.
 
 .. code-block:: shell
 
-  POD=`oc get pods -l app=webapp1 | grep Running | awk '{print $1}'`
+  POD=$(oc get pods -l app=webapp1 | grep Running | awk '{print $1}')
   oc exec -it $POD -- bash
 
 .. code-block:: shell
@@ -371,7 +371,7 @@ Open a terminal for webapp2: *Terminal 2*.
 
 .. code-block:: shell
 
-  POD=`oc get pods -l app=webapp2 | grep Running | awk '{print $1}'`
+  POD=$(oc get pods -l app=webapp2 | grep Running | awk '{print $1}')
   oc exec -it $POD -- bash
 
 .. code-block:: shell
@@ -385,7 +385,7 @@ Open a terminal for webapp3: *Terminal 3*.
 
 .. code-block:: shell
 
-  POD=`oc get pods -l app=webapp3 | grep Running | awk '{print $1}'`
+  POD=$(oc get pods -l app=webapp3 | grep Running | awk '{print $1}')
   oc exec -it $POD -- bash
 
 .. code-block:: shell
