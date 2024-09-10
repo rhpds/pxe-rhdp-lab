@@ -11,7 +11,8 @@ Take a look at the StorageClass definition for Portworx
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/px-repl3-sc.yaml
+  oc delete sc px-repl3-sc
+  cat <<EOF | oc apply -f -
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -26,17 +27,28 @@ Take a look at the StorageClass definition for Portworx
 
 The parameters are declarative policies for your storage volume. Notice the “allowVolumeExpansion: true” this needs to be added for kubernetes volume expansion. See `here <https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/dynamic-provisioning/>`__ for a full list of supported parameters.
 
-Create the storage class using:
+We will also need to apply a configmap to allow Openshift's prometheus instance to monitor Portworx events.
+
+NOTE: during the next test phase omit this config map and wait 15 minutes after the pg bench command to ensure it is needed.
 
 .. code-block:: shell
 
-  oc create -f /tmp/px-repl3-sc.yaml
+  cat <<EOF | oc apply -f -
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: cluster-monitoring-config
+    namespace: openshift-monitoring
+  data:
+    config.yaml: |
+      enableUserWorkload: true
+  EOF
 
-Take a look at the Persistent Volume Claim
+Create a new Persistent Volume Claim
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/px-postgres-pvc.yaml
+  cat <<EOF | oc apply -f -
   kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:
@@ -54,24 +66,8 @@ Take a look at the Persistent Volume Claim
 
 This defines the maximum volume size. Portworx will thin provision the volume.
 
-Create the PersistentVolumeClaim using:
 
-.. code-block:: shell
 
-  oc create -f /tmp/px-postgres-pvc.yaml
-
-Reviewing monitoring rules
-----------------------------
-
-First we will review rules to monitor Postgres !
-
-.. code-block:: shell
-
-  oc -n kube-system get servicemonitors.monitoring.coreos.com portworx -o yaml
-  oc get prometheusrules.monitoring.coreos.com -n kube-system portworx -o yaml
-  oc -n kube-system get prometheuses.monitoring.coreos.com px-prometheus -o yaml
-
-In this step, we will deploy the postgres application using the ``PersistentVolumeClaim`` created before.
 
 Create secret for postgres
 --------------------------
@@ -92,7 +88,7 @@ Now that we have the volumes created, let’s deploy Postgres !
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/postgres-app.yaml
+  cat <<EOF | oc create -f -
   apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -144,11 +140,7 @@ Now that we have the volumes created, let’s deploy Postgres !
 
 Observe the ``volumeMounts`` and ``volumes`` sections where we mount the PVC.
 
-Now use oc to deploy postgres.
 
-.. code-block:: shell
-
-  oc create -f /tmp/postgres-app.yaml
 
 Verify postgres pod is ready
 ----------------------------
@@ -172,9 +164,8 @@ Below we will use pxctl to inspect the underlying volume for our PVC.
 
 .. code-block:: shell
 
-  VOL=`oc get pvc | grep px-postgres-pvc | awk '{print $3}'`
-  PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
-  oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect ${VOL}
+  VOL=$(oc get pvc | grep px-postgres-pvc | awk '{print $3}')
+  pxctl volume inspect ${VOL}
 
 Make the following observations in the inspect output \* ``State`` indicates the volume is attached and shows the node on which it is attached. This is the node where the Kubernetes pod is running. \* ``HA`` shows the number of configured replicas for this volume \* ``Labels`` show the name of the PVC for this volume \* ``Replica sets on nodes`` shows the px nodes on which volume is replicated \* ``Size`` of the volume is 1GB. We'll check this later to see our volume property expanded.
 
@@ -196,12 +187,12 @@ Keep in mind, an AutoPilot Rule has 4 main parts.
 
 Below we target the Postgres PVC using an AutPilot Rule.
 
-View the AutoPilot Rule
+Create the AutoPilot Rule
 -----------------------
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/pvc-resize-rule.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: autopilot.libopenstorage.org/v1alpha1
   kind: AutopilotRule
   metadata:
@@ -231,14 +222,6 @@ View the AutoPilot Rule
 
 Note that we are defining the ``condition`` and the ``action`` in which our Rule is activated. In our Rule we are defining when our volume is using ``20%`` of its total available capacity, then we grow the volume using the ``openstorage.io.action.volume/resize`` action by 200 percent. Normally, you would likely use a larger threshold for volume usage.
 
-Create the AutoPilot Rule
--------------------------
-
-If you receive an error of ``no matches for kind "AutopilotRule"`` wait 1 minute and try again. AutoPilot installs in the background and if you clicked through this demo too fast it may not be ready just yet.
-
-.. code-block:: shell
-
-  oc apply -f /tmp/pvc-resize-rule.yaml
 
 Verify that AutoPilot initialized the Postgres PVC
 --------------------------------------------------
@@ -278,6 +261,11 @@ Use pgbench to run a baseline transaction benchmark which will try to grow the v
   pgbench -i -s 50 pxdemo
 
 .. note:: Note that once the test completes, **AutoPilot will make sure the usage remains above 20% for about 30 seconds before triggering the rule.** Type ``exit`` to exit from the pod shell before proceeding.
+
+.. code-block:: shell
+
+  exit
+
 
 Check to see if the rule was triggered
 --------------------------------------

@@ -7,11 +7,11 @@ In this step, we will create a Portworx volume (PVC) for nginx.
 Create StorageClass
 -------------------------
 
-Take a look at the StorageClass definition for Portworx
+Take a look at the StorageClass definition for Portworx and create the storage class.
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/px-shared-sc.yaml
+  cat <<EOF | oc apply -f -
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -24,20 +24,15 @@ Take a look at the StorageClass definition for Portworx
 
 The parameters are declarative policies for your storage volume. See `here <https://docs.portworx.com/manage/volumes.html>`__ for a full list of supported parameters. In our case the key parameter is sharedv4 = true.
 
-Create the storage class using:
-
-.. code-block:: shell
-
-  oc create -f /tmp/px-shared-sc.yaml
 
 Create PersistentVolumeClaim
 ----------------------------------
 
-Take a look at the Persistent Volume Claim
+Take a look at the Persistent Volume Claim and create it.
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/px-shared-pvc.yaml
+  cat <<EOF | oc apply -f -
   kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:
@@ -51,17 +46,7 @@ Take a look at the Persistent Volume Claim
         storage: 1Gi
   EOF
 
-.. code-block:: shell
 
-  cat /tmp/px-shared-pvc.yaml
-
-Here we're pointing at the storage class defined above and giving our volume a maximum size (Portworx thinly provisions volumes so that space will not be reserved up-front).
-
-Create the PersistentVolumeClaim using:
-
-.. code-block:: shell
-
-  oc create -f /tmp/px-shared-pvc.yaml
 
 Now that we have the volumes created, let's deploy a few nginx instances and see how the shared volumes work!
 
@@ -74,7 +59,7 @@ Step deploy 3 instances of nginx
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/deploy-webapps.yaml
+  cat <<EOF  | oc apply -f -
   apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -242,19 +227,10 @@ Step deploy 3 instances of nginx
       app: webapp3
   EOF
 
-Take a look at the yaml:
-
-.. code-block:: shell
-
-  cat /tmp/deploy-webapps.yaml
 
 Observe the ``volumeMounts`` and ``volumes`` sections where we mount the PVC.
 
-Now use oc to deploy nginx.
 
-.. code-block:: shell
-
-  oc create -f /tmp/deploy-webapps.yaml
 
 Verify nginx pods are ready
 ---------------------------------
@@ -279,8 +255,7 @@ Below we will use ``pxctl`` to inspect the underlying volume for our PVC.
 .. code-block:: shell
 
   VOL=$(oc get pvc | grep px-shared-pvc | awk '{print $3}')
-  PX_POD=$(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')
-  oc exec -it $PX_POD -n portworx -- /opt/pwx/bin/pxctl volume inspect ${VOL}
+  pxctl volume inspect ${VOL}
 
 Make the following observations in the volume list \* ``Status`` indicates the volume is attached and shows the node on which it is attached. For shared volumes, this is the transaction coordinator node which all other nodes will go through to write the data. \* ``HA`` shows the number of configured replicas for this volume (shared volumes can be replicated of course, you can try it by modifying the storage class in step 2) \* ``Shared`` shows if the volume is shared \* ``IO Priority`` shows the relative priority of this volume's IO (high, medium, or low) \* ``Volume consumers`` shows which pods are accessing the volume
 
@@ -316,7 +291,7 @@ Copy index.html into webapp1's pod:
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/index.html
+  cat <<"EOF" > /tmp/index.html
    /$$$$$$$                       /$$                                                
   | $$__  $$                     | $$                                                
   | $$  \ $$ /$$$$$$   /$$$$$$  /$$$$$$   /$$  /$$  /$$  /$$$$$$   /$$$$$$  /$$   /$$
@@ -329,7 +304,7 @@ Copy index.html into webapp1's pod:
 
 .. code-block:: shell
 
-  POD=`oc get pods -l app=webapp1 | grep Running | awk '{print $1}'`
+  POD=$(oc get pods -l app=webapp1 | grep Running | awk '{print $1}')
   oc cp /tmp/index.html $POD:/usr/share/nginx/html/index.html
 
 Now let's try all three URLs and see our hello world message is showing up on all three. This is because all three are attached to the same volume so updating one updates all three.

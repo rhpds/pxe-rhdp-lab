@@ -323,14 +323,20 @@ oc get pod mongo-0 -n pxbbq -o wide
 Next, let's get the worker node running the MongoDB pod into a variable:
 ```bash
 NODENAME=$(oc get pod mongo-0 --no-headers=true -n pxbbq -o wide | awk '{print $7}')
-EXTERNALIP=$(oc get nodes -o wide | grep $NODENAME | awk '{print $7}')
-NODE=$(cat .ssh/config | grep -B 1 $EXTERNALIP | awk '{print $2}' | grep node)
 ```
 
 And finally, reboot the Kubernetes worker node hosting the running MongoDB pod:
 ```bash
-# UPDATEME
-ssh $NODE sudo reboot
+oc debug node/$NODENAME
+```
+
+
+```bash
+chroot /host
+```
+
+```bash
+systemctl reboot
 ```
 
 We can watch our MongoDB pod get deleted and recreated. Note the ***NODE*** column as the pod gets evicted and recreated; the node name will change and the pod will be rescheduled on a node in a different AZ:

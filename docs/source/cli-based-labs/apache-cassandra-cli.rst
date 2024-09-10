@@ -131,7 +131,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
               command:
               - /bin/bash
               - -c
-              - true
+              - ls
             initialDelaySeconds: 15
             timeoutSeconds: 5
           # These volume mounts are persistent. They are like inline claims,
@@ -369,9 +369,11 @@ First let's insert a new record in our features table so we can show that the sn
 
 We're going to use STORK to take a 3DSnapshot of our Cassandra cluster. Take a look at the px-snap.yaml file and notice that we are going to force  a ``nodetool flush`` command on eachcluster member before we take the snapshot. As explained before, that will force all data to be written to disk in order  to ensure consistency of the snapshot. We also defined the volume group  name (cassandra_vg) so Portworx will synchronously quiesce I/O on all volumes  before triggering their snapshots.
 
+Now let's take a snapshot.
+
 .. code-block:: shell
 
-  cat << EOF > /tmp/cassandra-groupsnapshot.yaml
+  cat << EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: GroupVolumeSnapshot
   metadata:
@@ -383,11 +385,7 @@ We're going to use STORK to take a 3DSnapshot of our Cassandra cluster. Take a l
         app: cassandra
   EOF
 
-Now let's take a snapshot.
 
-.. code-block:: shell
-
-  oc create -f /tmp/cassandra-groupsnapshot.yaml
 
 You can see the snapshots using the following command:
 
@@ -425,13 +423,13 @@ First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names from th
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/vols-from-snaps.yaml
+  cat <<EOF > /tmp/snap.yaml
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: cassandra-snap-data-cassandra-restored-0
     annotations:
-      snapshot.alpha.kubernetes.io/snapshot: cassandra-group-snapshot-cassandra-data-cassandra-0-<REPLACE>
+      snapshot.alpha.kubernetes.io/snapshot: $(oc get stork-volumesnapshot | sed -n '/^cassandra-group-snapshot-cassandra-data-cassandra-0-/s/\s\+[^ ]\+$//p')
   spec:
     accessModes:
        - ReadWriteOnce
@@ -446,7 +444,7 @@ First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names from th
   metadata:
     name: cassandra-snap-data-cassandra-restored-1
     annotations:
-      snapshot.alpha.kubernetes.io/snapshot: cassandra-group-snapshot-cassandra-data-cassandra-1-<REPLACE>
+      snapshot.alpha.kubernetes.io/snapshot: $(oc get stork-volumesnapshot | sed -n '/^cassandra-group-snapshot-cassandra-data-cassandra-1-/s/\s\+[^ ]\+$//p')
   spec:
     accessModes:
        - ReadWriteOnce
@@ -461,7 +459,7 @@ First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names from th
   metadata:
     name: cassandra-snap-data-cassandra-restored-2
     annotations:
-      snapshot.alpha.kubernetes.io/snapshot: cassandra-group-snapshot-cassandra-data-cassandra-2-<REPLACE>
+      snapshot.alpha.kubernetes.io/snapshot: $(oc get stork-volumesnapshot | sed -n '/^cassandra-group-snapshot-cassandra-data-cassandra-2-/s/\s\+[^ ]\+$//p')
   spec:
     accessModes:
        - ReadWriteOnce
@@ -471,15 +469,6 @@ First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names from th
         storage: 10Gi
   EOF
 
-.. code-block:: shell
-
-  vim /tmp/vols-from-snaps.yaml
-
-Then create the clones.
-
-.. code-block:: shell
-
-  oc create -f /tmp/vols-from-snaps.yaml
 
 View the PVCs
 
@@ -491,7 +480,11 @@ Restore cassandra. We delete the original Cassandra deployment only because we d
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/cassandra-app-restore.yaml
+  oc delete sts cassandra
+
+.. code-block:: shell
+
+  cat <<EOF | oc apply -f -
   apiVersion: v1
   kind: Service
   metadata:
@@ -580,7 +573,7 @@ Restore cassandra. We delete the original Cassandra deployment only because we d
               command:
               - /bin/bash
               - -c
-              - /ready-probe.sh
+              - ls
             initialDelaySeconds: 15
             timeoutSeconds: 5
           # These volume mounts are persistent. They are like inline claims,
@@ -615,13 +608,6 @@ Restore cassandra. We delete the original Cassandra deployment only because we d
         - "exec tail -f /dev/null"
   EOF
 
-.. code-block:: shell
-
-  oc delete -f /tmp/cassandra.yaml
-
-.. code-block:: shell
-
-  oc create -f /tmp/cassandra-app-restore.yaml
 
 Wait for restored cassandra database to be Running (1/1). *Note there will be only 1 replica restored*
 

@@ -9,7 +9,7 @@ MySQL Deployment
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/create-mysql.yaml
+  cat <<EOF | oc create -f -
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -36,11 +36,11 @@ MySQL Deployment
      namespace: mysql-app
   spec:
     storageClassName: px-db-sc
-     accessModes:
-       - ReadWriteOnce
-     resources:
-       requests:
-         storage: 1Gi
+    accessModes:
+     - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
   ---
   apiVersion: apps/v1
   kind: Deployment
@@ -76,11 +76,6 @@ MySQL Deployment
             claimName: px-mysql-pvc
   EOF
 
-.. code-block:: shell
-  
-  oc create -f /tmp/create-mysql.yaml
-
-Before proceeding to the next step, please make sure the mysql pod is running:
 
 .. code-block:: shell
 
@@ -117,7 +112,7 @@ What is the name of the storage class used to create this PVC?
 
   .. code-block:: shell
 
-    oc -n mysql-app describe pvc px-mysql-pvc \| grep StorageClass
+    oc -n mysql-app describe pvc px-mysql-pvc | grep StorageClass
 
   Answer: px-db-sc
 
@@ -127,7 +122,7 @@ What is the ``io_profile`` used for this storage class?
 
   .. code-block:: shell
 
-    oc describe sc px-db-sc \| grep io_profile
+    oc describe sc px-db-sc | grep io_profile
 
   Answer: db
 
@@ -138,7 +133,7 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/mysql-snap.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: volumesnapshot.external-storage.k8s.io/v1
   kind: VolumeSnapshot
   metadata:
@@ -148,11 +143,6 @@ Create a snapshot called ``mysql-snap`` for the PVC ``px-mysql-pvc``.
     persistentVolumeClaimName: px-mysql-pvc
   EOF
  
-Run the below command to create the snapshot:
-
-.. code-block:: shell
-
-  oc create -f /tmp/mysql-snap.conf
 
 Restore the snapshot for MySQL
 ------------------------------
@@ -161,7 +151,7 @@ Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same Namespace as t
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/restore-mysql.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: VolumeSnapshotRestore
   metadata:
@@ -173,11 +163,7 @@ Restore the snapshot to the same PVC ``px-mysql-pvc`` in the same Namespace as t
     sourceNamespace: mysql-app
   EOF
    
-Run the below command to create the snapshot: 
 
-.. code-block:: shell
-
-  oc create -f /tmp/restore-mysql.yaml
 
 
 We will create a Statefulset to use with snapshots and restores.
@@ -189,7 +175,7 @@ NGinx statefulSet
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/create-nginx-sts.yaml
+  cat <<EOF | oc apply -f -
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -248,9 +234,6 @@ NGinx statefulSet
             storage: 1Gi
   EOF
 
-.. code-block:: shell
-
-  oc create -f /tmp/create-nginx-sts.yaml
 
 Before proceeding to the next step, please make sure all the resources are up:
 
@@ -267,7 +250,7 @@ Create a group snapshot called ``nginx-group-snap`` for the PVC's of the nginx S
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/nginx-snap.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: GroupVolumeSnapshot
   metadata:
@@ -280,50 +263,26 @@ Create a group snapshot called ``nginx-group-snap`` for the PVC's of the nginx S
      - default
   EOF
 
-Run the below command to create the snapshot: 
-
-.. code-block:: shell
-
-  oc create -f /tmp/nginx-snap.yaml
 
 Restore the snapshot for Nginx
 ------------------------------
 
 Restore the snapshot taken for the pod ``web-0`` to a new PVC ``web-clone-0`` in the ``default`` namespace.
 
-.. note:: 
-   
-  Use this command to find the volumesnapshot identifier for web-0: 
-
-  .. code-block:: shell
-
-    oc describe stork-volumesnapshot | grep “web-0” 
-
-  Copy the identifier that will be found in the Name after “nginx-group-snap-www-web-0-”. Now, use the below template to create a clone from the volumesnapshot for PVC of ``pod - 0`` of the nginx StatefulSet. You must modify the yaml file to add the volumesnapshot identifier for web-0. The line to be edited is highlighted. 
-
-  .. code-block:: shell
-
-    vi /tmp/restore-nginx.yaml 
-    
-  Create the restore object after editing. 
-  
-  .. code-block:: shell
-
-    oc apply -f /tmp/restore-nginx.yaml
 
 .. code-block:: shell
 
 
-  cat <<EOF > /tmp/restore-nginx.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: web-clone-0
     annotations:
-      snapshot.alpha.kubernetes.io/snapshot: nginx-group-snap-www-web-0-<snapshot_id>
+      snapshot.alpha.kubernetes.io/snapshot: $(oc get stork-volumesnapshot | sed -n '/^nginx-group-snap-www-web-0-/s/\s\+[^ ]\+$//p')
   spec:
     accessModes:
-       - ReadWriteOnce
+        - ReadWriteOnce
     storageClassName: stork-snapshot-sc
     resources:
       requests:

@@ -14,7 +14,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/create-mongo.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: v1
   kind: Service
   metadata:
@@ -82,7 +82,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/create-mysql.yaml
+  cat <<EOF | oc apply -f -
   ---
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
@@ -100,11 +100,11 @@ We will deploy a couple of Databases. Once ready, inspect them.
      name: px-mysql-pvc
   spec:
     storageClassName: px-ha-sc
-     accessModes:
-       - ReadWriteOnce
-     resources:
-       requests:
-         storage: 1Gi
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
   ---
   apiVersion: v1
   kind: Service
@@ -158,7 +158,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/testpolicy.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: SchedulePolicy
   metadata:
@@ -181,13 +181,7 @@ We will deploy a couple of Databases. Once ready, inspect them.
       retain: 5
   EOF
 
-.. code-block:: shell
 
-  oc config set-context --current --namespace=default
-  oc create -f /tmp/create-mysql.yaml
-  sleep 5
-  oc create -f /tmp/create-mongo.yaml
-  oc create -f /tmp/testpolicy.yaml
 
 Verify the creation of the MySQL and MongoDB pods are Ready
 -----------------------------------------------------------
@@ -211,7 +205,7 @@ Create a pre-snapshot rule called ``mysql-presnap-rule`` with the below specific
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/pre-mysql.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: Rule
   metadata:
@@ -226,24 +220,6 @@ Create a pre-snapshot rule called ``mysql-presnap-rule`` with the below specific
         value: mysql --user=root --password=$MYSQL_ROOT_PASSWORD -Bse 'flush tables with read lock;system ${WAIT_CMD};'
   EOF
 
-Rules:
-
-.. code-block:: 
-
-  Pod Selector:app=mysql,
-  type: command,
-  background: true,
-  value: mysql --user=root --password=$MYSQL_ROOT_PASSWORD
-  -Bse 'flush tables with read lock;system ${WAIT_CMD};'
-
-.. dropdown:: Show Solution
-  
-  We have created a solution file for you under ``/tmp/pre-mysql.yaml``.
-  Run: 
-  
-  .. code-block:: shell
-    
-    oc apply -f /tmp/pre-mysql.yaml
 
 
 Create an application consistent snapshot of MySQL
@@ -253,7 +229,7 @@ Create a new volume snapshot called ``mysql-3d-snapshot`` which makes use of the
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/vs.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: volumesnapshot.external-storage.k8s.io/v1
   kind: VolumeSnapshot
   metadata:
@@ -264,14 +240,6 @@ Create a new volume snapshot called ``mysql-3d-snapshot`` which makes use of the
     persistentVolumeClaimName: px-mysql-pvc
   EOF
 
-.. dropdown:: Show Solution
-  
-  We have created a solution file for you under ``/tmp/vs.yaml``
-  Run:
-  
- .. code-block:: shell
-  
-    oc apply -f /tmp/vs.yaml
 
 Create a pre-snapshot rule for MongoDB
 --------------------------------------
@@ -281,7 +249,7 @@ below specifications:
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/pre-mongo.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: Rule
   metadata:
@@ -294,22 +262,6 @@ below specifications:
         value: mongo --eval "printjson(db.fsyncLock())"
   EOF
 
-Rules:
-
-.. code-block:: 
-
-  Pod Selector:role=mongo
-  type: command
-  value: mongo --eval "printjson(db.fsyncLock())"
-
-.. dropdown:: Show Solution
-  
-  We have created a solution file for you under ``/tmp/pre-mongo.yaml`` 
-  Run:
-
-  .. code-block:: shell
-
-    oc apply -f /tmp/pre-mongo.yaml
 
 
 Create a post-snapshot rule for MongoDB
@@ -319,7 +271,7 @@ Create a pre-snapshot rule called ``mongodb-postsnap-rule`` with the below speci
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/post-mongo.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: Rule
   metadata:
@@ -332,22 +284,7 @@ Create a pre-snapshot rule called ``mongodb-postsnap-rule`` with the below speci
         value: mongo --eval "printjson(db.fsyncUnLock())"
   EOF
 
-Rules:
 
-.. code-block:: 
-
-  Pod Selector:role=mongo
-  type: command
-  value: mongo --eval "printjson(db.fsyncUnLock())"
-
-.. dropdown:: Show Solution
-  
-  We have created a solution file for you under ``/tmp/post-mongo.yaml``.
-  Run: 
-
-  .. code-block:: shell
-    
-    oc apply -f /tmp/post-mongo.yaml
 
 Create an application consistent snapshot of MongoDB
 ----------------------------------------------------
@@ -356,7 +293,7 @@ Create a new group volume snapshot called ``mongodb-3d-snapshot`` which makes us
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/gvs.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: GroupVolumeSnapshot
   metadata:  
@@ -370,19 +307,3 @@ Create a new group volume snapshot called ``mongodb-3d-snapshot`` which makes us
         app : mongo
   EOF
 
-Spec:
-
-.. code-block:: shell
-
-  pvcSelector: role=mongo
-  pre-snapshot rule: mongodb-presnap-rule
-  post-snapshot rule: mongodb-postsnap-rule
-
-.. dropdown:: Show Solution
-
-      We have created a solution file for you under ``/tmp/gvs.yaml`` 
-      Run: 
-
-      .. code-block:: shell
-        
-        oc apply -f /tmp/gvs.yaml

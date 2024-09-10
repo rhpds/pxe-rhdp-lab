@@ -7,7 +7,7 @@ Deploy MySQL and create a schedulePolicies
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/create-mysql.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: storage.k8s.io/v1
   kind: StorageClass
   metadata:
@@ -74,7 +74,7 @@ Deploy MySQL and create a schedulePolicies
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/create-schedpol.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: SchedulePolicy
   metadata:
@@ -104,10 +104,7 @@ Deploy MySQL and create a schedulePolicies
       retain: 5
   EOF
 
-.. code-block:: shell
 
-  oc apply -f /tmp/create-mysql.yaml
-  oc apply -f /tmp/create-schedpol.yaml
 
 Before proceeding, make sure all the pods are up and ready:
 
@@ -128,7 +125,7 @@ How many schedule policies have been created?
 
     oc get schedulepolicies
 
-  Answer: 8
+  Answer: 9
 
 What is the retenton period of the ``weekly`` policy?
 
@@ -170,7 +167,7 @@ Create a daily snapshot schedule policy called ``daily-schedule`` at ``10 PM``, 
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/sched-pol.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: stork.libopenstorage.org/v1alpha1
   kind: SchedulePolicy
   metadata:
@@ -181,13 +178,6 @@ Create a daily snapshot schedule policy called ``daily-schedule`` at ``10 PM``, 
       retain: 5
   EOF
 
-.. dropdown:: Show Solution
-
-  Run the below command to create the snapshot: 
-
-  .. code-block:: shell
-
-    oc create -f /tmp/sched-pol.yaml
 
 
 Create a storageClass that uses this schedule policy
@@ -197,7 +187,7 @@ Create a storage class ``px-nginx-scheduled`` with the newly created schedule po
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/px-nginx-scheduled.yaml
+  cat <<EOF | oc apply -f -
   kind: StorageClass
   apiVersion: storage.k8s.io/v1
   metadata:
@@ -212,13 +202,6 @@ Create a storage class ``px-nginx-scheduled`` with the newly created schedule po
         portworx/snapshot-type: local
   EOF
 
-.. dropdown:: Show Solution
-  
-  Run the below command to create the storage class: 
-  
-  .. code-block:: shell
-  
-    oc create -f /tmp/px-nginx-scheduled.yaml
 
 
 Create a Nginx StatefulSet that utilizes this storageClass
@@ -226,11 +209,11 @@ Create a Nginx StatefulSet that utilizes this storageClass
 
 Create a new NGINX StatefulSet, making use of the ``px-nginx-scheduled`` storage class.
 
-Use the YAML file ``/tmp/create-nginx-sts.yaml`` to create the deployment.
+
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/create-nginx-sts.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: v1
   kind: Service
   metadata:
@@ -248,7 +231,7 @@ Use the YAML file ``/tmp/create-nginx-sts.yaml`` to create the deployment.
   apiVersion: apps/v1
   kind: StatefulSet
   metadata:
-    name: web
+    name: web-sched
   spec:
     serviceName: "nginx"
     replicas: 2
@@ -280,12 +263,4 @@ Use the YAML file ``/tmp/create-nginx-sts.yaml`` to create the deployment.
             storage: 1Gi
   EOF
 
-The PVC's created by the StatefulSet will be backed up automatically as per the schedule policy ``daily-schedule``.
 
-.. dropdown:: Show Solution
-
-  Run the below command to create the NGINX sts: 
-
-  .. code-block:: shell
-    
-    oc create -f /tmp/create-nginx-sts.yaml
