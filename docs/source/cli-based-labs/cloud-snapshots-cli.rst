@@ -1,5 +1,5 @@
 =========================================
-Lab 06 - Cloud Snapshots
+Lab 05 - Cloud Snapshots
 =========================================
 
 .. important:: We will make use of Minio object store in this Lab. We will use it as the endpoint for our cloud snapshots.
@@ -36,22 +36,6 @@ Deploy Minio onto the OCP cluster
   helm repo add stable https://charts.helm.sh/stable
   echo "Helm installed!"
 
-.. code-block:: shell
-
-  echo "Installing mc"
-  export WORKER_NODE=$(oc get node -l node-role.kubernetes.io/worker= | grep -Eiv "infra|NAME" | awk '{print $1}' | head -1)
-  oc debug node/$WORKER_NODE
-  chroot /host
-
-.. code-block:: shell
-
-  curl --output /tmp/mc https://dl.minio.io/client/mc/release/linux-amd64/mc
-  chmod +x /tmp/mc
-  echo "mc installed!"
-
-.. code-block:: shell
-  
-  exit
 
 .. code-block:: shell
 
@@ -138,6 +122,12 @@ We will now create a MySQL database to use with Cloud Snapshots
   EOF
 
 
+Wait for the MySQL pod to start.
+
+.. code-block:: shell
+  
+  watch oc get pods -l app=mysql
+
 .. code-block:: shell
 
   POD=$(oc get pods -l app=mysql | grep Running | grep 1/1 | awk '{print $1}')
@@ -193,3 +183,8 @@ Create a clone PVC called ``px-mysql-clone-pvc`` by restoring data from the snap
         storage: 1Gi
   EOF
 
+We can see the status of the clone by running the following command
+
+.. code-block:: shell
+
+  oc describe pvc px-mysql-clone-pvc 

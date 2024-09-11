@@ -1,5 +1,5 @@
 ========================================
-Lab 09 - PVC Auto Resize using AutoPilot
+Lab 07 - PVC Auto Resize using AutoPilot
 ========================================
 
 In this step, we will create a Portworx volume (PVC) for postgres.
@@ -291,3 +291,24 @@ As you can see the volume is now expanded and our PostgresDB database didn't req
   oc get pods
 
 
+
+Manual resize of PVC
+---------------------------
+
+It is also possible to manually resize a PVC. Below we will resize the volume to 4GiB.
+
+Edit the existing PVC and change the size to 4GiB.
+
+   .. code-block:: shell
+      
+    oc edit pvc px-postgres-pvc
+
+
+
+Check out the utilization of the volume after the resize.
+
+It takes approximately 30s to complete resizing.
+
+.. code-block:: shell
+
+  oc describe pvc px-postgres-pvc

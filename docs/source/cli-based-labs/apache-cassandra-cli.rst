@@ -1,5 +1,5 @@
 =========================
-Lab 03 - Apache Cassandra
+Lab 02 - Apache Cassandra
 =========================
 
 Before we deploy cassandra, we will need to create a Portworx volume (PVC) for Cassandra. In order to create PVCs, we need a StorageClass which defined the class of storage available to us.
@@ -42,7 +42,7 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/cassandra.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: v1
   kind: Service
   metadata:
@@ -164,6 +164,16 @@ Create a Cassandra `StatefulSet <https://kubernetes.io/docs/concepts/workloads/c
         - sh
         - -c
         - "exec tail -f /dev/null"
+  apiVersion: stork.libopenstorage.org/v1alpha1
+  kind: Rule
+  metadata:
+    name: cassandra-presnap-rule
+  rules:
+    - podSelector:
+        app: cassandra
+      actions:
+      - type: command
+        value: nodetool flush
   EOF
 
 
@@ -210,6 +220,8 @@ Start a CQL Shell session:
 .. code-block:: shell
 
   oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
+
+NOTE: If you receive a traceback error, the cassandra pod may not be ready yet. Wait a few seconds and try again. 
 
 Create a keyspace with replication of 3 and insert some data:
 
@@ -399,8 +411,7 @@ hit ``ctrl-c`` to exit the screen.
 Drop features table
 -------------------------
 
-Now we're going to go ahead and do something stupid because it's
-Katacoda and we're here to learn.
+Now we're going to go ahead and do something stupid because we're here to learn.
 
 .. code-block:: shell
 
@@ -423,7 +434,7 @@ First edit ``/tmp/vols-from-snaps`` and insert the volumesnapshots names from th
 
 .. code-block:: shell
 
-  cat <<EOF > /tmp/snap.yaml
+  cat <<EOF | oc apply -f -
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -633,10 +644,3 @@ Select rows from the keyspace we previously created:
 
 You have now restored from a snapshot! Go ahead and ``quit`` the cqlsh session before finishing.
 
-Thank you for trying the playground. To view all our scenarios, go `here <https://rhpds-portworx.readthedocs.io/en/latest/index.html>`__
-
-To learn more about `Portworx <https://portworx.com/>`__, below are some useful references. 
-
-- `Deploy Portworx on Openshift <https://docs.portworx.com/portworx-enterprise/platform/openshift/ocp-bare-metal/install-on-ocp-bare-metal>`__
-- `Create Portworx volumes <https://docs.portworx.com/portworx-enterprise/platform/openshift/ocp-bare-metal/operations/storage-operations/create-pvcs>`__
-- `Use cases <https://portworx.com/use-case/kubernetes-storage/>`__
