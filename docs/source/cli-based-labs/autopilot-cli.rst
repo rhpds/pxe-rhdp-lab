@@ -312,3 +312,5 @@ It takes approximately 30s to complete resizing.
 .. code-block:: shell
 
   oc describe pvc px-postgres-pvc
+
+You can see events that the PVC was successfully resized and that the volume is now 4GiB.

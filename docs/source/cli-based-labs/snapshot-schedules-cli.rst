@@ -40,7 +40,7 @@ Create a storage class ``px-nginx-scheduled`` with the newly created schedule po
     repl: "2"
     io_priority: "high"
     snapshotschedule.stork.libopenstorage.org/default-schedule: |
-      schedulePolicyName: daily-schedule
+      schedulePolicyName: default-interval-schedule
       annotations:
         portworx/snapshot-type: local
   EOF
@@ -107,4 +107,15 @@ Create a new NGINX StatefulSet, making use of the ``px-nginx-scheduled`` storage
   EOF
 
 
-Add verification that our schedule policies are working
+We have now created a stateful set and its associated PVCs. For each PVC, a VolumeSnapshotSchedule is created. This will trigger a snapshot based on the scheduled that we configured in the storageClass. We can view these objects by running:
+
+.. code-block:: shell
+
+  oc get volumesnapshotschedule
+
+
+These volumeSnapshotSchedules are created when the PVC is created. We can view these events by running:
+
+.. code-block:: shell
+
+  oc get events --sort-by='.metadata.creationTimestamp' | grep -i snapshot

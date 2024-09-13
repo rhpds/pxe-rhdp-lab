@@ -1,5 +1,5 @@
 =========================
-Lab 02 - Apache Cassandra
+Lab 03 - Apache Cassandra
 =========================
 
 Before we deploy cassandra, we will need to create a Portworx volume (PVC) for Cassandra. In order to create PVCs, we need a StorageClass which defined the class of storage available to us.
