@@ -1,7 +1,14 @@
-* xref:module-01.adoc[1. RPM Native Container]
-** xref:module-01.adoc#repositories[Repositories]
-** xref:module-01.adoc#software[Software]
+* xref:01-explore-rhpds.adoc[1. Explore Redhat Openshift and Portworx]
 
-* xref:module-02.adoc[2. GitHub Sourced Container]
-** xref:module-02.adoc#prerequisites[Install Prerequisites]
-** xref:module-02.adoc#container[Enable Container]
+* xref:02-review-ocp-storage.adoc[2. Review OCP Storage]
+
+* xref:03-apache-cassandra.adoc[3. Snapshots with Cassandra]
+
+* xref:04-shared-volumes.adoc[4. Working with shared volumes]
+
+* xref:05-cloud-snapshots.adoc[5. Cloud Snapshots]
+
+* xref:06-snapshot-schedules.adoc[6. Creating Snapshot Schedules]
+
+* xref:07-autopilot.adoc[7. Automated capacity management]
+
