@@ -1,6 +1,6 @@
 = Lab 04 - Shared Volumes
 
-In this step, we will create a Portworx volume (PVC) for nginx.
+In this section, we will create a Portworx volume (PVC) for nginx.
 
 == Create StorageClass
 
@@ -27,7 +27,7 @@ supported parameters. In our case the key parameter is sharedv4 = true.
 
 == Create PersistentVolumeClaim
 
-Take a look at the Persistent Volume Claim and create it.
+Take a look at the PersistentVolumeClaim and create it.
 
 [source,shell]
 ----
@@ -245,11 +245,11 @@ state.
 watch oc get pods -l group=webapp -o wide
 ----
 
-When all three pods are in `Running` state then then hit `ctrl-c` to
-clear the screen.. Be patient, if it's staying in Pending state for a
+When all three pods are in the `Running` state then then hit `ctrl-c` to
+clear the screen.. Be patient. If it's staying in Pending state for a
 while it's because it has to fetch the docker image on each node.
 
-In this step, we will use pxctl to inspect the volume
+In this step, we will use `pxctl`` to inspect the volume
 
 == Inspect the Portworx volume
 
@@ -265,19 +265,15 @@ VOL=$(oc get pvc | grep px-shared-pvc | awk '{print $3}')
 pxctl volume inspect ${VOL}
 ----
 
-Make the following observations in the volume list * `Status` indicates
-the volume is attached and shows the node on which it is attached. For
-shared volumes, this is the transaction coordinator node which all other
-nodes will go through to write the data. * `HA` shows the number of
-configured replicas for this volume (shared volumes can be replicated of
-course, you can try it by modifying the storage class in step 2) *
-`Shared` shows if the volume is shared * `IO Priority` shows the
-relative priority of this volume's IO (high, medium, or low) *
-`Volume consumers` shows which pods are accessing the volume
+* `Status`: Indicates that the volume is attached and shows the node on which it is attached. For shared volumes, this is the transaction coordinator node that all other nodes use to write data.
+* `HA`: Displays the number of configured replicas for this volume (shared volumes can also be replicated; you can test this by modifying the storage class in step 2).
+* `Shared`: Shows if the volume is shared.
+* `IO Priority`: Displays the relative priority of the volume's IO (high, medium, or low).
+* `Volume consumers`: Shows which pods are accessing the volume.
 
-Now that we have our shared volumes created and mounted into all three
-nginx containers, let's proceed to write some data into the html folder
-of nginx and see how it gets read by all three containers.
+
+With our shared volumes successfully created and mounted across all three NGINX containers, we can now write data into the `html` folder of NGINX and verify that all three containers can read the data.
+
 
 In this step, we will check the state of our nginx servers.
 
@@ -327,9 +323,7 @@ POD=$(oc get pods -l app=webapp1 | grep Running | awk '{print $1}')
 oc cp /tmp/index.html $POD:/usr/share/nginx/html/index.html
 ----
 
-Now let's try all three URLs and see our hello world message is showing
-up on all three. This is because all three are attached to the same
-volume so updating one updates all three.
+Now, let's access all three URLs and verify that the "Hello World" message appears on each. This happens because all three containers are attached to the same volume, so any updates made to one are reflected across all.
 
 [source,shell]
 ----

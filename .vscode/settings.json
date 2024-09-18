@@ -1,5 +1,6 @@
 {
     /*"esbonio.sphinx.buildDir" : "${workspaceFolder}/build/html",*/
-    "esbonio.sphinx.confDir"  : "${workspaceFolder}/source",
+    "esbonio.sphinx.confDir": "${workspaceFolder}/source",
+    "asciidoc.antora.enableAntoraSupport": true,
     /*"esbonio.sphinx.srcDir"   : "${workspaceFolder}"*/
 }

@@ -1,13 +1,13 @@
-= Lab 02 - Understand Kubernetes Storage
+= Lab 02 - Understanding OpenShift Storage
 
 In this step, we will create a StorageClass for Portworx volumes.
 
-== Understand StorageClass
+== Understanding StorageClass
 
 A
-https://kubernetes.io/docs/concepts/storage/storage-classes/[StorageClass]
+https://docs.openshift.com/container-platform/4.16/storage/dynamic-provisioning.html[StorageClass]
 provides a way for administrators to describe the “classes” of storage
-on their Kubernetes cluster. Before we create a volume in Kubernetes, we
+on their OpenShift cluster. Before we create a volume in OpenShift, we
 have to create a StorageClass.
 
 For example, the following is a Portworx StorageClass whose volumes have
@@ -41,11 +41,11 @@ In this step, we will deploy a `PersistentVolumeClaim` using Portworx.
 == Understand PersistentVolumeClaim
 
 A
-https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims[PersistentVolumeClaim]
+https://docs.openshift.com/container-platform/4.16/storage/understanding-persistent-storage.html[PersistentVolumeClaim]
 can be used to dynamically create a volume using Portworx.
 
 For example, below is the spec for a 2GB volume that uses the Portworx
-Storage class we created before this step.
+Storage class we created previously.
 
 Let's create the PersistentVolumeClaim:
 
@@ -66,14 +66,11 @@ spec:
 EOF
 ----
 
-Behind the scenes, Kubernetes talks to the Portworx native driver to
-create this PVC. Each PVC has a unique one-one mapping to a
-https://kubernetes.io/docs/concepts/storage/persistent-volumes/[PersistentVolume]
-which is the actual volume backing the PVC.
+Behind the scenes, OpenShift talks to the Portworx native driver to create this PVC. Each PVC has a unique one-one mapping a PersistentVolume, which is the actual volume backing the PVC.
 
 == Validate PersistentVolumeClaim
 
-A PersistentVolumeClaim is successfully provisioned once it gets into
+A PersistentVolumeClaim is successfully provisioned once it is in the 
 “Bound” state. Let's run the below script to check that.
 
 [source,shell]
@@ -88,10 +85,6 @@ Let's proceed to the next step to further inspect the volume.
 In this step, we will use `pxctl` to inspect the volume.
 
 == Inspect the Portworx volume
-
-Portworx ships with a
-https://docs.portworx.com/portworx-enterprise/reference/cli/pxctl-reference/status-reference[pxctl]
-command line that can be used to manage Portworx.
 
 Below we will use pxctl to inspect the underlying volume for our PVC.
 

@@ -1,6 +1,6 @@
 = Lab 07 - PVC Auto Resize using AutoPilot
 
-In this step, we will create a Portworx volume (PVC) for postgres.
+In this step, we will create a Portworx volume (PVC) for PostgreSQL.
 
 == Create StorageClass and PersistentVolumeClaim
 
@@ -24,12 +24,12 @@ EOF
 ----
 
 The parameters are declarative policies for your storage volume. Notice
-the “allowVolumeExpansion: true” this needs to be added for kubernetes
+the “allowVolumeExpansion: true” this needs to be added for OpenShift
 volume expansion. See
 https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/dynamic-provisioning/[here]
 for a full list of supported parameters.
 
-We will also need to apply a configmap to allow Openshift's prometheus
+We will also need to apply a configmap to allow OpenShift's prometheus
 instance to monitor Portworx events.
 
 NOTE: during the next test phase omit this config map and wait 15
@@ -49,7 +49,7 @@ data:
 EOF
 ----
 
-Create a new Persistent Volume Claim
+Create a new PersistentVolumeClaim
 
 [source,shell]
 ----
@@ -149,24 +149,20 @@ PVC.
 
 == Verify postgres pod is ready
 
-Below commands wait till the postgres pods are in ready state.
+Below commands will wait untill the postgres pods are in the ready state.
 
 [source,shell]
 ----
 watch oc get pods -l app=postgres -o wide
 ----
 
-When the pod is in Running state then then hit `ctrl-c` to exit.
+When the pod is in the Running state hit `ctrl-c` to exit.
 
-In this step, we will use pxctl to inspect the volume
+In this step, we will use `pxctl`` to inspect the volume
 
 == Inspect the Portworx volume
 
-Portworx ships with a
-https://docs.portworx.com/reference/cli/basics/[pxctl] command line that
-can be used to manage Portworx.
-
-Below we will use pxctl to inspect the underlying volume for our PVC.
+Below we will use `pxctl`` to inspect the underlying volume for our PVC.
 
 [source,shell]
 ----
@@ -174,13 +170,12 @@ VOL=$(oc get pvc | grep px-postgres-pvc | awk '{print $3}')
 pxctl volume inspect ${VOL}
 ----
 
-Make the following observations in the inspect output * `State`
-indicates the volume is attached and shows the node on which it is
-attached. This is the node where the Kubernetes pod is running. * `HA`
-shows the number of configured replicas for this volume * `Labels` show
-the name of the PVC for this volume * `Replica sets on nodes` shows the
-px nodes on which volume is replicated * `Size` of the volume is 1GB.
-We'll check this later to see our volume property expanded.
+
+* `State`: Indicates that the volume is attached and shows the node on which it is attached. This is the node where the Kubernetes pod is running.
+* `HA`: Displays the number of configured replicas for this volume.
+* `Labels`: Shows the name of the PVC associated with this volume.
+* `Replica sets on nodes`: Displays the Portworx (px) nodes on which the volume is replicated.
+* `Size`: The size of the volume is 1GB. We'll check this later to verify if the volume has been expanded.
 
 Now that we have PostgreSQL up, let's proceed to setting up our
 AutoPilot rule!
@@ -241,7 +236,7 @@ Note that we are defining the `condition` and the `action` in which our
 Rule is activated. In our Rule we are defining when our volume is using
 `20%` of its total available capacity, then we grow the volume using the
 `openstorage.io.action.volume/resize` action by 200 percent. Normally,
-you would likely use a larger threshold for volume usage.
+you would use a larger threshold for volume usage.
 
 == Verify that AutoPilot initialized the Postgres PVC
 
@@ -302,10 +297,10 @@ exit
 == Check to see if the rule was triggered
 
 We can retrieve events by using the `oc get events` and filtering for
-`AutoPilotRule` events that match our use case. Note, that AutoPilot
+`AutoPilotRule` events that match our use case. Note that AutoPilot
 delays the rule from being triggered immediately to ensure that the
-conditions stablize, so make sure to *hang tight and see the rule get
-triggered if you dont see it right away, it may take a minute or two*.
+conditions stablize, so make sure to *hang tight and wait for the to rule get
+triggered.
 
 [source,shell]
 ----

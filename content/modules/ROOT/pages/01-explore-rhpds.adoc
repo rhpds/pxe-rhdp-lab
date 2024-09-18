@@ -1,13 +1,13 @@
-= Lab 01 - Explore Red Hat Product Demo System cluster
+= Lab 01 - Explore OpenShift cluster
 
 We will begin with a quick tour of the lab environment. This lab
-consists of a multi-node kubernetes cluster which has been deployed
+consists of a multi-node openshift cluster which has been deployed
 exclusively for you. This is a sandbox environment. Feel free to play
 around.
 
 == Red Hat Openshift Container Platform configuration review
 
-Let's start by getting the nodes in our current cluster:
+Let's start by getting the nodes in our current cluster.  Open the tab to access the bastion.
 
 [source,shell]
 ----
@@ -16,7 +16,7 @@ oc get nodes
 
 This cluster has 3 control-plane nodes and 3 worker nodes.
 
-We can check the openshift version we are running be running the
+We can check the OpenShift version we are running with the
 following command:
 
 [source,shell]
@@ -24,7 +24,7 @@ following command:
 oc version
 ----
 
-And we can check the status of the cluster by running:
+We can check the status of the cluster by running:
 
 [source,shell]
 ----
@@ -60,7 +60,11 @@ oc -n portworx logs -f $(oc get pods -l name=portworx -n portworx -o jsonpath='{
 
 == Add PXCTL alias
 
-To make it easier to run pxctl commands, we will add an alias to the
+Portworx ships with a
+https://docs.portworx.com/portworx-enterprise/reference/cli/pxctl-reference/status-reference[pxctl]
+command line that that allows users to manage Portworx resources across the cluster.
+
+To make it easier to run `pxctl1 commands, we will add an alias to the
 shell.
 
 [source,shell]

@@ -1,6 +1,6 @@
 * xref:01-explore-rhpds.adoc[1. Explore Redhat Openshift and Portworx]
 
-* xref:02-review-ocp-storage.adoc[2. Review OCP Storage]
+* xref:02-review-ocp-storage.adoc[2. Review OpenShift Storage]
 
 * xref:03-apache-cassandra.adoc[3. Snapshots with Cassandra]
 
