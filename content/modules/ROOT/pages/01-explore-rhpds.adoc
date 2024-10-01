@@ -7,11 +7,9 @@ This is a sandbox environment. Feel free to play around.
 
 If you prefer to use your own terminal, you can login to the bastion for the lab with ssh
 
-[source,shell]
-----
 
 ssh {bastion_ssh_user_name}@{bastion_public_hostname}
-----
+
 
 == Red Hat Openshift Container Platform configuration review
 
