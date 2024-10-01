@@ -102,10 +102,12 @@ Next, let's take a quick look at the OpenShift Web console
 
 The username is `{openshift_cluster_admin_username}` and the password is `{openshift_cluster_admin_password}`
 
-Web Console URL: {openshift_console_url}
+Web Console URL
+
+cd {openshift_console_url}
 
 
 Once logged in, navigate to `Operators/Installed Operators`. Change your Project to `portwrox`.  You should see Portworx Etnerprise installed with a status of Succeeded.
 
-image::../assets/images/01_01_operator.png[]
+image::assets/images/01_01_operator.png[]
 
