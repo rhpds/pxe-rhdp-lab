@@ -95,8 +95,7 @@ Next, let's take a quick look at the OpenShift Web console
 The username is `{openshift_cluster_admin_username}` and the password is `{openshift_cluster_admin_password}`
 
 Web Console URL: 
-[source]
-----
+
 {openshift_console_url}
 
 
