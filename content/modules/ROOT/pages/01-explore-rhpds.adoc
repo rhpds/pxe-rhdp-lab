@@ -2,16 +2,16 @@
 
 We will begin with a quick tour of the lab environment. This lab
 consists of a multi-node openshift cluster which has been deployed
-exclusively for you. This is a sandbox environment. Feel free to play
-around.  
+exclusively for you. 
+This is a sandbox environment. Feel free to play around.  
 
 If you prefer to use your own terminal, you can login to the bastion for the lab with ssh
 
 [source,shell]
----
+----
 
 ssh {bastion_ssh_user_name}@{bastion_public_hostname}
----
+----
 
 == Red Hat Openshift Container Platform configuration review
 
