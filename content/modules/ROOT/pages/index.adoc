@@ -13,7 +13,6 @@ Portworx OpenShift Operator
 Application deployment for demos
 
 Use cases demos
-----
 
 === Lab Access
 

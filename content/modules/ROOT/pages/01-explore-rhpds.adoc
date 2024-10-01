@@ -15,6 +15,7 @@ ssh {bastion_ssh_user_name}@{bastion_public_hostname}
 
 Let's start by getting the nodes in our current cluster.  Open the tab to access the bastion.
 
++
 [source,shell]
 ----
 oc get nodes
@@ -25,6 +26,7 @@ This cluster has 3 control-plane nodes and 3 worker nodes.
 We can check the OpenShift version we are running with the
 following command:
 
++
 [source,shell]
 ----
 oc version
@@ -32,6 +34,7 @@ oc version
 
 We can check the status of the cluster by running:
 
++
 [source,shell]
 ----
 oc cluster-info
@@ -52,6 +55,7 @@ Portworx Built-in KVDB instead of deploying our own.
 . *Specification*: Portworx is defined by a spec file, we will create
 the Portworx cluster using the spec URL.
 
++
 [source,shell]
 ----
 oc get pods -o wide -n portworx -l name=portworx
@@ -59,6 +63,7 @@ oc get pods -o wide -n portworx -l name=portworx
 
 Check the installation logs:
 
++
 [source,shell]
 ----
 oc -n portworx logs -f $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')  -c portworx
@@ -73,6 +78,7 @@ command line that that allows users to manage Portworx resources across the clus
 To make it easier to run `pxctl1 commands, we will add an alias to the
 shell.
 
++
 [source,shell]
 ----
 alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl"
@@ -82,6 +88,7 @@ echo 'alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portwor
 Take a moment to review the portworx configuration by running the
 following command:
 
++
 [source,shell]
 ----
 pxctl status
@@ -89,17 +96,16 @@ pxctl status
 
 Notice that our Portworx cluster is running on 3 nodes.
 
+== OpenShift Web Console
 
 Next, let's take a quick look at the OpenShift Web console
 
 The username is `{openshift_cluster_admin_username}` and the password is `{openshift_cluster_admin_password}`
 
-Web Console URL: 
-
-{openshift_console_url}
+Web Console URL: {openshift_console_url}
 
 
-Once logged in, navigate to Operators/Installed Operators. Change your Project to portwrox.  You should see Portworx Etnerprise installed with a status of Succeeded.
+Once logged in, navigate to `Operators/Installed Operators`. Change your Project to `portwrox`.  You should see Portworx Etnerprise installed with a status of Succeeded.
 
-image::../assets/images/01_01_operator.png
+image::../assets/images/01_01_operator.png[]
 
