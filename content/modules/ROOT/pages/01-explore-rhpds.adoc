@@ -5,6 +5,14 @@ consists of a multi-node openshift cluster which has been deployed
 exclusively for you. This is a sandbox environment. Feel free to play
 around.  
 
+If you prefer to use your own terminal, you can login to the bastion for the lab with ssh
+
+[source,shell]
+---
+
+ssh {bastion_ssh_user_name}@{bastion_public_hostname}
+---
+
 == Red Hat Openshift Container Platform configuration review
 
 Let's start by getting the nodes in our current cluster.  Open the tab to access the bastion.
@@ -82,3 +90,19 @@ pxctl status
 ----
 
 Notice that our Portworx cluster is running on 3 nodes.
+
+
+Next, let's take a quick look at the OpenShift Web console
+
+The username is `{openshift_cluster_admin_username}` and the password is `{openshift_cluster_admin_password}`
+
+Web Console URL: 
+[source]
+----
+{openshift_console_url}
+
+
+Once logged in, navigate to Operators/Installed Operators. Change your Project to portwrox.  You should see Portworx Etnerprise installed with a status of Succeeded.
+
+image::../assets/images/01_01_operator.png
+
