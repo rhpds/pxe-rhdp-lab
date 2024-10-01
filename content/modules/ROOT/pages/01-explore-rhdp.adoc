@@ -115,4 +115,4 @@ Click on the `Portworx Enterprise` operator and then Click `Stoage Cluster`
 
 `portworx-storage-clusteer` should be in the `Running` phase
 
-image::01_02_portworx_operator.png[]
+image::01_02_portworx-operator.png[]
