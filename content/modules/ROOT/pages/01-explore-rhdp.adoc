@@ -16,7 +16,7 @@ If you prefer to use your own terminal, you can login to the bastion for the lab
 Let's start by getting the nodes in our current cluster.  Open the tab to access the bastion.
 
 +
-[source,shell]
+[source,bash]
 ----
 oc get nodes
 ----
@@ -27,7 +27,7 @@ We can check the OpenShift version we are running with the
 following command:
 
 +
-[source,shell]
+[source,bash]
 ----
 oc version
 ----
@@ -35,7 +35,7 @@ oc version
 We can check the status of the cluster by running:
 
 +
-[source,shell]
+[source,bash]
 ----
 oc cluster-info
 ----
@@ -56,7 +56,7 @@ Portworx Built-in KVDB instead of deploying our own.
 the Portworx cluster using the spec URL.
 
 +
-[source,shell]
+[source,bash]
 ----
 oc get pods -o wide -n portworx -l name=portworx
 ----
@@ -64,7 +64,7 @@ oc get pods -o wide -n portworx -l name=portworx
 Check the installation logs:
 
 +
-[source,shell]
+[source,bash]
 ----
 oc -n portworx logs -f $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}')  -c portworx
 ----
@@ -79,7 +79,7 @@ To make it easier to run `pxctl1 commands, we will add an alias to the
 shell.
 
 +
-[source,shell]
+[source,bash]
 ----
 alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl"
 echo 'alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl"' >> ~/.bashrc
@@ -89,7 +89,7 @@ Take a moment to review the portworx configuration by running the
 following command:
 
 +
-[source,shell]
+[source,bash]
 ----
 pxctl status
 ----
@@ -104,7 +104,7 @@ The username is `{openshift_cluster_admin_username}` and the password is `{opens
 
 Web Console URL
 
-{openshift_console_url}
+`{openshift_console_url}`
 
 
 Once logged in, navigate to `Operators/Installed Operators`. Change your Project to `portwrox`.  You should see Portworx Etnerprise installed with a status of Succeeded.
