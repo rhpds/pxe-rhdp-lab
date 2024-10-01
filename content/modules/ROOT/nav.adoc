@@ -1,4 +1,4 @@
-* xref:01-explore-rhpds.adoc[1. Explore Redhat Openshift and Portworx]
+* xref:01-explore-rhdp.adoc[1. Explore Redhat Openshift and Portworx]
 
 * xref:02-review-ocp-storage.adoc[2. Review OpenShift Storage]
 
