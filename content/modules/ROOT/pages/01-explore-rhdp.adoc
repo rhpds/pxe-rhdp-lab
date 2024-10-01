@@ -111,3 +111,8 @@ Once logged in, navigate to `Operators/Installed Operators`. Change your Project
 
 image::01_01_operator.png[]
 
+Click on the `Portworx Enterprise` operator and then Click `Stoage Cluster`
+
+`portworx-storage-clusteer` should be in the `Running` phase
+
+image::01_02_portworx_operator.png[]
