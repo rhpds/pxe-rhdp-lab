@@ -1,22 +1,16 @@
 = Lab 02 - Understanding OpenShift Storage
 
-In this step, we will create a StorageClass for Portworx volumes.
+In this step, we will create a `StorageClass` for Portworx volumes.
 
 == Understanding StorageClass
 
-A
-https://docs.openshift.com/container-platform/4.16/storage/dynamic-provisioning.html[StorageClass]
-provides a way for administrators to describe the “classes” of storage
-on their OpenShift cluster. Before we create a volume in OpenShift, we
-have to create a StorageClass.
+A https://docs.openshift.com/container-platform/4.16/storage/dynamic-provisioning.html[StorageClass] provides a way for administrators to describe the "classes" of storage available on their OpenShift cluster. Before we can create a volume in OpenShift, we need to create a `StorageClass`.
 
-For example, the following is a Portworx StorageClass whose volumes have
-replication factor of 3 and high IO priority. * Replication factor of 3
-means the data for the volume is replicated on 3 different nodes in the
-cluster * High IO priority means Portworx will use storage devices that
-are classified into the high IO profile (for e.g SSDs).
+For example, below is a Portworx `StorageClass` whose volumes have:
+* **Replication factor of 3**: This means the data for the volume is replicated across 3 different nodes in the cluster.
+* **High IO priority**: Portworx will use storage devices that are classified under the high IO profile, such as SSDs.
 
-Create the storage class by running
+Create the `StorageClass` by running the following command:
 
 [source,shell]
 ----
@@ -34,20 +28,17 @@ volumeBindingMode: Immediate
 EOF
 ----
 
-Let's proceed to creating volumes that use this storage class.
+Let's proceed by creating volumes that use this `StorageClass`.
 
 In this step, we will deploy a `PersistentVolumeClaim` using Portworx.
 
-== Understand PersistentVolumeClaim
+== Understanding PersistentVolumeClaim
 
-A
-https://docs.openshift.com/container-platform/4.16/storage/understanding-persistent-storage.html[PersistentVolumeClaim]
-can be used to dynamically create a volume using Portworx.
+A https://docs.openshift.com/container-platform/4.16/storage/understanding-persistent-storage.html[PersistentVolumeClaim] (PVC) can be used to dynamically create a volume using Portworx.
 
-For example, below is the spec for a 2GB volume that uses the Portworx
-Storage class we created previously.
+Below is the spec for a 2GB volume that uses the Portworx `StorageClass` we created earlier.
 
-Let's create the PersistentVolumeClaim:
+Let's create the `PersistentVolumeClaim`:
 
 [source,shell]
 ----
@@ -66,36 +57,33 @@ spec:
 EOF
 ----
 
-Behind the scenes, OpenShift talks to the Portworx native driver to create this PVC. Each PVC has a unique one-one mapping a PersistentVolume, which is the actual volume backing the PVC.
+Behind the scenes, OpenShift communicates with the Portworx native driver to create this PVC. Each PVC has a unique one-to-one mapping to a `PersistentVolume` (PV), which is the actual volume backing the PVC.
 
 == Validate PersistentVolumeClaim
 
-A PersistentVolumeClaim is successfully provisioned once it is in the 
-“Bound” state. Let's run the below script to check that.
+A `PersistentVolumeClaim` is successfully provisioned once it reaches the "Bound" state. Let's run the following command to check its status:
 
 [source,shell]
 ----
-oc get pvc
+oc get pvc px-pvc
 ----
 
-we can see in the example output that our PVC is bound.
+You should see in the example output that our PVC is in the "Bound" state.
 
 Let's proceed to the next step to further inspect the volume.
 
-In this step, we will use `pxctl` to inspect the volume.
+== Inspect the Portworx Volume
 
-== Inspect the Portworx volume
-
-Below we will use pxctl to inspect the underlying volume for our PVC.
+Now, we will use `pxctl` to inspect the underlying volume for our PVC.
 
 [source,shell]
 ----
-VOL=$(oc get pvc | grep px-pvc | awk '{print $3}')
+VOL=$(oc get pvc px-pvc -o jsonpath='{.spec.volumeName}')
 pxctl volume inspect ${VOL}
 ----
 
-Make the following observations in the inspect output * `HA` shows the
-number of configured replcas for this volume * `Labels` show the name of
-the PVC for this volume * `Replica sets on nodes` shows the px nodes on
-which volume is replicated * `State` indicates the volume is detached
-which means no applications are using the volume yet
+Make the following observations in the inspect output:
+* **`HA`**: Shows the number of configured replicas for this volume.
+* **`Labels`**: Shows the name of the PVC associated with this volume.
+* **`Replica sets on nodes`**: Displays the Portworx nodes on which the volume is replicated.
+* **`State`**: Indicates the volume is currently "detached," meaning no applications are using the volume yet.
