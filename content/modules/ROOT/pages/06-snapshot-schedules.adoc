@@ -1,9 +1,12 @@
 = Lab 06 - Snapshot Schedules
 
-== Create a new snapshot schedule policy
+== Introduction
 
-Create a daily snapshot schedule policy called `daily-schedule` at
-`10 PM`, `retain 5`.
+In this lab, we will learn how to create and manage snapshot schedules in OpenShift using Portworx. We will begin by creating a snapshot schedule policy to automate the creation of volume snapshots. Next, we will create a storage class that incorporates this snapshot schedule policy, ensuring that all Persistent Volume Claims (PVCs) created with this storage class have automated snapshots. Finally, we will deploy an NGINX StatefulSet that utilizes this storage class, automatically generating snapshots for the PVCs associated with the StatefulSet.
+
+== Create a New Snapshot Schedule Policy
+
+First, create a daily snapshot schedule policy named `daily-schedule` that takes a snapshot every day at `10 PM` and retains the last 5 snapshots.
 
 [source,shell]
 ----
@@ -19,10 +22,9 @@ policy:
 EOF
 ----
 
-== Create a storageClass that uses this schedule policy
+== Create a Storage Class That Uses This Schedule Policy
 
-Create a storage class `px-nginx-scheduled` with the newly created
-schedule policy `daily-schedule`
+Next, create a storage class named `px-nginx-scheduled` that uses the newly created schedule policy `daily-schedule`.
 
 [source,shell]
 ----
@@ -42,10 +44,9 @@ parameters:
 EOF
 ----
 
-== Create a Nginx StatefulSet that utilizes this storageClass
+== Create an NGINX StatefulSet That Utilizes This StorageClass
 
-Create a new NGINX StatefulSet, making use of the `px-nginx-scheduled`
-storage class.
+Now, create a new NGINX StatefulSet, making use of the `px-nginx-scheduled` storage class.
 
 [source,shell]
 ----
@@ -100,20 +101,6 @@ spec:
 EOF
 ----
 
-We have now created a stateful set and its associated PVCs. For each
-PVC, a VolumeSnapshotSchedule is created. This will trigger a snapshot
-based on the scheduled that we configured in the storageClass. We can
-view these objects by running:
+== Summary
 
-[source,shell]
-----
-oc get volumesnapshotschedule
-----
-
-These volumeSnapshotSchedules are created when the PVC is created. We
-can view these events by running:
-
-[source,shell]
-----
-oc get events --sort-by='.metadata.creationTimestamp' | grep -i snapshot
-----
+In this lab, we successfully created a snapshot schedule policy and applied it to a storage class. We then deployed an NGINX StatefulSet that automatically utilizes the snapshot scheduling capabilities of this storage class. As a result, the PVCs associated with the StatefulSet have automated daily snapshots, ensuring data protection and quick recovery if needed. We verified the creation of `VolumeSnapshotSchedule` objects and reviewed the related events to ensure everything is working as expected.
