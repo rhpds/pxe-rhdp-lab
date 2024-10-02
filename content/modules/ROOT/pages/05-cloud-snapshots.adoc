@@ -1,13 +1,15 @@
 = Lab 05 - Cloud Snapshots
 
-[IMPORTANT]
-.Important
-====
-We will make use of Minio object store in this Lab. We will use it as
-the endpoint for our cloud snapshots.
-====== Deploy Minio as target for Portworx Cloud Snapshots
 
-Create a storageClass for use by Minio
+== Introduction
+
+In this lab, you will learn how to create cloud snapshots for stateful applications using Portworx and Minio as the object storage solution. Cloud snapshots provide a way to backup data in a scalable and reliable manner, allowing for efficient data recovery. This lab walks you through deploying Minio as the target for cloud snapshots, provisioning a MySQL database, taking cloud snapshots, and restoring from those snapshots.
+
+== Deploy Minio as Target for Portworx Cloud Snapshots
+
+To begin, we need to deploy Minio as our object store endpoint for Portworx cloud snapshots. First, we will create a StorageClass for Minio.
+
+Create a StorageClass for use by Minio:
 
 [source,shell]
 ----
@@ -29,7 +31,7 @@ EOF
 oc create -f /tmp/px-ha-sc.yaml
 ----
 
-Deploy Minio onto the OCP cluster
+Next, deploy Minio onto the OCP cluster:
 
 [source,shell]
 ----
@@ -50,7 +52,7 @@ until [[ `oc -n minio get pods | grep px-minio | grep Running | grep 1/1 | wc -l
 echo "Setup Complete ..."
 ----
 
-Run the below command to obtain the object store endpoint:
+Run the command below to obtain the object store endpoint:
 
 [source,shell]
 ----
@@ -60,7 +62,7 @@ pxctl credentials create --provider s3 --s3-access-key ZZYYXXWWVVUUTT --s3-secre
 
 == Provision MySQL Database
 
-We will now create a MySQL database to use with Cloud Snapshots
+We will now create a MySQL database to use with cloud snapshots.
 
 [source,shell]
 ----
@@ -121,24 +123,24 @@ spec:
 EOF
 ----
 
-Wait for the MySQL pod to start.
+Wait for the MySQL pod to start:
 
 [source,shell]
 ----
 watch oc get pods -l app=mysql
 ----
 
+Create a database named `demodb`:
+
 [source,shell]
 ----
 POD=$(oc get pods -l app=mysql | grep Running | grep 1/1 | awk '{print $1}')
-oc exec -it $POD -- mysql -u root -e "Create database demodb"
+oc exec -it $POD -- mysql -u root -e "CREATE DATABASE demodb"
 ----
 
 == Take Cloud Snapshot
 
-We have deployed a mysql pod that uses a PortWorx volume. Take a cloud
-snapshot of this PVC called `mysql-snapshot`. The snapshot should be
-successfully backed up to the object store.
+We have deployed a MySQL pod that uses a Portworx volume. Now, take a cloud snapshot of this PVC named `mysql-snapshot`. The snapshot should be successfully backed up to the object store.
 
 [source,shell]
 ----
@@ -155,8 +157,7 @@ spec:
 EOF
 ----
 
-If the cloud credentials and volume snapshot were set up correctly, you
-can check the status by running the below command:
+If the cloud credentials and volume snapshot were set up correctly, you can check the status by running the command below:
 
 [source,shell]
 ----
@@ -165,8 +166,7 @@ oc describe stork-volumesnapshot mysql-snapshot
 
 == Clone PVC
 
-Create a clone PVC called `px-mysql-clone-pvc` by restoring data from
-the snapshot `mysql-snapshot`.
+Create a clone PVC named `px-mysql-clone-pvc` by restoring data from the snapshot `mysql-snapshot`.
 
 [source,shell]
 ----
@@ -187,9 +187,13 @@ spec:
 EOF
 ----
 
-We can see the status of the clone by running the following command
+You can check the status of the clone by running the following command:
 
 [source,shell]
 ----
 oc describe pvc px-mysql-clone-pvc 
 ----
+
+== Summary
+
+In this lab, you successfully deployed Minio as an object store for Portworx cloud snapshots. You also created a MySQL database with persistent storage, took a cloud snapshot, and restored the data by creating a clone PVC. These steps demonstrate the power of Portworx cloud snapshots for efficient data backup and recovery in Kubernetes environments.

@@ -52,7 +52,7 @@ Now that we have the volume created, let's deploy a few NGINX instances and see 
 In this step, we will deploy the NGINX application using the `PersistentVolumeClaim` created before.
 
 [NOTE]
-.Note
+
 ====
 Notice in the specification below, we have set the `securityContext.seLinuxOptions`. Without this setting, the pods may be assigned random SELinux labels, in which case only the last pod to come online would have access to the shared volume.
 ====
