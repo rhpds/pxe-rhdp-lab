@@ -7,9 +7,7 @@ Apache Cassandra is a distributed NoSQL database designed to manage large amount
 
 A `3DSnap` (Three-Dimensional Snapshot) allows you to take consistent snapshots across multiple volumes in your cluster simultaneously. This is particularly useful for distributed applications like Cassandra, which use multiple volumes for their data.
 
-By using 3DSnap, you can ensure that all volumes in a Cassandra cluster are snapped at the exact same point in time. This guarantees consistency across the entire dataset, making recovery easier and preventing issues that can arise from having data at different points in time.
-
-For example, when taking a snapshot of a Cassandra cluster that uses three volumes for storage, 3DSnap ensures that each of these volumes is captured simultaneously. This level of consistency is crucial for proper recovery or cloning of the cluster.
+By using 3DSnap, you can ensure that all volumes in a Cassandra cluster are snapped at the exact same point in time. This guarantees consistency across the entire dataset, making recovery easier and preventing issues that can arise from having data at different points in time. This level of consistency is crucial for proper recovery or cloning of the cluster.
 
 To enable this feature in a production environment, you would add the `fg=true` parameter to your `StorageClass`, which ensures that Portworx places each volume and its replicas on separate nodes. This prevents a failover scenario where volumes might end up on the same node, thus improving reliability and performance.
 
@@ -18,7 +16,9 @@ In this lab, we'll deploy Cassandra on OpenShift using Portworx for dynamic stor
 
 == Step 1: Create a Portworx Volume for Cassandra
 
-Before deploying Cassandra, we need to create a Portworx Persistent Volume Claim (PVC). To do that, we first need a StorageClass, which defines the type of storage available.
+Before deploying Cassandra, we need to create a Portworx `PersistentVolumeClaim` (PVC). 
+
+To do that, we first need a StorageClass, which defines the type of storage available.
 
 === Create StorageClass
 
@@ -51,7 +51,7 @@ Now that we have the StorageClass created, let's deploy Cassandra.
 
 == Step 2: Deploy Cassandra StatefulSet
 
-In this step, we will deploy a 3-node Cassandra application using a StatefulSet. To learn more about StatefulSets, see https://docs.openshift.com/container-platform/4.16/rest_api/workloads_apis/statefulset-apps-v1.html[link].
+In this step, we will deploy a 3-node Cassandra application using a `StatefulSet`. To learn more about StatefulSets, see https://docs.openshift.com/container-platform/4.16/rest_api/workloads_apis/statefulset-apps-v1.html[here].
 
 === Create the Cassandra StatefulSet
 
@@ -165,7 +165,8 @@ spec:
 EOF
 ----
 
-The above configuration uses a headless service to expose the StatefulSet. PVCs are dynamically created for each member of the StatefulSet based on `volumeClaimTemplates`.
+The above configuration uses a headless service to expose the StatefulSet. 
+PVCs are dynamically created for each member of the StatefulSet based on `volumeClaimTemplates`.
 
 == Step 3: Verify Cassandra Pod is Ready
 
@@ -184,15 +185,17 @@ Next, inspect the underlying volumes for our Cassandra pod:
 
 [source,shell]
 ----
-VOLS=$(oc get pvc | grep cassandra | awk '{print $3}')
-pxctl volume inspect $VOLS
+pxctl volume inspect $(oc get pvc | grep cassandra | awk '{print $3}')
+
 ----
 
 Look for:
-- `State`: Indicates the volume is attached and shows the node.
-- `HA`: Number of configured replicas.
-- `Labels`: PVC name associated with the volume.
-- `Replica sets on nodes`: Portworx nodes with volume replicas.
+
+* **`State`**: Indicates the volume is attached and shows the node.
+* **`HA`**: Number of configured replicas.
+* **`Labels`**: PVC name associated with the volume.
+* **`Replica sets on nodes`**: Portworx nodes with volume replicas.
+
 
 == Step 5: Create a Table and Insert Data
 
