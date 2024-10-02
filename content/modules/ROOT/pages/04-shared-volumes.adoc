@@ -1,11 +1,14 @@
 = Lab 04 - Shared Volumes
 
-In this section, we will create a Portworx volume (PVC) for nginx.
+In this section, we will create a Portworx volume (PVC) for NGINX.
+
+== Why NGINX?
+
+In this lab, we are using NGINX to demonstrate how shared volumes can be utilized to deploy and scale stateless applications effectively. NGINX is an ideal example for testing the behavior of shared volumes, as its data must remain consistent across multiple instances. This approach will help us understand how Portworx shared volumes work in an OpenShift environment.
 
 == Create StorageClass
 
-Take a look at the StorageClass definition for Portworx and create the
-storage class.
+Take a look at the StorageClass definition for Portworx and create the storage class.
 
 [source,shell]
 ----
@@ -21,9 +24,7 @@ parameters:
 EOF
 ----
 
-The parameters are declarative policies for your storage volume. See
-https://docs.portworx.com/manage/volumes.html[here] for a full list of
-supported parameters. In our case the key parameter is sharedv4 = true.
+The parameters are declarative policies for your storage volume. See https://docs.portworx.com/manage/volumes.html[here] for a full list of supported parameters. In our case, the key parameter is `sharedv4 = true`.
 
 == Create PersistentVolumeClaim
 
@@ -46,24 +47,21 @@ spec:
 EOF
 ----
 
-Now that we have the volumes created, let's deploy a few nginx instances
-and see how the shared volumes work!
+Now that we have the volume created, let's deploy a few NGINX instances and see how the shared volume works!
 
-In this step, we will deploy the nginx application using the
-`PersistentVolumeClaim` created before.
+In this step, we will deploy the NGINX application using the `PersistentVolumeClaim` created before.
 
 [NOTE]
 .Note
 ====
-Notice in the below specification we have set the
-securityContext.seLinuxOptions. Without this setting the pods may be
-assigned random selinux labels, in which case only the last pod to come
-online would have access to the shared volume.
-====== Step deploy 3 instances of nginx
+Notice in the specification below, we have set the `securityContext.seLinuxOptions`. Without this setting, the pods may be assigned random SELinux labels, in which case only the last pod to come online would have access to the shared volume.
+====
+
+== Deploy 3 Instances of NGINX
 
 [source,shell]
 ----
-cat <<EOF  | oc apply -f -
+cat <<EOF | oc apply -f -
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -174,7 +172,6 @@ spec:
       containers:
       - name: webapp3
         securityContext:
-        securityContext:
           allowPrivilegeEscalation: false
           seLinuxOptions: 
             level: "s0:c1,c0"
@@ -232,37 +229,29 @@ spec:
 EOF
 ----
 
-Observe the `volumeMounts` and `volumes` sections where we mount the
-PVC.
+Observe the `volumeMounts` and `volumes` sections where we mount the PVC.
 
-== Verify nginx pods are ready
+== Verify NGINX Pods Are Ready
 
-Run the below command and wait till all three nginx pods are in ready
-state.
+Run the command below and wait until all three NGINX pods are in a ready state.
 
 [source,shell]
 ----
 watch oc get pods -l group=webapp -o wide
 ----
 
-When all three pods are in the `Running` state then then hit `ctrl-c` to
-clear the screen.. Be patient. If it's staying in Pending state for a
-while it's because it has to fetch the docker image on each node.
+When all three pods are in the `Running` state, press `ctrl-c` to clear the screen. Be patient. If they stay in the `Pending` state for a while, it is because each node must fetch the Docker image.
 
-In this step, we will use `pxctl`` to inspect the volume
+== Inspect the Portworx Volume
 
-== Inspect the Portworx volume
+Portworx ships with a https://docs.portworx.com/control/status.html[pxctl] command line tool that can be used to manage Portworx.
 
-Portworx ships with a
-https://docs.portworx.com/control/status.html[pxctl] command line that
-can be used to manage Portworx.
-
-Below we will use `pxctl` to inspect the underlying volume for our PVC.
+Below, we will use `pxctl` to inspect the underlying volume for our PVC.
 
 [source,shell]
 ----
-VOL=$(oc get pvc | grep px-shared-pvc | awk '{print $3}')
-pxctl volume inspect ${VOL}
+pxctl volume inspect $(oc get pvc | grep px-shared-pvc | awk '{print $3}')
+
 ----
 
 * `Status`: Indicates that the volume is attached and shows the node on which it is attached. For shared volumes, this is the transaction coordinator node that all other nodes use to write data.
@@ -271,13 +260,9 @@ pxctl volume inspect ${VOL}
 * `IO Priority`: Displays the relative priority of the volume's IO (high, medium, or low).
 * `Volume consumers`: Shows which pods are accessing the volume.
 
+With our shared volume successfully created and mounted across all three NGINX containers, we can now write data into the `html` folder of NGINX and verify that all three containers can read the data.
 
-With our shared volumes successfully created and mounted across all three NGINX containers, we can now write data into the `html` folder of NGINX and verify that all three containers can read the data.
-
-
-In this step, we will check the state of our nginx servers.
-
-== Confirm our nginx servers are up
+== Confirm Our NGINX Servers Are Up
 
 Run the following command:
 
@@ -299,15 +284,15 @@ You should see the following:
 </html>
 ----
 
-== Create index.html nginx html folder on webapp1
+== Create `index.html` in the NGINX HTML Folder on `webapp1`
 
-Copy index.html into webapp1's pod:
+Copy `index.html` into the `webapp1` pod:
 
 [source,shell]
 ----
 cat <<"EOF" > /tmp/index.html
- /$$$$$$$                       /$$                                                
-| $$__  $$                     | $$                                                
+ /$$$$$$$                       /$$                                                 
+| $$__  $$                     | $$                                                 
 | $$  \ $$ /$$$$$$   /$$$$$$  /$$$$$$   /$$  /$$  /$$  /$$$$$$   /$$$$$$  /$$   /$$
 | $$$$$$$//$$__  $$ /$$__  $$|_  $$_/  | $$ | $$ | $$ /$$__  $$ /$$__  $$|  $$ /$$/
 | $$____/| $$  \ $$| $$  \__/  | $$    | $$ | $$ | $$| $$  \ $$| $$  \__/ \  $$$$/ 
@@ -339,3 +324,9 @@ oc run test-webapp2 --image nginx --restart=Never --rm -ti -- curl webapp2-svc
 ----
 oc run test-webapp3 --image nginx --restart=Never --rm -ti -- curl webapp3-svc
 ----
+
+== Summary
+
+Congratulations! You have successfully created a shared volume using Portworx and deployed multiple NGINX instances to demonstrate how data consistency is maintained across multiple pods. We verified that each instance of NGINX can access the same shared data, showcasing the power of shared storage in an OpenShift environment.
+
+With our shared volumes successfully created and mounted across all three NGINX containers, we were able to modify the html folder of webapp1, and see the changes reflected in all NGINX instances. This demonstrated how shared volumes facilitate consistent data across multiple application pods.

@@ -1,4 +1,4 @@
-= Lab 03 - Managing Portworx Snapshots
+= Lab 03 - Managing Appache Casandara with Portworx Snapshots
 
 == Understanding Apache Cassandra
 Apache Cassandra is a distributed NoSQL database designed to manage large amounts of data across multiple servers, providing high availability and fault tolerance. It ensures there is no single point of failure by spreading data evenly across the servers in the network.
@@ -235,16 +235,16 @@ Cordon the node where Cassandra is running:
 
 [source,shell]
 ----
-NODE=$(oc get pods -o wide | grep cassandra-0 | awk '{print $7}')
-oc adm cordon ${NODE}
+oc delete pod $(oc get pods -l app=cassandra -o wide | grep -v NAME | awk '{print $1}')
+
 ----
 
 Delete the Cassandra pod:
 
 [source,shell]
 ----
-POD=$(oc get pods -l app=cassandra -o wide | grep -v NAME | awk '{print $1}')
-oc delete pod ${POD}
+oc delete pod $(oc get pods -l app=cassandra -o wide | awk 'NR>1 {print $1}')
+
 ----
 
 This will cause Kubernetes to reschedule the pod on another node.
