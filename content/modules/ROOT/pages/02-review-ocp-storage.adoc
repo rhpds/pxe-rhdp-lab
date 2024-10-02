@@ -68,7 +68,7 @@ A `PersistentVolumeClaim` is successfully provisioned once it reaches the "Bound
 oc get pvc px-pvc
 ----
 
-You should see in the example output that our PVC is in the "Bound" state.
+You should see in the example output that our PVC is in the *Bound* state.
 
 Let's proceed to the next step to further inspect the volume.
 
@@ -78,12 +78,14 @@ Now, we will use `pxctl` to inspect the underlying volume for our PVC.
 
 [source,shell]
 ----
-VOL=$(oc get pvc px-pvc -o jsonpath='{.spec.volumeName}')
-pxctl volume inspect ${VOL}
+pxctl volume inspect $(oc get pvc px-pvc -o jsonpath='{.spec.volumeName}')
+
 ----
 
 Make the following observations in the inspect output:
-* **`HA`**: Shows the number of configured replicas for this volume.
-* **`Labels`**: Shows the name of the PVC associated with this volume.
-* **`Replica sets on nodes`**: Displays the Portworx nodes on which the volume is replicated.
-* **`State`**: Indicates the volume is currently "detached," meaning no applications are using the volume yet.
+
+* **HA**: Shows the number of configured replicas for this volume.
+* **Labels**: Shows the name of the PVC associated with this volume.
+* **Replica sets on nodes**: Displays the Portworx nodes on which the volume is replicated.
+* **State**: Indicates whether the volume is currently "detached," meaning no applications are using the volume yet.
+
