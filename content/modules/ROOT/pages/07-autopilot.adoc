@@ -2,7 +2,8 @@
 
 == Introduction
 
-In this lab, we will learn how to create and manage automatic volume resizing for a PostgreSQL Persistent Volume Claim (PVC) using Portworx AutoPilot. We will begin by creating a StorageClass and a PVC for PostgreSQL that allows volume expansion. After that, we will deploy a PostgreSQL instance that uses this PVC. Finally, we will configure an AutoPilot rule to automatically resize the volume when a certain usage threshold is reached, ensuring seamless expansion without downtime.
+In this lab, we will explore how to dynamically manage the storage needs of a PostgreSQL deployment in OpenShift using Portworx and AutoPilot. We will create a PVC with volume expansion capabilities and deploy a PostgreSQL instance that uses this PVC. Additionally, we will implement an AutoPilot rule to automatically expand the volume when certain conditions are met, ensuring continuous operation without manual intervention or downtime. By the end of this lab, you will understand how to configure and verify automatic volume resizing, providing a robust solution for managing increasing storage demands.
+
 
 == Create StorageClass and PersistentVolumeClaim
 
@@ -301,4 +302,4 @@ You can see events that indicate the PVC was successfully resized and that the v
 
 == Summary
 
-In this lab, we demonstrated how to create and manage automatic volume resizing for a PostgreSQL PVC using Portworx AutoPilot. We created a StorageClass and a PVC that allowed volume expansion, deployed a PostgreSQL instance, and set up an AutoPilot rule to automatically resize the volume when a specific threshold was met. We also verified the rule's functionality by running a benchmark that triggered the volume expansion. Additionally, we manually resized the PVC to show both automatic and manual expansion capabilities. This ensures that our PostgreSQL deployment can handle increasing storage demands seamlessly, without downtime or manual intervention.
+In this lab, we successfully configured a dynamic volume resizing solution for PostgreSQL using Portworx and AutoPilot. By creating a PVC that supports expansion and deploying PostgreSQL, we enabled seamless scalability of our storage. The AutoPilot rule we configured ensured that the volume resized automatically as usage increased, which we verified with a benchmark test. We also demonstrated how to manually resize a PVC, showcasing the flexibility of managing storage both automatically and manually. This lab highlights how to maintain efficient, uninterrupted application performance even as storage demands evolve.
