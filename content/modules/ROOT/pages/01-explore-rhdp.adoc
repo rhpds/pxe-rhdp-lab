@@ -76,7 +76,7 @@ First, create an alias.
 alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl"
 ----
 
-Next, echo the alias to the .bashrc file so it gets loaded automatically if you relogin to the terminal.
+Next, echo the alias to the `.bashrc` file so it gets loaded automatically if you relogin to the terminal.
 
 [source,bash]
 ----
@@ -98,11 +98,11 @@ Notice that our Portworx cluster is running on 3 nodes by findind the line that 
 
 Next, let's take a quick look at the OpenShift Web console.
 
-Note: You will need to copy/paste the url into a new tab in your browser.
+NOTE: You will need to copy/paste the url into a new tab in your browser.
 
-Web Console URL: `{openshift_console_url}`
-Username: `{openshift_cluster_admin_username}`
-Password: `{openshift_cluster_admin_password}`
+* Web Console URL: `{openshift_console_url}`
+* Username: `{openshift_cluster_admin_username}`
+* Password: `{openshift_cluster_admin_password}`
 
 
 
