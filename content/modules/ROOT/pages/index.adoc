@@ -16,5 +16,13 @@ Use cases demos
 
 === Lab Access
 
-The terminal window to your right is already logged into the lab environment as the `{bastion_ssh_user_name}` user. 
-All steps of this lab are to be completed as the `{bastion_ssh_user_name}` user.
+The terminal window to your right has the `oc` command we will use during the lab already installed, but we need to login to the cluster
+
+Use this command to login to the cluster:
+
+[shell,bash]
+----
+oc login {openshift_api_url} -u {openshift_cluster_admin_username} -p {openshift_cluster_admin_password}
+----
+
+NOTE:  The lab guide is available in Asciidoc on link:https://github.com/PureStorage-OpenConnect/pxe-rhdp-lab/tree/main/content/modules/ROOT/pages[Github] if you wish to save it for future reference.
