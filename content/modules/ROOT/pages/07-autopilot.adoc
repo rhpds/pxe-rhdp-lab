@@ -1,10 +1,12 @@
 = Lab 07 - PVC Auto Resize using AutoPilot
 
-In this step, we will create a Portworx volume (PVC) for PostgreSQL.
+== Introduction
+
+In this lab, we will learn how to create and manage automatic volume resizing for a PostgreSQL Persistent Volume Claim (PVC) using Portworx AutoPilot. We will begin by creating a StorageClass and a PVC for PostgreSQL that allows volume expansion. After that, we will deploy a PostgreSQL instance that uses this PVC. Finally, we will configure an AutoPilot rule to automatically resize the volume when a certain usage threshold is reached, ensuring seamless expansion without downtime.
 
 == Create StorageClass and PersistentVolumeClaim
 
-Take a look at the StorageClass definition for Portworx
+Take a look at the StorageClass definition for Portworx:
 
 [source,shell]
 ----
@@ -23,17 +25,14 @@ allowVolumeExpansion: true
 EOF
 ----
 
-The parameters are declarative policies for your storage volume. Notice
-the “allowVolumeExpansion: true” this needs to be added for OpenShift
-volume expansion. See
-https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/dynamic-provisioning/[here]
-for a full list of supported parameters.
+The parameters are declarative policies for your storage volume. Notice the `allowVolumeExpansion: true`; this is necessary for OpenShift volume expansion. See https://docs.portworx.com/portworx-install-with-kubernetes/storage-operations/create-pvcs/dynamic-provisioning/[here] for a full list of supported parameters.
 
-We will also need to apply a configmap to allow OpenShift's prometheus
-instance to monitor Portworx events.
+We also need to apply a ConfigMap to allow OpenShift's Prometheus instance to monitor Portworx events.
 
-NOTE: during the next test phase omit this config map and wait 15
-minutes after the pg bench command to ensure it is needed.
+[NOTE]
+====
+During the next test phase, omit this ConfigMap and wait 15 minutes after the pgbench command to ensure it is needed.
+====
 
 [source,shell]
 ----
@@ -49,7 +48,7 @@ data:
 EOF
 ----
 
-Create a new PersistentVolumeClaim
+Create a new PersistentVolumeClaim:
 
 [source,shell]
 ----
@@ -70,12 +69,11 @@ spec:
 EOF
 ----
 
-This defines the maximum volume size. Portworx will thin provision the
-volume.
+This defines the initial volume size. Portworx will thin provision the volume.
 
-== Create secret for postgres
+== Create Secret for PostgreSQL
 
-Below we are creating a Secret to store the postgres password.
+Create a Secret to store the PostgreSQL password.
 
 [source,shell]
 ----
@@ -83,13 +81,9 @@ echo -n mysql123 > /tmp/password.txt
 oc create secret generic postgres-pass --from-file=/tmp/password.txt
 ----
 
-Below we will create a Postgres
-https://kubernetes.io/docs/concepts/workloads/controllers/deployment/[Deployment]
-that uses a Portworx PVC.
+== Deploy PostgreSQL
 
-=== Deploy Postgres
-
-Now that we have the volumes created, let’s deploy Postgres !
+Now that we have the volumes created, let’s deploy PostgreSQL!
 
 [source,shell]
 ----
@@ -144,32 +138,27 @@ spec:
 EOF
 ----
 
-Observe the `volumeMounts` and `volumes` sections where we mount the
-PVC.
+Observe the `volumeMounts` and `volumes` sections where we mount the PVC.
 
-== Verify postgres pod is ready
+== Verify PostgreSQL Pod is Ready
 
-Below commands will wait untill the postgres pods are in the ready state.
+Below command will wait until the PostgreSQL pod is in the ready state.
 
 [source,shell]
 ----
 watch oc get pods -l app=postgres -o wide
 ----
 
-When the pod is in the Running state hit `ctrl-c` to exit.
+When the pod is in the Running state, hit `ctrl-c` to exit.
 
-In this step, we will use `pxctl`` to inspect the volume
+== Inspect the Portworx Volume
 
-== Inspect the Portworx volume
-
-Below we will use `pxctl`` to inspect the underlying volume for our PVC.
+Below we will use `pxctl` to inspect the underlying volume for our PVC.
 
 [source,shell]
 ----
-VOL=$(oc get pvc | grep px-postgres-pvc | awk '{print $3}')
-pxctl volume inspect ${VOL}
+pxctl volume inspect $(oc get pvc | grep px-postgres-pvc | awk '{print $3}')
 ----
-
 
 * `State`: Indicates that the volume is attached and shows the node on which it is attached. This is the node where the Kubernetes pod is running.
 * `HA`: Displays the number of configured replicas for this volume.
@@ -177,29 +166,20 @@ pxctl volume inspect ${VOL}
 * `Replica sets on nodes`: Displays the Portworx (px) nodes on which the volume is replicated.
 * `Size`: The size of the volume is 1GB. We'll check this later to verify if the volume has been expanded.
 
-Now that we have PostgreSQL up, let's proceed to setting up our
-AutoPilot rule!
+== Configure AutoPilot Rule
 
-In this step, we will configure the AutoPilot rule for Postgres
+Now that we have PostgreSQL up, let's proceed to set up our AutoPilot rule!
 
-== Configure Autopilot Rule
+Learn more about https://2.11.docs.portworx.com/portworx-install-with-kubernetes/autopilot/how-to-use/working-with-rules/#understanding-an-autopilotrule[working with AutoPilot Rules] in the Portworx documentation.
 
-Learn more about
-https://2.11.docs.portworx.com/portworx-install-with-kubernetes/autopilot/how-to-use/working-with-rules/#understanding-an-autopilotrule[working
-with AutoPilot Rules] in the Portworx documentation.
+Keep in mind, an AutoPilot Rule has 4 main parts:
 
-Keep in mind, an AutoPilot Rule has 4 main parts.
+* `Selector`: Matches labels on the objects that the rule should monitor.
+* `Namespace Selector`: Matches labels on the Kubernetes namespaces the rule should monitor. This is optional, and the default is all namespaces.
+* `Conditions`: The metrics for the objects to monitor.
+* `Actions`: The actions to perform once the metric conditions are met.
 
-* `Selector` Matches labels on the objects that the rule should monitor.
-* `Namespace Selector` Matches labels on the Kubernetes namespaces the
-rule should monitor. This is optional, and the default is all
-namespaces.
-* `Conditions` The metrics for the objects to monitor.
-* `Actions` to perform once the metric conditions are met.
-
-Below we target the Postgres PVC using an AutPilot Rule.
-
-Create the AutoPilot Rule -----------------------
+Below we target the PostgreSQL PVC using an AutoPilot Rule.
 
 [source,shell]
 ----
@@ -213,13 +193,11 @@ spec:
     matchLabels:
       app: postgres
   conditions:
-    # volume usage should be less than 20%
     expressions:
     - key: "100 * (px_volume_usage_bytes / px_volume_capacity_bytes)"
       operator: Gt
       values:
         - "20"
-    # volume capacity should not exceed 400GiB
     - key: "px_volume_capacity_bytes / 1000000000"
       operator: Lt
       values:
@@ -227,43 +205,34 @@ spec:
   actions:
   - name: openstorage.io.action.volume/resize
     params:
-      # resize volume by scalepercentage of current size
       scalepercentage: "200"
 EOF
 ----
 
-Note that we are defining the `condition` and the `action` in which our
-Rule is activated. In our Rule we are defining when our volume is using
-`20%` of its total available capacity, then we grow the volume using the
-`openstorage.io.action.volume/resize` action by 200 percent. Normally,
-you would use a larger threshold for volume usage.
+The `condition` and `action` in the rule are defined such that when the volume is using more than `20%` of its total available capacity, it will grow the volume by `200%`. Normally, you would use a larger threshold for volume usage.
 
-== Verify that AutoPilot initialized the Postgres PVC
+== Verify AutoPilot Initialization
 
 [source,shell]
 ----
 watch oc get events --field-selector involvedObject.kind=AutopilotRule,involvedObject.name=auto-volume-resize --all-namespaces
 ----
 
-Check to see that AutoPilot has recognized the PVC and initialized it.
-When the events show `transition from Initializing => Normal` for the
-Postgres PVC, AutoPilot is ready. Hit `ctrl-c` to exit.
+Check that AutoPilot has recognized the PVC and initialized it. When the events show `transition from Initializing => Normal` for the PostgreSQL PVC, AutoPilot is ready. Hit `ctrl-c` to exit.
 
-In this step, we will run a benchmark that uses more than 20% of our
-volume and show how AutoPilot dynamically increases the volume size
-without downtime or user intervention.
+== Run Benchmark and Verify Volume Expansion
 
-== Open a shell inside the postgres container
+In this step, we will run a benchmark that uses more than 20% of our volume and show how AutoPilot dynamically increases the volume size without downtime or user intervention.
 
-Below commands exec into the postgres pod:
+Open a shell inside the PostgreSQL container:
 
 [source,shell]
 ----
-POD=`oc get pods -l app=postgres | grep Running | grep 1/1 | awk '{print $1}'`
-oc exec -it $POD -- bash
+oc exec -it $(oc get pods -l app=postgres --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}') -- bash
+
 ----
 
-Next we can launch the psql utility and create a database
+Launch the `psql` utility and create a database:
 
 [source,shell]
 ----
@@ -273,10 +242,7 @@ create database pxdemo;
 \q
 ----
 
-Use pgbench to run a baseline transaction benchmark which will try to
-grow the volume to a size that is greater than the 20% that we defined
-in our AutoPilot Rule. This should trigger AutoPilot to resize the
-volume.
+Use `pgbench` to run a baseline transaction benchmark to grow the volume beyond the 20% threshold defined in the AutoPilot Rule:
 
 [source,shell]
 ----
@@ -284,72 +250,55 @@ pgbench -i -s 50 pxdemo
 ----
 
 [NOTE]
-.Note
 ====
-Note that once the test completes, *AutoPilot will make sure the usage
-remains above 20% for about 30 seconds before triggering the rule.* Type
-`exit` to exit from the pod shell before proceeding.
-====[source,shell]
-----
-exit
-----
+Note that once the test completes, *AutoPilot will ensure the usage remains above 20% for about 30 seconds before triggering the rule.* Type `exit` to exit from the pod shell before proceeding.
+====
 
-== Check to see if the rule was triggered
+== Check if the Rule Was Triggered
 
-We can retrieve events by using the `oc get events` and filtering for
-`AutoPilotRule` events that match our use case. Note that AutoPilot
-delays the rule from being triggered immediately to ensure that the
-conditions stablize, so make sure to *hang tight and wait for the to rule get
-triggered.
+We can retrieve events by using the `oc get events` command and filtering for `AutoPilotRule` events. Note that AutoPilot delays the rule from being triggered immediately to ensure the conditions stabilize.
 
 [source,shell]
 ----
 watch oc get events --field-selector involvedObject.kind=AutopilotRule,involvedObject.name=auto-volume-resize --all-namespaces
 ----
 
-When you see `Triggered => ActiveActionsPending` the action has been
-activated. When you see `ActiveActionsInProgress => ActiveActionsTake`
-this means the resize has taken place and your volume should be resized
-by *200%*. Hit `ctrl-c` to clear the screen.
+When you see `Triggered => ActiveActionsPending`, the action has been activated. When you see `ActiveActionsInProgress => ActiveActionsTake`, this means the resize has taken place and your volume should now be resized by *200%*. Hit `ctrl-c` to clear the screen.
 
-Inspect the volume and verify that it now has grown by 200% capacity
-(3GB).
+Inspect the volume and verify that it has grown by 200% capacity (3GB).
 
 [source,shell]
 ----
 oc get pvc px-postgres-pvc
 ----
 
-As you can see the volume is now expanded and our PostgresDB database
-didn't require restarting.
+As you can see, the volume is now expanded and our PostgreSQL database didn't require a restart.
 
 [source,shell]
 ----
 oc get pods
 ----
 
-== Manual resize of PVC
+== Manual Resize of PVC
 
-It is also possible to manually resize a PVC. Below we will resize the
-volume to 4GiB.
+It is also possible to manually resize a PVC. Below we will resize the volume to 4GiB.
 
-Edit the existing PVC and change the size to 4GiB.
+Edit the existing PVC and change the size to 4GiB:
 
-____
 [source,shell]
 ----
 oc edit pvc px-postgres-pvc
 ----
-____
 
-Check out the utilization of the volume after the resize.
-
-It takes approximately 30s to complete resizing.
+Check the utilization of the volume after the resize. It takes approximately 30 seconds to complete resizing.
 
 [source,shell]
 ----
 oc describe pvc px-postgres-pvc
 ----
 
-You can see events that the PVC was successfully resized and that the
-volume is now 4GiB.
+You can see events that indicate the PVC was successfully resized and that the volume is now 4GiB.
+
+== Summary
+
+In this lab, we demonstrated how to create and manage automatic volume resizing for a PostgreSQL PVC using Portworx AutoPilot. We created a StorageClass and a PVC that allowed volume expansion, deployed a PostgreSQL instance, and set up an AutoPilot rule to automatically resize the volume when a specific threshold was met. We also verified the rule's functionality by running a benchmark that triggered the volume expansion. Additionally, we manually resized the PVC to show both automatic and manual expansion capabilities. This ensures that our PostgreSQL deployment can handle increasing storage demands seamlessly, without downtime or manual intervention.
