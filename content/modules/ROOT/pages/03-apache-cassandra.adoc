@@ -55,6 +55,13 @@ In this step, we will deploy a 3-node Cassandra application using a `StatefulSet
 
 === Create the Cassandra StatefulSet
 
+First, let's configure our Security Context Contraints to allow `anyuid`
+
+[source,shell]
+----
+oc adm policy add-scc-to-user anyuid -z default -n default
+----
+
 Create a Cassandra `StatefulSet` that uses a Portworx PVC.
 
 [source,shell]
