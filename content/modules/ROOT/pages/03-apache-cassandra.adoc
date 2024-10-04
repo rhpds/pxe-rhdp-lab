@@ -162,6 +162,29 @@ spec:
       resources:
         requests:
           storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cqlsh
+spec:
+  containers:
+  - name: cqlsh
+    image: mikewright/cqlsh
+    command:
+      - sh
+      - -c
+      - "exec tail -f /dev/null"
+apiVersion: stork.libopenstorage.org/v1alpha1
+kind: Rule
+metadata:
+  name: cassandra-presnap-rule
+rules:
+  - podSelector:
+      app: cassandra
+    actions:
+    - type: command
+      value: nodetool flush
 EOF
 ----
 
