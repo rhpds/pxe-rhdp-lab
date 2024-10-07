@@ -13,7 +13,7 @@ For example, below is a Portworx `StorageClass` whose volumes have:
 
 Create the `StorageClass` by running the following command:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc create -f -
 kind: StorageClass
@@ -41,7 +41,7 @@ Below is the spec for a 2GB volume that uses the Portworx `StorageClass` we crea
 
 Let's create the `PersistentVolumeClaim`:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc create -f -
 kind: PersistentVolumeClaim
@@ -64,7 +64,7 @@ Behind the scenes, OpenShift communicates with the Portworx native driver to cre
 
 A `PersistentVolumeClaim` is successfully provisioned once it reaches the "Bound" state. Let's run the following command to check its status:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc get pvc px-pvc
 ----
@@ -77,7 +77,7 @@ Let's proceed to the next step to further inspect the volume.
 
 Now, we will use `pxctl` to inspect the underlying volume for our PVC.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 pxctl volume inspect $(oc get pvc px-pvc -o jsonpath='{.spec.volumeName}')
 
@@ -89,4 +89,3 @@ Make the following observations in the inspect output:
 * **Labels**: Shows the name of the PVC associated with this volume.
 * **Replica sets on nodes**: Displays the Portworx nodes on which the volume is replicated.
 * **State**: Indicates whether the volume is currently "detached," meaning no applications are using the volume yet.
-
