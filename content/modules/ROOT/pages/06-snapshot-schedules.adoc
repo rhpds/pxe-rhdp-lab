@@ -8,7 +8,7 @@ In this lab, we will learn how to create and manage snapshot schedules in OpenSh
 
 First, create a daily snapshot schedule policy named `daily-schedule` that takes a snapshot every day at `10 PM` and retains the last 5 snapshots.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 apiVersion: stork.libopenstorage.org/v1alpha1
@@ -26,7 +26,7 @@ EOF
 
 Next, create a storage class named `px-nginx-scheduled` that uses the newly created schedule policy `daily-schedule`.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 kind: StorageClass
@@ -48,7 +48,7 @@ EOF
 
 Now, create a new NGINX StatefulSet, making use of the `px-nginx-scheduled` storage class.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 apiVersion: v1

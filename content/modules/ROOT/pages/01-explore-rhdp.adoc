@@ -10,7 +10,7 @@ This is a sandbox environment. Feel free to explore and experiment.
 
 Let's start by getting the nodes in our current cluster. Open the tab to access the bastion.
 
-[source,bash]
+[,bash,role="execute"]
 ----
 oc get nodes
 ----
@@ -20,14 +20,14 @@ This cluster has 3 control-plane nodes and 3 worker nodes.
 We can check the OpenShift version we are running with the
 following command.  Look for the line that reads `Server Version`
 
-[source,bash]
+[,bash,role="execute"]
 ----
 oc version
 ----
 
 We can check the status of the cluster by running:
 
-[source,bash]
+[,bash,role="execute"]
 ----
 oc cluster-info
 ----
@@ -48,17 +48,16 @@ the Portworx cluster using the spec URL.
 
 To see the running Portworx pods:
 
-[source,bash]
+[,bash,role="execute"]
 ----
 oc get pods -o wide -n portworx -l name=portworx
 ----
 
 Let's check the installation logs. This will check the last 50 lines of the log.
 
-[source,bash]
+[,bash,role="execute"]
 ----
 oc -n portworx logs --tail=50 $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx
-
 ----
 
 == Add PXCTL Alias
@@ -71,23 +70,22 @@ To make it easier to run `pxctl` commands, we will add an alias to the
 shell.
 
 First, create an alias.
-[source,bash]
+[,bash,role="execute"]
 ----
 alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl"
 ----
 
 Next, echo the alias to the `.bashrc` file so it gets loaded automatically if you relogin to the terminal.
 
-[source,bash]
+[,bash,role="execute"]
 ----
 echo 'alias pxctl="oc -n portworx exec $(oc get pods -l name=portworx -n portworx -o jsonpath='{.items[0].metadata.name}') -c portworx -it -- /opt/pwx/bin/pxctl"' >> ~/.bashrc
 ----
 
-
 Take a moment to review the Portworx configuration by running the
 following command:
 
-[source,bash]
+[,bash,role="execute"]
 ----
 pxctl status
 ----
@@ -103,8 +101,6 @@ NOTE: You will need to copy/paste the url into a new tab in your browser.
 * Web Console URL: `{openshift_console_url}`
 * Username: `{openshift_cluster_admin_username}`
 * Password: `{openshift_cluster_admin_password}`
-
-
 
 Once logged in, navigate to `Operators/Installed Operators`. Change your Project to `portworx`. You should see Portworx Enterprise installed with a status of **Succeeded**.
 

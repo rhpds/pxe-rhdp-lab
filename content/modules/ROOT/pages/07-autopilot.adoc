@@ -9,7 +9,7 @@ In this lab, we will explore how to dynamically manage the storage needs of a Po
 
 Take a look at the StorageClass definition for Portworx:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc delete sc px-repl3-sc
 cat <<EOF | oc apply -f -
@@ -35,7 +35,7 @@ We also need to apply a ConfigMap to allow OpenShift's Prometheus instance to mo
 During the next test phase, omit this ConfigMap and wait 15 minutes after the pgbench command to ensure it is needed.
 ====
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 apiVersion: v1
@@ -51,7 +51,7 @@ EOF
 
 Create a new PersistentVolumeClaim:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 kind: PersistentVolumeClaim
@@ -76,7 +76,7 @@ This defines the initial volume size. Portworx will thin provision the volume.
 
 Create a Secret to store the PostgreSQL password.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 echo -n mysql123 > /tmp/password.txt
 oc create secret generic postgres-pass --from-file=/tmp/password.txt
@@ -86,7 +86,7 @@ oc create secret generic postgres-pass --from-file=/tmp/password.txt
 
 Now that we have the volumes created, let’s deploy PostgreSQL!
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc create -f -
 apiVersion: apps/v1
@@ -145,7 +145,7 @@ Observe the `volumeMounts` and `volumes` sections where we mount the PVC.
 
 Below command will wait until the PostgreSQL pod is in the ready state.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 watch oc get pods -l app=postgres -o wide
 ----
@@ -156,7 +156,7 @@ When the pod is in the Running state, hit `ctrl-c` to exit.
 
 Below we will use `pxctl` to inspect the underlying volume for our PVC.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 pxctl volume inspect $(oc get pvc | grep px-postgres-pvc | awk '{print $3}')
 ----
@@ -182,7 +182,7 @@ Keep in mind, an AutoPilot Rule has 4 main parts:
 
 Below we target the PostgreSQL PVC using an AutoPilot Rule.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 apiVersion: autopilot.libopenstorage.org/v1alpha1
@@ -214,7 +214,7 @@ The `condition` and `action` in the rule are defined such that when the volume i
 
 == Verify AutoPilot Initialization
 
-[source,shell]
+[,bash,role="execute"]
 ----
 watch oc get events --field-selector involvedObject.kind=AutopilotRule,involvedObject.name=auto-volume-resize --all-namespaces
 ----
@@ -227,7 +227,7 @@ In this step, we will run a benchmark that uses more than 20% of our volume and 
 
 Open a shell inside the PostgreSQL container:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc exec -it $(oc get pods -l app=postgres --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}') -- bash
 
@@ -235,7 +235,7 @@ oc exec -it $(oc get pods -l app=postgres --field-selector=status.phase=Running 
 
 Launch the `psql` utility and create a database:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 psql
 create database pxdemo;
@@ -245,7 +245,7 @@ create database pxdemo;
 
 Use `pgbench` to run a baseline transaction benchmark to grow the volume beyond the 20% threshold defined in the AutoPilot Rule:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 pgbench -i -s 50 pxdemo
 ----
@@ -259,7 +259,7 @@ Note that once the test completes, *AutoPilot will ensure the usage remains abov
 
 We can retrieve events by using the `oc get events` command and filtering for `AutoPilotRule` events. Note that AutoPilot delays the rule from being triggered immediately to ensure the conditions stabilize.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 watch oc get events --field-selector involvedObject.kind=AutopilotRule,involvedObject.name=auto-volume-resize --all-namespaces
 ----
@@ -268,14 +268,14 @@ When you see `Triggered => ActiveActionsPending`, the action has been activated.
 
 Inspect the volume and verify that it has grown by 200% capacity (3GB).
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc get pvc px-postgres-pvc
 ----
 
 As you can see, the volume is now expanded and our PostgreSQL database didn't require a restart.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc get pods
 ----
@@ -286,14 +286,14 @@ It is also possible to manually resize a PVC. Below we will resize the volume to
 
 Edit the existing PVC and change the size to 4GiB:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc edit pvc px-postgres-pvc
 ----
 
 Check the utilization of the volume after the resize. It takes approximately 30 seconds to complete resizing.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc describe pvc px-postgres-pvc
 ----

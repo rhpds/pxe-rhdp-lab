@@ -16,7 +16,7 @@ In this lab, we'll deploy Cassandra on OpenShift using Portworx for dynamic stor
 
 == Step 1: Create a Portworx Volume for Cassandra
 
-Before deploying Cassandra, we need to create a Portworx `PersistentVolumeClaim` (PVC). 
+Before deploying Cassandra, we need to create a Portworx `PersistentVolumeClaim` (PVC).
 
 To do that, we first need a StorageClass, which defines the type of storage available.
 
@@ -32,7 +32,7 @@ NOTE: For a 3-volume group and 2 replicas, a minimum of 6 worker nodes is requir
 
 Create the storage class using:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 kind: StorageClass
@@ -57,14 +57,14 @@ In this step, we will deploy a 3-node Cassandra application using a `StatefulSet
 
 First, let's configure our Security Context Contraints to allow `anyuid`
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc adm policy add-scc-to-user anyuid -z default -n default
 ----
 
 Create a Cassandra `StatefulSet` that uses a Portworx PVC.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 apiVersion: v1
@@ -195,14 +195,14 @@ rules:
 EOF
 ----
 
-The above configuration uses a headless service to expose the StatefulSet. 
+The above configuration uses a headless service to expose the StatefulSet.
 PVCs are dynamically created for each member of the StatefulSet based on `volumeClaimTemplates`.
 
 == Step 3: Verify Cassandra Pod is Ready
 
 To monitor the Cassandra pod until it's ready, use the following command:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 watch oc get pods -o wide
 ----
@@ -213,7 +213,7 @@ This may take a few minutes. When the `cassandra-0` pod is in `STATUS Running` a
 
 Next, inspect the underlying volumes for our Cassandra pod:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 pxctl volume inspect $(oc get pvc | grep cassandra | awk '{print $3}')
 
@@ -231,7 +231,7 @@ Look for:
 
 Start a CQL Shell session:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 ----
@@ -252,7 +252,7 @@ INSERT INTO portworx.features (id, name, value) VALUES ('px-3', 'STORK', 'conver
 
 == Step 6: Flush Data to Disk
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc exec -it cassandra-0 -- nodetool flush
 ----
@@ -263,7 +263,7 @@ Flushing data to disk ensures data persistence for failover tests.
 
 Cordon the node where Cassandra is running:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc delete pod $(oc get pods -l app=cassandra -o wide | grep -v NAME | awk '{print $1}')
 
@@ -271,7 +271,7 @@ oc delete pod $(oc get pods -l app=cassandra -o wide | grep -v NAME | awk '{prin
 
 Delete the Cassandra pod:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc delete pod $(oc get pods -l app=cassandra -o wide | awk 'NR>1 {print $1}')
 
@@ -281,7 +281,7 @@ This will cause Kubernetes to reschedule the pod on another node.
 
 To verify the new pod is running:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 watch oc get pods -l app=cassandra -o wide
 ----
@@ -290,7 +290,7 @@ Once the new pod is `Running` and `READY(1/1)`, press `ctrl-c` to exit.
 
 Uncordon the node:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc adm uncordon ${NODE}
 ----
@@ -299,7 +299,7 @@ oc adm uncordon ${NODE}
 
 Start a CQL Shell session again:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cqlversion=3.4.4
 ----

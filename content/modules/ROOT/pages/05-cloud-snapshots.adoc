@@ -11,7 +11,7 @@ To begin, we need to deploy Minio as our object store endpoint for Portworx clou
 
 Create a StorageClass for use by Minio:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF > /tmp/px-ha-sc.yaml
 kind: StorageClass
@@ -26,14 +26,14 @@ parameters:
 EOF
 ----
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc create -f /tmp/px-ha-sc.yaml
 ----
 
 Next, deploy Minio onto the OCP cluster:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 echo "Installing Helm"
 curl -L https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash -s -- --version v3.8.2
@@ -41,9 +41,9 @@ helm repo add stable https://charts.helm.sh/stable
 echo "Helm installed!"
 ----
 
-[source,shell]
+[,bash,role="execute"]
 ----
-echo "Setting Up Minio" 
+echo "Setting Up Minio"
 oc create namespace minio
 oc -n minio adm policy add-scc-to-user anyuid -z px-minio
 helm install px-minio stable/minio --namespace minio --set accessKey=ZZYYXXWWVVUUTT --set secretKey=0ldSup3rS3cr3t --set persistence.storageClass=px-ha-sc --set resources.requests.memory=1Gi > /dev/null 2>&1
@@ -54,7 +54,7 @@ echo "Setup Complete ..."
 
 Run the command below to obtain the object store endpoint:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 MINIO_ENDPOINT=http://$(oc -n minio get svc px-minio -o jsonpath='{.spec.clusterIP}:9000'); echo $MINIO_ENDPOINT
 pxctl credentials create --provider s3 --s3-access-key ZZYYXXWWVVUUTT --s3-secret-key 0ldSup3rS3cr3t --s3-endpoint $MINIO_ENDPOINT --s3-region us-east-1 my-cloud-credentials
@@ -64,7 +64,7 @@ pxctl credentials create --provider s3 --s3-access-key ZZYYXXWWVVUUTT --s3-secre
 
 We will now create a MySQL database to use with cloud snapshots.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc create -f -
 kind: StorageClass
@@ -125,14 +125,14 @@ EOF
 
 Wait for the MySQL pod to start:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 watch oc get pods -l app=mysql
 ----
 
 Create a database named `demodb`:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 POD=$(oc get pods -l app=mysql | grep Running | grep 1/1 | awk '{print $1}')
 oc exec -it $POD -- mysql -u root -e "CREATE DATABASE demodb"
@@ -142,7 +142,7 @@ oc exec -it $POD -- mysql -u root -e "CREATE DATABASE demodb"
 
 We have deployed a MySQL pod that uses a Portworx volume. Now, take a cloud snapshot of this PVC named `mysql-snapshot`. The snapshot should be successfully backed up to the object store.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 apiVersion: volumesnapshot.external-storage.k8s.io/v1
@@ -159,7 +159,7 @@ EOF
 
 If the cloud credentials and volume snapshot were set up correctly, you can check the status by running the command below:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc describe stork-volumesnapshot mysql-snapshot
 ----
@@ -168,7 +168,7 @@ oc describe stork-volumesnapshot mysql-snapshot
 
 Create a clone PVC named `px-mysql-clone-pvc` by restoring data from the snapshot `mysql-snapshot`.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 apiVersion: v1
@@ -189,9 +189,9 @@ EOF
 
 You can check the status of the clone by running the following command:
 
-[source,shell]
+[,bash,role="execute"]
 ----
-oc describe pvc px-mysql-clone-pvc 
+oc describe pvc px-mysql-clone-pvc
 ----
 
 == Summary

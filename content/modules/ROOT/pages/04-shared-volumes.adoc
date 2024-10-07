@@ -10,7 +10,7 @@ In this lab, we are using NGINX to demonstrate how shared volumes can be utilize
 
 Take a look at the StorageClass definition for Portworx and create the storage class.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 kind: StorageClass
@@ -30,7 +30,7 @@ The parameters are declarative policies for your storage volume. See https://doc
 
 Take a look at the PersistentVolumeClaim and create it.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 kind: PersistentVolumeClaim
@@ -59,7 +59,7 @@ Notice in the specification below, we have set the `securityContext.seLinuxOptio
 
 == Deploy 3 Instances of NGINX
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<EOF | oc apply -f -
 apiVersion: apps/v1
@@ -81,15 +81,15 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        seLinuxOptions: 
+        seLinuxOptions:
           level: "s0:c1,c0"
-        seccompProfile: 
+        seccompProfile:
           type: RuntimeDefault
       containers:
       - name: webapp1
         securityContext:
           allowPrivilegeEscalation: false
-          seLinuxOptions: 
+          seLinuxOptions:
             level: "s0:c1,c0"
           capabilities:
             drop: ["ALL"]
@@ -123,15 +123,15 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        seLinuxOptions: 
+        seLinuxOptions:
           level: "s0:c1,c0"
-        seccompProfile: 
+        seccompProfile:
           type: RuntimeDefault
       containers:
       - name: webapp2
         securityContext:
           allowPrivilegeEscalation: false
-          seLinuxOptions: 
+          seLinuxOptions:
             level: "s0:c1,c0"
           capabilities:
             drop: ["ALL"]
@@ -165,15 +165,15 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        seLinuxOptions: 
+        seLinuxOptions:
           level: "s0:c1,c0"
-        seccompProfile: 
+        seccompProfile:
           type: RuntimeDefault
       containers:
       - name: webapp3
         securityContext:
           allowPrivilegeEscalation: false
-          seLinuxOptions: 
+          seLinuxOptions:
             level: "s0:c1,c0"
           capabilities:
             drop: ["ALL"]
@@ -235,7 +235,7 @@ Observe the `volumeMounts` and `volumes` sections where we mount the PVC.
 
 Run the command below and wait until all three NGINX pods are in a ready state.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 watch oc get pods -l group=webapp -o wide
 ----
@@ -248,7 +248,7 @@ Portworx ships with a https://docs.portworx.com/control/status.html[pxctl] comma
 
 Below, we will use `pxctl` to inspect the underlying volume for our PVC.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 pxctl volume inspect $(oc get pvc | grep px-shared-pvc | awk '{print $3}')
 
@@ -266,7 +266,7 @@ With our shared volume successfully created and mounted across all three NGINX c
 
 Run the following command:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc run test-webapp1 --image nginx --restart=Never --rm -ti -- curl webapp1-svc
 ----
@@ -288,21 +288,21 @@ You should see the following:
 
 Copy `index.html` into the `webapp1` pod:
 
-[source,shell]
+[,bash,role="execute"]
 ----
 cat <<"EOF" > /tmp/index.html
- /$$$$$$$                       /$$                                                 
-| $$__  $$                     | $$                                                 
+ /$$$$$$$                       /$$
+| $$__  $$                     | $$
 | $$  \ $$ /$$$$$$   /$$$$$$  /$$$$$$   /$$  /$$  /$$  /$$$$$$   /$$$$$$  /$$   /$$
 | $$$$$$$//$$__  $$ /$$__  $$|_  $$_/  | $$ | $$ | $$ /$$__  $$ /$$__  $$|  $$ /$$/
-| $$____/| $$  \ $$| $$  \__/  | $$    | $$ | $$ | $$| $$  \ $$| $$  \__/ \  $$$$/ 
-| $$     | $$  | $$| $$        | $$ /$$| $$ | $$ | $$| $$  | $$| $$        >$$  $$ 
+| $$____/| $$  \ $$| $$  \__/  | $$    | $$ | $$ | $$| $$  \ $$| $$  \__/ \  $$$$/
+| $$     | $$  | $$| $$        | $$ /$$| $$ | $$ | $$| $$  | $$| $$        >$$  $$
 | $$     |  $$$$$$/| $$        |  $$$$/|  $$$$$/$$$$/|  $$$$$$/| $$       /$$/\  $$
 |__/      \______/ |__/         \___/   \_____/\___/  \______/ |__/      |__/  \__/
 EOF
 ----
 
-[source,shell]
+[,bash,role="execute"]
 ----
 POD=$(oc get pods -l app=webapp1 | grep Running | awk '{print $1}')
 oc cp /tmp/index.html $POD:/usr/share/nginx/html/index.html
@@ -310,17 +310,17 @@ oc cp /tmp/index.html $POD:/usr/share/nginx/html/index.html
 
 Now, let's access all three URLs and verify that the "Hello World" message appears on each. This happens because all three containers are attached to the same volume, so any updates made to one are reflected across all.
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc run test-webapp1 --image nginx --restart=Never --rm -ti -- curl webapp1-svc
 ----
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc run test-webapp2 --image nginx --restart=Never --rm -ti -- curl webapp2-svc
 ----
 
-[source,shell]
+[,bash,role="execute"]
 ----
 oc run test-webapp3 --image nginx --restart=Never --rm -ti -- curl webapp3-svc
 ----
