@@ -20,9 +20,10 @@ The terminal window to your right has the `oc` command we will use during the la
 
 Use this command to login to the cluster:
 
-[,bash,role="execute"]
+[,bash,role="execute",subs="attributes"]
 ----
 oc login {openshift_api_url} -u {openshift_cluster_admin_username}  -p {openshift_cluster_admin_password}
+oc project default
 ----
 
 NOTE:  The lab guide is available in Asciidoc on link:https://github.com/PureStorage-OpenConnect/pxe-rhdp-lab/tree/main/content/modules/ROOT/pages[Github] if you wish to save it for future reference.
