@@ -127,7 +127,7 @@ Wait for the MySQL pod to start:
 
 [,bash,role="execute"]
 ----
-watch oc get pods -l app=mysql
+oc get pods -l app=mysql -w
 ----
 
 Create a database named `demodb`:
@@ -193,6 +193,8 @@ You can check the status of the clone by running the following command:
 ----
 oc describe pvc px-mysql-clone-pvc
 ----
+
+TODO: Show the use of this new PVC
 
 == Summary
 
