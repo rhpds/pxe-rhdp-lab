@@ -60,6 +60,7 @@ First, let's configure our Security Context Contraints to allow `anyuid`
 [,bash,role="execute"]
 ----
 oc adm policy add-scc-to-user anyuid -z default -n default
+oc adm policy add-scc-to-user privileged -z default -n default
 ----
 
 Create a Cassandra `StatefulSet` that uses a Portworx PVC.
