@@ -242,7 +242,7 @@ NOTE: If you receive a traceback error, the Cassandra pod might not be ready yet
 
 Create a keyspace and insert some data:
 
-[source,sql]
+[source,sql,role="execute"]
 ----
 CREATE KEYSPACE portworx WITH REPLICATION = {'class':'SimpleStrategy','replication_factor':3};
 USE portworx;
@@ -267,8 +267,8 @@ Cordon the node where Cassandra is running:
 
 [,bash,role="execute"]
 ----
-oc delete pod $(oc get pods -l app=cassandra -o wide | grep -v NAME | awk '{print $1}')
-
+ORIGINAL_NODE=$(oc get pods -l app=cassandra -o jsonpath='{.items[0].spec.nodeName}')
+oc adm cordon $ORIGINAL_NODE
 ----
 
 Delete the Cassandra pod:
@@ -276,7 +276,6 @@ Delete the Cassandra pod:
 [,bash,role="execute"]
 ----
 oc delete pod $(oc get pods -l app=cassandra -o wide | awk 'NR>1 {print $1}')
-
 ----
 
 This will cause Kubernetes to reschedule the pod on another node.
@@ -285,7 +284,7 @@ To verify the new pod is running:
 
 [,bash,role="execute"]
 ----
-watch oc get pods -l app=cassandra -o wide
+oc get pods -l app=cassandra -o wide -w
 ----
 
 Once the new pod is `Running` and `READY(1/1)`, press `ctrl-c` to exit.
@@ -294,7 +293,7 @@ Uncordon the node:
 
 [,bash,role="execute"]
 ----
-oc adm uncordon ${NODE}
+oc adm uncordon ${ORIGINAL_NODE}
 ----
 
 == Step 8: Verify Data Availability After Failover
