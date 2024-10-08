@@ -237,7 +237,7 @@ Run the command below and wait until all three NGINX pods are in a ready state.
 
 [,bash,role="execute"]
 ----
-watch oc get pods -l group=webapp -o wide
+oc get pods -l group=webapp -o wide -w
 ----
 
 When all three pods are in the `Running` state, press `ctrl-c` to clear the screen. Be patient. If they stay in the `Pending` state for a while, it is because each node must fetch the Docker image.
@@ -250,8 +250,7 @@ Below, we will use `pxctl` to inspect the underlying volume for our PVC.
 
 [,bash,role="execute"]
 ----
-pxctl volume inspect $(oc get pvc | grep px-shared-pvc | awk '{print $3}')
-
+pxctl volume inspect $(oc get pvc px-shared-pvc -o jsonpath='{.spec.volumeName}')
 ----
 
 * `Status`: Indicates that the volume is attached and shows the node on which it is attached. For shared volumes, this is the transaction coordinator node that all other nodes use to write data.
