@@ -242,7 +242,7 @@ NOTE: If you receive a traceback error, the Cassandra pod might not be ready yet
 
 Create a keyspace and insert some data:
 
-[source,sql,role="execute"]
+[,sql,role="execute"]
 ----
 CREATE KEYSPACE portworx WITH REPLICATION = {'class':'SimpleStrategy','replication_factor':3};
 USE portworx;
@@ -307,7 +307,7 @@ oc exec -it cqlsh -- cqlsh cassandra-0.cassandra.default.svc.cluster.local --cql
 
 Select rows from the keyspace:
 
-[source,sql]
+[,sql,role="execute"]
 ----
 SELECT id, name, value FROM portworx.features;
 ----
