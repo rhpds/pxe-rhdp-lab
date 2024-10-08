@@ -147,7 +147,7 @@ Below command will wait until the PostgreSQL pod is in the ready state.
 
 [,bash,role="execute"]
 ----
-watch oc get pods -l app=postgres -o wide
+oc get pods -l app=postgres -o wide -w
 ----
 
 When the pod is in the Running state, hit `ctrl-c` to exit.
@@ -216,7 +216,7 @@ The `condition` and `action` in the rule are defined such that when the volume i
 
 [,bash,role="execute"]
 ----
-watch oc get events --field-selector involvedObject.kind=AutopilotRule,involvedObject.name=auto-volume-resize --all-namespaces
+oc get events --field-selector involvedObject.kind=AutopilotRule,involvedObject.name=auto-volume-resize --all-namespaces -w
 ----
 
 Check that AutoPilot has recognized the PVC and initialized it. When the events show `transition from Initializing => Normal` for the PostgreSQL PVC, AutoPilot is ready. Hit `ctrl-c` to exit.
@@ -261,7 +261,7 @@ We can retrieve events by using the `oc get events` command and filtering for `A
 
 [,bash,role="execute"]
 ----
-watch oc get events --field-selector involvedObject.kind=AutopilotRule,involvedObject.name=auto-volume-resize --all-namespaces
+oc get events --field-selector involvedObject.kind=AutopilotRule,involvedObject.name=auto-volume-resize --all-namespaces -w
 ----
 
 When you see `Triggered => ActiveActionsPending`, the action has been activated. When you see `ActiveActionsInProgress => ActiveActionsTake`, this means the resize has taken place and your volume should now be resized by *200%*. Hit `ctrl-c` to clear the screen.
