@@ -313,3 +313,5 @@ SELECT id, name, value FROM portworx.features;
 ----
 
 Verify that the data is still present, which confirms that failover was successful.
+
+Log out of the CQL Shell session by pressing `Ctrl-C`.
